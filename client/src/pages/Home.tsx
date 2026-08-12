@@ -3,6 +3,7 @@
 // storytelling sequence. Adapted for YBI blue, red, yellow, and orange.
 import { useState } from "react";
 import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 import {
   ArrowDown,
   ArrowRight,
@@ -53,6 +54,7 @@ const reasons = [
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { data: managedHero } = trpc.publicSite.content.useQuery({ contentKey: "homepage-hero" });
 
   const closeMenu = () => setMenuOpen(false);
   const handleNewsletter = (event: React.FormEvent<HTMLFormElement>) => {
@@ -90,9 +92,9 @@ export default function Home() {
           <div className="reference-hero-overlay" />
           <div className="reference-hero-content page-width">
             <p className="reference-eyebrow light"><span /> A platform for possibility</p>
-            <h1 id="hero-title">Inspiring voices,<br />building leaders,<br /><span>shaping futures.</span></h1>
-            <p className="reference-hero-copy">We create a platform where the young and the aged inspire one another, build practical capability, and use their gifts to make a positive difference in the world.</p>
-            <a className="reference-button white-button" href="#connect">Support us <ArrowUpRight size={18} /></a>
+            <h1 id="hero-title" className="managed-hero-title">{managedHero?.title ?? "Inspiring voices,\nbuilding leaders,\nshaping futures."}</h1>
+            <p className="reference-hero-copy">{managedHero?.body ?? "We create a platform where the young and the aged inspire one another, build practical capability, and use their gifts to make a positive difference in the world."}</p>
+            <a className="reference-button white-button" href={managedHero?.actionHref || "#connect"}>{managedHero?.actionLabel || "Support us"} <ArrowUpRight size={18} /></a>
           </div>
           <a className="hero-scroll" href="#about"><span>Discover more</span><ChevronDown size={18} /></a>
         </section>

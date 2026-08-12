@@ -19,3 +19,9 @@
 - [x] Add a browser-based photo uploader with previews, removal controls, and local persistence.
 - [x] Add polished image reveal, hover, and lightbox animations with reduced-motion support.
 - [x] Verify the Gallery page on desktop and mobile and save an updated checkpoint.
+- [x] Correct the footer brand and description spacing at mobile and desktop sizes.
+- [x] Upgrade the project with backend, database, user management, and file storage foundations.
+- [x] Add a protected admin dashboard route with overview metrics and navigation.
+- [x] Add admin management screens for gallery photos, programs, updates, and site content.
+- [x] Connect dashboard forms to persistent data and storage with loading, success, and error states.
+- [x] Verify public footer, admin authentication, CRUD flows, responsive layouts, and save a stable checkpoint.

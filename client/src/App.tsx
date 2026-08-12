@@ -9,9 +9,10 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Subpage from "./pages/Subpage";
 import Gallery from "./pages/Gallery";
-
+import AdminDashboard from "./pages/AdminDashboard";
 
 function Router() {
+  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path={"/"} component={Home} />
@@ -21,6 +22,8 @@ function Router() {
       <Route path={"/join-us"}><Subpage page="join-us" /></Route>
       <Route path={"/media"}><Subpage page="media" /></Route>
       <Route path={"/gallery"} component={Gallery} />
+      <Route path={"/admin"} component={AdminDashboard} />
+      <Route path={"/admin/:section"} component={AdminDashboard} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
