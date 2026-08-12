@@ -71,3 +71,6 @@
 - [x] Redesign the homepage update cards as visual news cards matching the supplied reference: image, category label, headline, and metadata footer.
 - [x] Keep the updated cards responsive and aligned to the shared YBI content grid.
 - [x] Verify the revised update cards on desktop and mobile, run checks, and save a checkpoint.
+- [x] Add a smooth swipe-and-zoom rotation so the homepage visual-news cards cycle through different YBI images.
+- [x] Preserve category labels, accessible card links, responsive sizing, and reduced-motion support during image rotation.
+- [x] Verify the animated cards on desktop and mobile, run checks, and save a checkpoint.

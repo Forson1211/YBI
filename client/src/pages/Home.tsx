@@ -1,7 +1,7 @@
 // Ground-truth reference: worldinspiringnetwork.org — white utility header,
 // documentary hero, centered mobile-first copy, bold support CTA, and a nonprofit
 // storytelling sequence. Adapted for YBI blue, red, yellow, and orange.
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 import { createImageWallRows, type ImageWallPhoto } from "@/lib/imageWall";
@@ -60,6 +60,41 @@ const reasons = [
   { icon: Lightbulb, title: "Practical", text: "We focus on skills people can carry into their next step." },
   { icon: HandHeart, title: "Open-hearted", text: "We build a platform where people can be seen, heard, and equipped." },
 ];
+
+function RotatingUpdateImage({ category, media }: Pick<(typeof homepageUpdates)[number], "category" | "media">) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [exitingIndex, setExitingIndex] = useState<number | null>(null);
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+
+  const changeImage = (step: 1 | -1) => {
+    setActiveIndex((currentIndex) => {
+      setExitingIndex(currentIndex);
+      setDirection(step);
+      return (currentIndex + step + media.length) % media.length;
+    });
+  };
+
+  useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => setReducedMotion(query.matches);
+    updatePreference();
+    query.addEventListener("change", updatePreference);
+    return () => query.removeEventListener("change", updatePreference);
+  }, []);
+
+  useEffect(() => {
+    if (reducedMotion) return;
+    const rotation = window.setInterval(() => changeImage(1), 5200);
+    return () => window.clearInterval(rotation);
+  }, [reducedMotion, media.length]);
+
+  return <div className="update-news-image update-news-rotator" onTouchStart={(event) => { touchStartX.current = event.touches[0]?.clientX ?? null; }} onTouchEnd={(event) => { const endX = event.changedTouches[0]?.clientX; if (touchStartX.current === null || endX === undefined) return; const distance = endX - touchStartX.current; touchStartX.current = null; if (Math.abs(distance) < 36) return; changeImage(distance < 0 ? 1 : -1); }}>
+    {media.map((image, index) => <img aria-hidden="true" alt="" className={`update-rotating-image${index === activeIndex ? " is-active" : ""}${index === exitingIndex ? " is-exiting" : ""}${direction === -1 ? " is-reverse" : ""}`} key={image.src} src={image.src} />)}
+    <span className="update-category">{category}</span>
+  </div>;
+}
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -149,7 +184,7 @@ export default function Home() {
 
         <section id="connect" className="join-reference section-red"><div className="page-width join-grid"><div><p className="reference-eyebrow light"><span /> Be part of the beginning</p><h2>There is room<br />for your <span>voice.</span></h2></div><div><p>Whether you want to learn, mentor, collaborate, volunteer, or support the work, there is a meaningful way to join this platform.</p><a className="reference-button white-button" href="/join-us">Join us today <ArrowUpRight size={18} /></a></div></div></section>
 
-        <section id="updates" className="updates-reference section-white"><div className="page-width"><div className="updates-heading"><div><p className="reference-eyebrow"><span /> From the platform</p><h2>Ideas worth<br /><span>carrying forward.</span></h2></div><p>Short notes and practical prompts for people finding their voice, building capability, and making a difference.</p></div><div className="updates-grid">{homepageUpdates.map((update) => <article className="update-news-card" key={update.category}><a href="/media" aria-label={`Read ${update.title}`}><div className="update-news-image"><img src={update.image} alt={update.imageAlt} /><span className="update-category">{update.category}</span></div><div className="update-news-copy"><h3>{update.title}</h3></div><div className="update-news-meta"><span>{update.source}</span><span>{update.detail}</span></div></a></article>)}</div></div></section>
+        <section id="updates" className="updates-reference section-white"><div className="page-width"><div className="updates-heading"><div><p className="reference-eyebrow"><span /> From the platform</p><h2>Ideas worth<br /><span>carrying forward.</span></h2></div><p>Short notes and practical prompts for people finding their voice, building capability, and making a difference.</p></div><div className="updates-grid">{homepageUpdates.map((update) => <article className="update-news-card" key={update.category}><a href="/media" aria-label={`Read ${update.title}`}><RotatingUpdateImage category={update.category} media={update.media} /><div className="update-news-copy"><h3>{update.title}</h3></div><div className="update-news-meta"><span>{update.source}</span><span>{update.detail}</span></div></a></article>)}</div></div></section>
 
         <section className="home-image-wall" aria-labelledby="image-wall-title">
           <div className="page-width image-wall-heading">
