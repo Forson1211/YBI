@@ -62,6 +62,7 @@ export const publicNavItems: PublicNavItem[] = [
     items: [
       { label: "Platform Stories", href: "/media#stories" },
       { label: "Stay Connected", href: "/media#newsletter" },
+      { label: "Gallery", href: "/gallery" },
     ],
   },
   { label: "Gallery", href: "/gallery" },

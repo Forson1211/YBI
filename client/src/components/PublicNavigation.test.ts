@@ -26,6 +26,10 @@ describe("public navigation structure", () => {
     const destinations = publicNavItems.flatMap((item) => [item.href, ...(item.items?.map((link) => link.href) ?? [])]);
     expect(destinations.every((href) => href.startsWith("/"))).toBe(true);
     expect(destinations).toContain("/media#newsletter");
+    expect(publicNavItems.find((item) => item.label === "Media")?.items).toContainEqual({
+      label: "Gallery",
+      href: "/gallery",
+    });
   });
 
   it("keeps mobile submenus collapsed initially and toggles one parent section at a time", () => {

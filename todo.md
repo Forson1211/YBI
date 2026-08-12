@@ -103,3 +103,4 @@
 - [x] Ensure the moving homepage image wall remains clearly visible and continuously animated across mobile device sizes.
 - [x] Replace immediate repeated image-wall tiles with varied, role-specific image sequences in each animated row.
 - [x] Verify image-wall continuity and responsive presentation on desktop and mobile, run checks, and save a checkpoint.
+- [x] Add Gallery as a live destination within the Media dropdown navigation.
