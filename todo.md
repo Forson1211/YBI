@@ -59,3 +59,9 @@
 - [x] Left-align the Solution, Programs, and Why YBI section labels, headings, and supporting copy shown in the supplied screenshots.
 - [x] Verify the revised homepage section alignment on desktop and mobile, then save a checkpoint.
 - [x] Save a checkpoint for the verified left-aligned homepage section refinement.
+- [x] Add a full-width, three-row animated image wall to the homepage using the site's gallery imagery.
+- [x] Animate the top and bottom image rows continuously right-to-left and the middle row continuously left-to-right, with reduced-motion support.
+- [x] Verify desktop and mobile presentation, animation direction, tests, production build, and save a checkpoint.
+- [x] Change the middle animated image-wall row to Instagram-style portrait card dimensions while keeping top and bottom rows landscape.
+- [x] Verify portrait sizing and alternating motion on desktop and mobile, then save a checkpoint.
+- [ ] Save a checkpoint for the verified Instagram-style portrait middle-row refinement.

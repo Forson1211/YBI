@@ -1,9 +1,10 @@
 // Ground-truth reference: worldinspiringnetwork.org — white utility header,
 // documentary hero, centered mobile-first copy, bold support CTA, and a nonprofit
 // storytelling sequence. Adapted for YBI blue, red, yellow, and orange.
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
+import { createImageWallRows, type ImageWallPhoto } from "@/lib/imageWall";
 import PublicNavigation from "@/components/PublicNavigation";
 import {
   ArrowDown,
@@ -27,6 +28,12 @@ const hero = "/manus-storage/ybi-hero_42b78e95.jpg";
 const publicSpeaking = "/manus-storage/ybi-public-speaking_08161e85.jpg";
 const entrepreneurship = "/manus-storage/ybi-entrepreneurship_d7a3f3ed.jpg";
 const community = "/manus-storage/ybi-community_b2ad3c56.jpg";
+
+const imageWallFallback: ImageWallPhoto[] = [
+  { src: publicSpeaking, alt: "Young people developing public-speaking confidence" },
+  { src: entrepreneurship, alt: "Participants exploring entrepreneurship together" },
+  { src: community, alt: "Intergenerational community conversation" },
+];
 
 const problemCards = [
   { number: "01", title: "Unused potential", text: "Too many capable people never get the room, tools, or encouragement to turn potential into contribution.", color: "red" },
@@ -56,6 +63,15 @@ const reasons = [
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { data: managedHero } = trpc.publicSite.content.useQuery({ contentKey: "homepage-hero" });
+  const { data: managedGallery } = trpc.publicSite.gallery.useQuery();
+  const imageWallRows = useMemo(() => {
+    const publishedPhotos = (managedGallery ?? []).slice(0, 12).map((photo) => ({
+      src: photo.imageUrl,
+      alt: photo.altText || photo.title,
+    }));
+
+    return createImageWallRows(publishedPhotos.length ? publishedPhotos : imageWallFallback);
+  }, [managedGallery]);
 
   const closeMenu = () => setMenuOpen(false);
   const handleNewsletter = (event: React.FormEvent<HTMLFormElement>) => {
@@ -133,6 +149,27 @@ export default function Home() {
         <section id="connect" className="join-reference section-red"><div className="page-width join-grid"><div><p className="reference-eyebrow light"><span /> Be part of the beginning</p><h2>There is room<br />for your <span>voice.</span></h2></div><div><p>Whether you want to learn, mentor, collaborate, volunteer, or support the work, there is a meaningful way to join this platform.</p><a className="reference-button white-button" href="/join-us">Join us today <ArrowUpRight size={18} /></a></div></div></section>
 
         <section id="updates" className="updates-reference section-white"><div className="page-width"><div className="updates-heading"><div><p className="reference-eyebrow"><span /> From the platform</p><h2>Ideas worth<br /><span>carrying forward.</span></h2></div><p>Short notes and practical prompts for people finding their voice, building capability, and making a difference.</p></div><div className="updates-grid"><article><div className="update-number">01</div><h3>Start with the room you are in</h3><p>Leadership begins in ordinary places: the conversation, responsibility, and courage already within reach.</p><a className="reference-text-link" href="/media">Read more <ArrowRight size={18} /></a></article><article><div className="update-number">02</div><h3>An idea becomes useful when it serves</h3><p>Entrepreneurship is not only about starting. It is about noticing a need and building with care.</p><a className="reference-text-link" href="/media">Read more <ArrowRight size={18} /></a></article><article><div className="update-number">03</div><h3>Your voice gets stronger in practice</h3><p>Public speaking grows through small brave repetitions—and people who make it safe to try.</p><a className="reference-text-link" href="/media">Read more <ArrowRight size={18} /></a></article></div></div></section>
+
+        <section className="home-image-wall" aria-labelledby="image-wall-title">
+          <div className="page-width image-wall-heading">
+            <div>
+              <p className="reference-eyebrow"><span /> From the YBI community</p>
+              <h2 id="image-wall-title">Every gathering<br /><span>moves us forward.</span></h2>
+            </div>
+            <a className="reference-text-link" href="/gallery">View gallery <ArrowRight size={18} /></a>
+          </div>
+          <div className="image-wall-viewport" aria-hidden="true">
+            {imageWallRows.map((row, rowIndex) => (
+              <div className={`image-wall-track image-wall-track-${rowIndex + 1}`} key={rowIndex}>
+                {row.map((photo, photoIndex) => (
+                  <figure className="image-wall-card" key={`${rowIndex}-${photoIndex}-${photo.src}`}>
+                    <img src={photo.src} alt="" />
+                  </figure>
+                ))}
+              </div>
+            ))}
+          </div>
+        </section>
 
         <section className="newsletter-reference section-cream"><div className="page-width newsletter-reference-inner"><div><p className="reference-eyebrow"><span /> Stay connected</p><h2>Make room for<br /><span>the next invitation.</span></h2></div><form onSubmit={handleNewsletter}><label htmlFor="reference-name">Full name</label><input id="reference-name" name="name" placeholder="First & last name" required /><label htmlFor="reference-email">Email</label><input id="reference-email" name="email" type="email" placeholder="Email address" required /><button className="reference-button blue-button" type="submit">Subscribe <ArrowUpRight size={18} /></button></form></div></section>
       </main>
