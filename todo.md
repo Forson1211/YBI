@@ -29,3 +29,7 @@
 - [x] Apply a shared container grid so hero, page sections, gallery content, footer, and header align consistently.
 - [x] Verify alignment at desktop and mobile sizes and save an updated checkpoint.
 - [x] Save the verified header-to-content alignment refinement as a new checkpoint.
+- [x] Replace the current homepage introductory section with a clean header-aligned two-column text-and-image composition.
+- [x] Remove the detached vertical kicker and yellow note-card treatment from the homepage introduction.
+- [x] Verify the revised introductory composition at desktop and mobile sizes and save an updated checkpoint.
+- [x] Save a new checkpoint for the verified homepage introduction redesign.

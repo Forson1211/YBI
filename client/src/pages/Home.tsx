@@ -101,9 +101,16 @@ export default function Home() {
 
         <section id="about" className="about-reference section-white">
           <div className="page-width about-reference-grid">
-            <div className="section-kicker">We are<br /><span>YBI</span></div>
-            <div className="about-reference-copy"><p className="reference-eyebrow"><span /> Who we are</p><h2>People grow when they have a place to <span>begin.</span></h2><p className="large-paragraph">Young Beginners Inspiration is a non-profit organization creating a platform that gives both the young and the old age space to inspire and be impacted.</p><p>We believe every generation has something valuable to share. Through learning, public speaking, entrepreneurship, and meaningful connection, we help potential become responsible leadership.</p><a className="reference-text-link" href="/about">Discover more <ArrowRight size={18} /></a></div>
-            <div className="about-reference-card"><span className="card-number">01</span><HandHeart size={30} /><h3>A shared space.<br /><span>A shared future.</span></h3><p>A place for voices, ideas, and experience to meet.</p></div>
+            <div className="about-reference-copy">
+              <p className="reference-eyebrow"><span /> Who we are</p>
+              <h2>People grow when they have a place to <span>begin.</span></h2>
+              <p className="large-paragraph">Young Beginners Inspiration is a non-profit organization creating a platform that gives both the young and the old age space to inspire and be impacted.</p>
+              <p>We believe every generation has something valuable to share. Through learning, public speaking, entrepreneurship, and meaningful connection, we help potential become responsible leadership.</p>
+              <a className="reference-text-link" href="/about">Discover more <ArrowRight size={18} /></a>
+            </div>
+            <figure className="about-reference-image">
+              <img src={publicSpeaking} alt="Young people taking part in a Young Beginners Inspiration learning session" />
+            </figure>
           </div>
         </section>
 
