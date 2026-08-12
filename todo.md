@@ -109,3 +109,7 @@
 - [x] Align the YBI logo, navigation labels, and Support Us action on one shared horizontal header line.
 - [x] Verify the fixed header and alignment on desktop and mobile, run checks, and save a checkpoint.
 - [x] Save a checkpoint for the verified fixed-header refinement.
+- [x] Verify the animated image wall remains visible, sized well, and scroll-safe at physical phone viewport widths.
+- [x] Add a smooth, accessible open and close animation to the mobile hamburger menu without changing its visual design.
+- [x] Validate the mobile layout and navigation animation at representative physical-device sizes, run checks, and save a checkpoint.
+- [x] Save a checkpoint for the verified physical-mobile and hamburger-menu animation refinement.
