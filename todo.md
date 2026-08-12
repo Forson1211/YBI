@@ -38,3 +38,8 @@
 - [x] Recompose the opportunity section as a left-aligned header-grid layout.
 - [x] Verify dropdown behavior, mobile navigation, and opportunity copy alignment before saving an updated checkpoint.
 - [x] Save the verified navigation and opportunity alignment refinement as a checkpoint.
+- [x] Replace thin chevrons with compact solid downward triangle indicators matching the provided reference.
+- [x] Rebalance navigation label-and-arrow spacing and group spacing across the desktop header.
+- [x] Verify desktop and mobile header presentation and save an updated checkpoint.
+- [x] Save the solid-triangle navigation refinement as a new checkpoint.
+- [x] Save a checkpoint after the verified solid-triangle dropdown-arrow and header-spacing refinement.
