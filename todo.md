@@ -64,4 +64,7 @@
 - [x] Verify desktop and mobile presentation, animation direction, tests, production build, and save a checkpoint.
 - [x] Change the middle animated image-wall row to Instagram-style portrait card dimensions while keeping top and bottom rows landscape.
 - [x] Verify portrait sizing and alternating motion on desktop and mobile, then save a checkpoint.
-- [ ] Save a checkpoint for the verified Instagram-style portrait middle-row refinement.
+- [x] Save a checkpoint for the verified Instagram-style portrait middle-row refinement.
+- [x] Expand the animated image wall into a near-full-viewport homepage visual section with larger, dense photo tiles.
+- [x] Preserve the top/bottom right-to-left motion and middle left-to-right motion while scaling the section responsively.
+- [x] Verify the enlarged desktop and mobile image wall, tests, production build, and save a checkpoint.
