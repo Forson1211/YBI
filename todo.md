@@ -92,3 +92,14 @@
 - [x] Smooth the Who We Are image rotation and zoom so each transition feels gradual and natural.
 - [x] Optimize the hero background crop, overlay, and content spacing for clear presentation across mobile device sizes.
 - [x] Verify the refined motion and mobile hero across representative viewports, run checks, and save a checkpoint.
+- [x] Keep mobile navigation submenus collapsed when the mobile menu first opens.
+- [x] Let visitors tap each parent navigation item to expand or collapse only its corresponding submenu accessibly.
+- [x] Verify the mobile menu interaction on a narrow viewport, run checks, and save a checkpoint.
+- [x] Audit all public navigation and footer destinations against existing live routes.
+- [x] Add a dedicated Contact Us page and route, including a polished public contact experience.
+- [x] Create distinct public pages for navigation subsections that currently share generic content or lack routes.
+- [x] Update all navigation and footer links to point to their exact live pages without placeholder destinations.
+- [x] Verify every public route, mobile menu destination, and footer link on desktop and mobile, run checks, and save a checkpoint.
+- [x] Ensure the moving homepage image wall remains clearly visible and continuously animated across mobile device sizes.
+- [x] Replace immediate repeated image-wall tiles with varied, role-specific image sequences in each animated row.
+- [x] Verify image-wall continuity and responsive presentation on desktop and mobile, run checks, and save a checkpoint.

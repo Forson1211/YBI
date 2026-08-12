@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Expand, HandHeart, ImagePlus, Menu, X } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import PublicNavigation from "@/components/PublicNavigation";
+import { PublicFooter } from "@/components/PublicSiteChrome";
 
 const mark = "/manus-storage/ybi-logo_a28c9057.png";
 const hero = "/manus-storage/ybi-hero_42b78e95.jpg";
@@ -18,8 +19,6 @@ const seededPhotos: GalleryPhoto[] = [
   { id: "seed-enterprise", src: entrepreneurship, title: "Ideas taking shape", caption: "Entrepreneurship starts with noticing a need." },
   { id: "seed-community", src: community, title: "Generations in conversation", caption: "Experience and fresh perspective strengthen one another." },
 ];
-
-const navItems = [["About", "/about"], ["Focus Areas", "/focus-areas"], ["Programs", "/programs"], ["Join Us", "/join-us"], ["Media", "/media"], ["Gallery", "/gallery"]];
 
 export default function Gallery() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -51,7 +50,7 @@ export default function Gallery() {
       <section className="gallery-content section-cream"><div className="page-width"><div className="gallery-intro-grid"><div><p className="reference-eyebrow"><span /> The YBI gallery</p><h2>Every picture<br /><span>holds a beginning.</span></h2></div><div className="gallery-upload-card"><div className="gallery-upload-icon"><ImagePlus size={25} /></div><div><h3>Share a moment</h3><p>New gallery photos are curated and published by the Young Beginners Inspiration team.</p></div><a className="reference-button blue-button gallery-upload-button" href="/admin/gallery">Manage gallery <ArrowUpRight size={16} /></a><small>Published gallery moments are shared with every visitor.</small></div></div><div className="gallery-grid">{photos.map((photo, index) => <article className={`gallery-card ${index === 0 ? "gallery-card-featured" : ""}`} key={photo.id} style={{ "--gallery-index": index } as React.CSSProperties}><button type="button" className="gallery-image-button" onClick={() => setActivePhoto(index)} aria-label={`Open ${photo.title}`}><img src={photo.src} alt={photo.title} /><span className="gallery-card-shade" /><span className="gallery-card-open"><Expand size={18} /></span></button><div className="gallery-card-caption"><p>{photo.title}</p><span>{photo.caption}</span></div></article>)}</div></div></section>
       <section className="gallery-cta section-red"><div className="page-width gallery-cta-inner"><div><p className="reference-eyebrow light"><span /> Keep the story moving</p><h2>Bring the next<br /><span>moment with you.</span></h2></div><div><p>When people gather, learn, and make room for one another, there is always another story worth sharing.</p><a className="reference-button white-button" href="/join-us">Join the platform <ArrowUpRight size={18} /></a></div></div></section>
     </main>
-    <footer className="reference-footer"><div className="page-width footer-reference-grid"><div className="footer-reference-brand"><a className="reference-brand footer-brand" href="/"><img src={mark} alt="Young Beginners Inspiration logo" /><span>Young Beginners<br />Inspiration</span></a><p>Equipping the young and the aged to inspire, learn, and become responsible leaders.</p><a className="reference-button yellow-button" href="/join-us">Support us <ArrowUpRight size={17} /></a></div><div className="footer-reference-links"><div><h4>Explore</h4>{navItems.slice(0, 3).map(([label, href]) => <a href={href} key={href}>{label}</a>)}</div><div><h4>Join us</h4><a href="/join-us">Volunteer</a><a href="/join-us">Partner with us</a><a href="/media">Media</a></div></div><div className="footer-reference-note"><h4>Our belief</h4><p>“Every generation has something valuable to share.”</p><div className="footer-socials"><a href="/join-us" aria-label="Facebook">f</a><a href="/join-us" aria-label="Instagram">◎</a><a href="/join-us" aria-label="LinkedIn">in</a></div></div></div><div className="page-width footer-reference-bottom"><span>© 2026 Young Beginners Inspiration</span><span>Leadership · Education · Business</span><a href="/">Back home <ArrowUpRight size={14} /></a></div></footer>
+    <PublicFooter />
     {activePhoto !== null ? <div className="gallery-lightbox" role="dialog" aria-modal="true" aria-label="Gallery image viewer" onClick={() => setActivePhoto(null)}><div className="gallery-lightbox-inner" onClick={(event) => event.stopPropagation()}><button type="button" className="gallery-lightbox-close" onClick={() => setActivePhoto(null)} aria-label="Close image viewer"><X size={24} /></button><img src={photos[activePhoto].src} alt={photos[activePhoto].title} /><div className="gallery-lightbox-caption"><div><p>{photos[activePhoto].title}</p><span>{photos[activePhoto].caption}</span></div><div className="gallery-lightbox-controls"><button type="button" onClick={previousPhoto} aria-label="Previous photo"><ArrowLeft size={20} /></button><button type="button" onClick={nextPhoto} aria-label="Next photo"><ArrowRight size={20} /></button></div></div></div></div> : null}
   </div>;
 }

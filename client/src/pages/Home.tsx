@@ -9,6 +9,7 @@ import { homepageUpdates } from "@/lib/homeUpdates";
 import { footerImpactActions, footerNavigation } from "@/lib/footerNavigation";
 import { aboutMediaSlides } from "@/lib/aboutMedia";
 import PublicNavigation from "@/components/PublicNavigation";
+import { PublicFooter } from "@/components/PublicSiteChrome";
 import {
   ArrowDown,
   ArrowRight,
@@ -36,6 +37,11 @@ const imageWallFallback: ImageWallPhoto[] = [
   { src: publicSpeaking, alt: "Young people developing public-speaking confidence" },
   { src: entrepreneurship, alt: "Participants exploring entrepreneurship together" },
   { src: community, alt: "Intergenerational community conversation" },
+  { src: "/manus-storage/ybi-wall-youth-leadership_54de63d4.jpg", alt: "Young facilitator leading a community leadership workshop" },
+  { src: "/manus-storage/ybi-wall-intergenerational-mentoring_a05ff1a5.jpg", alt: "Intergenerational mentoring around a practical project" },
+  { src: "/manus-storage/ybi-wall-entrepreneurship_b46594df.jpg", alt: "Community members developing an entrepreneurship idea" },
+  { src: "/manus-storage/ybi-wall-public-speaking_ad917d32.jpg", alt: "Young participant practicing public speaking" },
+  { src: "/manus-storage/ybi-wall-community-circle_014bceb5.jpg", alt: "An outdoor intergenerational community circle" },
 ];
 
 const problemCards = [
@@ -107,7 +113,7 @@ export default function Home() {
       alt: photo.altText || photo.title,
     }));
 
-    return createImageWallRows(publishedPhotos.length ? publishedPhotos : imageWallFallback);
+    return createImageWallRows([...publishedPhotos, ...imageWallFallback]);
   }, [managedGallery]);
 
   const closeMenu = () => setMenuOpen(false);
@@ -209,7 +215,7 @@ export default function Home() {
         <section id="newsletter" className="newsletter-reference section-cream"><div className="page-width newsletter-reference-inner"><div className="newsletter-intro"><p className="reference-eyebrow"><span /> Stay connected</p><h2>Make room for<br /><span>the next invitation.</span></h2><p>Thoughtful updates on leadership, learning, entrepreneurship, and the people building a positive difference together.</p><div className="newsletter-topics"><span>Leadership</span><span>Learning</span><span>Community</span></div></div><div className="newsletter-signup-card"><p className="newsletter-card-kicker">Keep the conversation moving</p><form onSubmit={handleNewsletter}><div className="newsletter-field"><label htmlFor="reference-name">Full name</label><input id="reference-name" name="name" placeholder="First & last name" required /></div><div className="newsletter-field"><label htmlFor="reference-email">Email</label><input id="reference-email" name="email" type="email" placeholder="Email address" required /></div><button className="reference-button blue-button" type="submit">Subscribe <ArrowUpRight size={18} /></button><p className="newsletter-form-note">Practical notes, meaningful invitations, and stories from the YBI community.</p></form></div></div></section>
       </main>
 
-      <footer className="reference-footer"><div className="page-width footer-reference-grid"><div className="footer-reference-brand"><a className="reference-brand footer-brand" href="/"><img src={mark} alt="Young Beginners Inspiration logo" /><span>Young Beginners<br />Inspiration</span></a><p>Equipping the young and the aged to inspire, learn, and become responsible leaders.</p><a className="reference-button yellow-button" href="/join-us">Support us <ArrowUpRight size={17} /></a></div><div className="footer-reference-links">{footerNavigation.map((group) => <div key={group.title}><h4>{group.title}</h4>{group.links.map((link) => <a href={link.href} key={link.label}>{link.label}</a>)}</div>)}</div><div className="footer-reference-note"><h4>Our belief</h4><p>“Every generation has something valuable to share.”</p><div className="footer-socials"><a href="/join-us" aria-label="Facebook">f</a><a href="/join-us" aria-label="Instagram">◎</a><a href="/join-us" aria-label="LinkedIn">in</a></div><div className="footer-impact-card"><span>Make an impact</span><p>Find a meaningful way to learn, lead, volunteer, or partner with YBI.</p><div>{footerImpactActions.map((action) => <a href={action.href} key={action.label}>{action.label} <ArrowUpRight size={14} /></a>)}</div></div></div></div><div className="page-width footer-reference-bottom"><span>© 2026 Young Beginners Inspiration</span><span>Leadership · Education · Business</span><a href="/">Back home <ArrowUpRight size={14} /></a></div></footer>
+      <PublicFooter />
     </div>
   );
 }

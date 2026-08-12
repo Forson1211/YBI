@@ -9,10 +9,27 @@ describe("footer navigation", () => {
       expect(group.links.length).toBeGreaterThan(0);
       for (const link of group.links) {
         expect(link.label).toBeTruthy();
-        expect(link.href).toMatch(/^(\/|#|mailto:)/);
+        expect(link.href).toMatch(/^\//);
       }
     }
 
     expect(footerImpactActions).toHaveLength(2);
+    expect(footerNavigation[1].links.find((link) => link.label === "Contact us")?.href).toBe("/contact");
+
+    const exactDestinations = [...footerNavigation.flatMap((group) => group.links), ...footerImpactActions].map((link) => link.href);
+    expect(exactDestinations).toEqual([
+      "/about",
+      "/focus-areas",
+      "/programs",
+      "/join-us#volunteer",
+      "/join-us#partner",
+      "/contact",
+      "/team",
+      "/gallery",
+      "/media#stories",
+      "/media#newsletter",
+      "/join-us#volunteer",
+      "/programs",
+    ]);
   });
 });

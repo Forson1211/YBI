@@ -6,6 +6,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { useEffect, useState } from "react";
 
 type DropdownLink = {
   label: string;
@@ -25,48 +26,59 @@ export const publicNavItems: PublicNavItem[] = [
     items: [
       { label: "About Us", href: "/about" },
       { label: "Our Team", href: "/team" },
-      { label: "Our Approach", href: "/about" },
+      { label: "Our Approach", href: "/about#approach" },
     ],
   },
   {
     label: "Focus Areas",
     href: "/focus-areas",
     items: [
-      { label: "Leadership", href: "/focus-areas" },
-      { label: "Education", href: "/focus-areas" },
-      { label: "Business", href: "/focus-areas" },
+      { label: "Leadership", href: "/focus-areas#leadership" },
+      { label: "Education", href: "/focus-areas#education" },
+      { label: "Business", href: "/focus-areas#business" },
     ],
   },
   {
     label: "Programs",
     href: "/programs",
     items: [
-      { label: "Public Speaking", href: "/programs" },
-      { label: "Entrepreneurship", href: "/programs" },
-      { label: "Generations in Conversation", href: "/programs" },
+      { label: "Public Speaking", href: "/programs#public-speaking" },
+      { label: "Entrepreneurship", href: "/programs#entrepreneurship" },
+      { label: "Generations in Conversation", href: "/programs#generations" },
     ],
   },
   {
     label: "Join Us",
     href: "/join-us",
     items: [
-      { label: "Participate", href: "/join-us" },
-      { label: "Mentor", href: "/join-us" },
-      { label: "Partner", href: "/join-us" },
+      { label: "Participate", href: "/join-us#participate" },
+      { label: "Mentor", href: "/join-us#volunteer" },
+      { label: "Partner", href: "/join-us#partner" },
     ],
   },
   {
     label: "Media",
     href: "/media",
     items: [
-      { label: "Platform Stories", href: "/media" },
-      { label: "Stay Connected", href: "/media" },
+      { label: "Platform Stories", href: "/media#stories" },
+      { label: "Stay Connected", href: "/media#newsletter" },
     ],
   },
   { label: "Gallery", href: "/gallery" },
+  { label: "Contact", href: "/contact" },
 ];
 
+export function getNextMobileSubmenu(current: string | null, target: string) {
+  return current === target ? null : target;
+}
+
 export default function PublicNavigation({ menuOpen, onNavigate }: { menuOpen: boolean; onNavigate: () => void }) {
+  const [expandedMobileItem, setExpandedMobileItem] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!menuOpen) setExpandedMobileItem(null);
+  }, [menuOpen]);
+
   return (
     <nav className={`reference-nav ${menuOpen ? "is-open" : ""}`} aria-label="Primary navigation">
       <div className="reference-nav-desktop">
@@ -99,12 +111,21 @@ export default function PublicNavigation({ menuOpen, onNavigate }: { menuOpen: b
       </div>
 
       <div className="reference-nav-mobile">
-        {publicNavItems.map((item) => (
-          <div className="mobile-nav-group" key={item.label}>
-            <a className="mobile-nav-parent" href={item.href} onClick={onNavigate}>{item.label}</a>
-            {item.items ? <div className="mobile-nav-submenu">{item.items.map((link) => <a href={link.href} key={link.label} onClick={onNavigate}>{link.label}</a>)}</div> : null}
-          </div>
-        ))}
+        {publicNavItems.map((item) => {
+          const isExpanded = expandedMobileItem === item.label;
+          const submenuId = `mobile-submenu-${item.label.toLowerCase().replaceAll(" ", "-")}`;
+
+          return <div className="mobile-nav-group" key={item.label}>
+            {item.items ? <>
+              <button aria-controls={submenuId} aria-expanded={isExpanded} className="mobile-nav-parent" onClick={() => setExpandedMobileItem((current) => getNextMobileSubmenu(current, item.label))} type="button">
+                {item.label}<span aria-hidden="true" />
+              </button>
+              <div aria-hidden={!isExpanded} className={`mobile-nav-submenu${isExpanded ? " is-expanded" : ""}`} id={submenuId}>
+                {item.items.map((link) => <a href={link.href} key={link.label} onClick={onNavigate}>{link.label}</a>)}
+              </div>
+            </> : <a className="mobile-nav-parent mobile-nav-direct-link" href={item.href} onClick={onNavigate}>{item.label}</a>}
+          </div>;
+        })}
       </div>
     </nav>
   );

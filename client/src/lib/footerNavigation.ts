@@ -15,9 +15,9 @@ export const footerNavigation: FooterNavigationGroup[] = [
   {
     title: "Get involved",
     links: [
-      { label: "Volunteer", href: "/join-us" },
-      { label: "Partner with us", href: "/join-us" },
-      { label: "Contact us", href: "mailto:hello@youngbeginnersinspiration.org" },
+      { label: "Volunteer", href: "/join-us#volunteer" },
+      { label: "Partner with us", href: "/join-us#partner" },
+      { label: "Contact us", href: "/contact" },
     ],
   },
   {
@@ -25,13 +25,13 @@ export const footerNavigation: FooterNavigationGroup[] = [
     links: [
       { label: "Our team", href: "/team" },
       { label: "Gallery", href: "/gallery" },
-      { label: "Latest updates", href: "#updates" },
-      { label: "Newsletter", href: "#newsletter" },
+      { label: "Latest updates", href: "/media#stories" },
+      { label: "Newsletter", href: "/media#newsletter" },
     ],
   },
 ];
 
 export const footerImpactActions = [
-  { label: "Volunteer with YBI", href: "/join-us" },
+  { label: "Volunteer with YBI", href: "/join-us#volunteer" },
   { label: "Explore programs", href: "/programs" },
 ];

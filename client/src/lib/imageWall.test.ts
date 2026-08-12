@@ -20,4 +20,15 @@ describe("createImageWallRows", () => {
   it("returns no rows when no gallery images are available", () => {
     expect(createImageWallRows([])).toEqual([]);
   });
+
+  it("keeps a varied collection free from immediate duplicate tiles in every row", () => {
+    const variedPhotos = Array.from({ length: 8 }, (_, index) => ({
+      src: `/photo-${index + 1}.jpg`,
+      alt: `Photo ${index + 1}`,
+    }));
+    const rows = createImageWallRows([...variedPhotos, variedPhotos[0]]);
+
+    expect(rows.every((row) => new Set(row.slice(0, 8).map((photo) => photo.src)).size === 8)).toBe(true);
+    expect(rows.every((row) => row.every((photo, index) => index === 0 || photo.src !== row[index - 1]?.src))).toBe(true);
+  });
 });

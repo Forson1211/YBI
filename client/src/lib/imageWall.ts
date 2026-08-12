@@ -7,11 +7,15 @@ const MINIMUM_ROW_ITEMS = 8;
 const ROW_OFFSETS = [0, 2, 4] as const;
 
 export function createImageWallRows(photos: ImageWallPhoto[]) {
-  if (photos.length === 0) return [];
+  const uniquePhotos = photos.filter((photo, index, collection) => (
+    collection.findIndex((candidate) => candidate.src === photo.src) === index
+  ));
+
+  if (uniquePhotos.length === 0) return [];
 
   const normalized = Array.from(
-    { length: Math.max(MINIMUM_ROW_ITEMS, photos.length) },
-    (_, index) => photos[index % photos.length],
+    { length: Math.max(MINIMUM_ROW_ITEMS, uniquePhotos.length) },
+    (_, index) => uniquePhotos[index % uniquePhotos.length],
   );
 
   return ROW_OFFSETS.map((offset) => {

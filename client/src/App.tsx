@@ -7,21 +7,28 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
-import Subpage from "./pages/Subpage";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import FocusAreas from "./pages/FocusAreas";
 import Gallery from "./pages/Gallery";
 import AdminDashboard from "./pages/AdminDashboard";
+import JoinUs from "./pages/JoinUs";
+import Media from "./pages/Media";
+import Programs from "./pages/Programs";
+import Team from "./pages/Team";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path={"/"} component={Home} />
-      <Route path={"/about"}><Subpage page="about" /></Route>
-      <Route path={"/team"}><Subpage page="team" /></Route>
-      <Route path={"/focus-areas"}><Subpage page="focus-areas" /></Route>
-      <Route path={"/programs"}><Subpage page="programs" /></Route>
-      <Route path={"/join-us"}><Subpage page="join-us" /></Route>
-      <Route path={"/media"}><Subpage page="media" /></Route>
+      <Route path={"/about"} component={About} />
+      <Route path={"/team"} component={Team} />
+      <Route path={"/focus-areas"} component={FocusAreas} />
+      <Route path={"/programs"} component={Programs} />
+      <Route path={"/join-us"} component={JoinUs} />
+      <Route path={"/media"} component={Media} />
+      <Route path={"/contact"} component={Contact} />
       <Route path={"/gallery"} component={Gallery} />
       <Route path={"/admin"} component={AdminDashboard} />
       <Route path={"/admin/:section"} component={AdminDashboard} />
