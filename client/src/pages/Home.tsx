@@ -1,19 +1,20 @@
-// Design reminder: The Commons of Becoming — offset editorial composition,
-// tactile warmth, clear invitations, and photography that keeps people first.
+// Ground-truth reference: worldinspiringnetwork.org — white utility header,
+// documentary hero, centered mobile-first copy, bold support CTA, and a nonprofit
+// storytelling sequence. Adapted for YBI blue, red, yellow, and orange.
 import { useState } from "react";
 import { toast } from "sonner";
 import {
-  ArrowDownRight,
+  ArrowDown,
+  ArrowRight,
   ArrowUpRight,
   BookOpen,
   BriefcaseBusiness,
   Check,
   ChevronDown,
-  CircleArrowOutUpRight,
   HandHeart,
+  Lightbulb,
   Menu,
   Mic2,
-  MoveRight,
   Sparkles,
   UsersRound,
   X,
@@ -25,188 +26,114 @@ const publicSpeaking = "/manus-storage/ybi-public-speaking_08161e85.jpg";
 const entrepreneurship = "/manus-storage/ybi-entrepreneurship_d7a3f3ed.jpg";
 const community = "/manus-storage/ybi-community_b2ad3c56.jpg";
 
-const focusAreas = [
-  {
-    number: "01",
-    title: "Leadership",
-    text: "We help people recognise the leadership already present in their choices, communities, and everyday acts of courage.",
-    icon: UsersRound,
-  },
-  {
-    number: "02",
-    title: "Education",
-    text: "We create space for practical learning, shared wisdom, and the confidence to keep asking better questions.",
-    icon: BookOpen,
-  },
-  {
-    number: "03",
-    title: "Business",
-    text: "We make room for ideas to become useful ventures, responsible work, and positive difference in the world.",
-    icon: BriefcaseBusiness,
-  },
+const problemCards = [
+  { number: "01", title: "Unused potential", text: "Too many capable people never get the room, tools, or encouragement to turn potential into contribution.", color: "red" },
+  { number: "02", title: "Quiet voices", text: "Without practice and support, important ideas stay unspoken instead of shaping families, communities, and futures.", color: "orange" },
+  { number: "03", title: "Few bridges", text: "Young and older generations have much to learn from one another, but too few spaces are built for that exchange.", color: "blue" },
 ];
 
-const steps = [
-  "Bring your story",
-  "Build your capability",
-  "Use it for good",
+const solutionCards = [
+  { icon: UsersRound, title: "Leadership", text: "We equip responsible leaders who understand that influence is measured by the difference it makes for other people." },
+  { icon: BookOpen, title: "Education", text: "We make learning practical, shared, and active—so knowledge becomes confidence and confidence becomes action." },
+  { icon: BriefcaseBusiness, title: "Business", text: "We help ideas take shape through entrepreneurship, thoughtful problem-solving, and work that serves a real need." },
+];
+
+const initiativeCards = [
+  { image: publicSpeaking, number: "01", kicker: "Voice · Presence · Courage", title: "Public Speaking", text: "Practice the confidence to speak clearly, listen deeply, and bring your ideas into the room." },
+  { image: entrepreneurship, number: "02", kicker: "Ideas · Enterprise · Responsibility", title: "Entrepreneurship", text: "Turn a meaningful idea into a practical beginning with guidance, testing, and shared learning." },
+  { image: community, number: "03", kicker: "Mentorship · Exchange · Belonging", title: "Generations in Conversation", text: "Create meaningful connections where lived experience and fresh perspective strengthen one another." },
+];
+
+const reasons = [
+  { icon: Sparkles, title: "Purpose-led", text: "Every activity starts with the positive difference it can make." },
+  { icon: UsersRound, title: "Intergenerational", text: "We believe wisdom and possibility move in both directions." },
+  { icon: Lightbulb, title: "Practical", text: "We focus on skills people can carry into their next step." },
+  { icon: HandHeart, title: "Open-hearted", text: "We build a platform where people can be seen, heard, and equipped." },
 ];
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const closeMenu = () => setMenuOpen(false);
-
   const handleNewsletter = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    toast.success("You’re on the list.", {
-      description: "We’ll share the next opportunity to learn, lead, and take part.",
-    });
+    toast.success("Thank you for staying connected.", { description: "We’ll share meaningful updates from the platform." });
     event.currentTarget.reset();
   };
 
   return (
-    <div className="site-shell">
-      <header className="site-header">
-        <a className="brand" href="#top" aria-label="Young Beginners Inspiration home" onClick={closeMenu}>
-          <img src={mark} alt="Young Beginners Inspiration logo" className="brand-mark" />
-          <span className="brand-name">
-            <span>Young Beginners</span>
-            <span>Inspiration</span>
-          </span>
-        </a>
-
-        <button
-          className="menu-toggle"
-          type="button"
-          aria-expanded={menuOpen}
-          aria-controls="primary-navigation"
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          <span>{menuOpen ? "Close" : "Menu"}</span>
-          {menuOpen ? <X size={18} /> : <Menu size={18} />}
-        </button>
-
-        <nav id="primary-navigation" className={`primary-nav ${menuOpen ? "is-open" : ""}`}>
-          <a href="#about" onClick={closeMenu}>About us</a>
-          <a href="#focus" onClick={closeMenu}>Our focus</a>
-          <a href="#programs" onClick={closeMenu}>Programs</a>
-          <a href="#connect" onClick={closeMenu}>Get involved</a>
-          <a className="header-cta" href="#connect" onClick={closeMenu}>Support the work <ArrowUpRight size={15} /></a>
-        </nav>
+    <div className="reference-site-shell">
+      <header className="reference-header">
+        <div className="reference-header-inner">
+          <button className="mobile-menu-button" type="button" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}>
+            {menuOpen ? <X size={27} /> : <Menu size={29} />}
+          </button>
+          <a className="reference-brand" href="#top" onClick={closeMenu} aria-label="Young Beginners Inspiration home">
+            <img src={mark} alt="Young Beginners Inspiration logo" />
+            <span>Young Beginners<br />Inspiration</span>
+          </a>
+          <nav className={`reference-nav ${menuOpen ? "is-open" : ""}`}>
+            <a href="#about" onClick={closeMenu}>About</a>
+            <a href="#focus" onClick={closeMenu}>Focus Areas</a>
+            <a href="#initiatives" onClick={closeMenu}>Programs</a>
+            <a href="#connect" onClick={closeMenu}>Join Us</a>
+            <a href="#updates" onClick={closeMenu}>Media</a>
+          </nav>
+          <a className="header-support" href="#connect" onClick={closeMenu}><HandHeart size={22} /><span>Support Us</span></a>
+        </div>
       </header>
 
       <main id="top">
-        <section className="hero-section" aria-labelledby="hero-title">
-          <img className="hero-image" src={hero} alt="A young speaker addressing an intergenerational community gathering" />
-          <div className="hero-overlay" />
-          <div className="hero-content page-width">
-            <p className="eyebrow eyebrow-light"><span className="eyebrow-dot" /> A platform for possibility</p>
-            <h1 id="hero-title">Your voice<br /><span className="highlight">is a beginning.</span></h1>
-            <p className="hero-copy">We bring the young and the aged into the same room to inspire, learn, and become responsible leaders who make a positive difference.</p>
-            <div className="hero-actions">
-              <a className="button button-gold" href="#programs">Explore the programs <MoveRight size={18} /></a>
-              <a className="text-link light-link" href="#about">Why we exist <ArrowDownRight size={18} /></a>
-            </div>
+        <section className="reference-hero" aria-labelledby="hero-title">
+          <img className="reference-hero-image" src={hero} alt="A young woman speaking to an intergenerational audience" />
+          <div className="reference-hero-overlay" />
+          <div className="reference-hero-content page-width">
+            <p className="reference-eyebrow light"><span /> A platform for possibility</p>
+            <h1 id="hero-title">Inspiring voices,<br />building leaders,<br /><span>shaping futures.</span></h1>
+            <p className="reference-hero-copy">We create a platform where the young and the aged inspire one another, build practical capability, and use their gifts to make a positive difference in the world.</p>
+            <a className="reference-button white-button" href="#connect">Support us <ArrowUpRight size={18} /></a>
           </div>
-          <div className="hero-note">Young + aged<br /><span>One shared future</span></div>
-          <a className="scroll-cue" href="#about" aria-label="Scroll to learn more"><span>Scroll to explore</span><ChevronDown size={18} /></a>
+          <a className="hero-scroll" href="#about"><span>Discover more</span><ChevronDown size={18} /></a>
         </section>
 
-        <section id="about" className="intro-section section-pad">
-          <div className="page-width intro-grid">
-            <div className="section-marker">01 / who we are</div>
-            <div className="intro-copy">
-              <p className="eyebrow"><span className="eyebrow-dot" /> A shared table</p>
-              <h2>There is more in us when we <span className="highlight">make room</span> for one another.</h2>
-              <p className="lead-copy">Young Beginners Inspiration is a non-profit organization creating a platform where both the young and the old age can inspire and be impacted.</p>
-              <p>We believe potential does not have an expiry date. When generations exchange courage, experience, and practical skills, people leave with more than information—they leave with a next step.</p>
-              <a className="text-link ink-link" href="#focus">See the three places we begin <ArrowUpRight size={17} /></a>
-            </div>
-            <div className="vision-card">
-              <div className="vision-card-top"><Sparkles size={20} /><span>Our vision</span></div>
-              <p>To inspire, motivate, and impact the young, aged, and developing potential of individuals in leadership, education, and business.</p>
-              <div className="vision-card-line" />
-              <div className="vision-card-bottom">A place to be seen, heard, and equipped.</div>
-            </div>
+        <section id="about" className="about-reference section-white">
+          <div className="page-width about-reference-grid">
+            <div className="section-kicker">We are<br /><span>YBI</span></div>
+            <div className="about-reference-copy"><p className="reference-eyebrow"><span /> Who we are</p><h2>People grow when they have a place to <span>begin.</span></h2><p className="large-paragraph">Young Beginners Inspiration is a non-profit organization creating a platform that gives both the young and the old age space to inspire and be impacted.</p><p>We believe every generation has something valuable to share. Through learning, public speaking, entrepreneurship, and meaningful connection, we help potential become responsible leadership.</p><a className="reference-text-link" href="#focus">Discover more <ArrowRight size={18} /></a></div>
+            <div className="about-reference-card"><span className="card-number">01</span><HandHeart size={30} /><h3>A shared space.<br /><span>A shared future.</span></h3><p>A place for voices, ideas, and experience to meet.</p></div>
           </div>
         </section>
 
-        <section id="focus" className="focus-section section-pad">
+        <section className="problem-reference section-cream">
           <div className="page-width">
-            <div className="section-heading split-heading">
-              <div>
-                <p className="eyebrow"><span className="eyebrow-dot" /> Our focus</p>
-                <h2>Capability is a form of <span className="highlight">care.</span></h2>
-              </div>
-              <p>We focus on the practical places where a person’s potential can become a contribution: how they lead, how they learn, and how they build.</p>
-            </div>
-            <div className="focus-list">
-              {focusAreas.map(({ number, title, text, icon: Icon }) => (
-                <article className="focus-item" key={title}>
-                  <div className="focus-number">{number}</div>
-                  <div className="focus-icon"><Icon size={25} strokeWidth={1.6} /></div>
-                  <div className="focus-body"><h3>{title}</h3><p>{text}</p></div>
-                  <ArrowUpRight className="focus-arrow" size={22} />
-                </article>
-              ))}
-            </div>
+            <div className="center-heading"><p className="reference-eyebrow"><span /> The opportunity</p><h2>What happens when potential<br /><span>gets a platform?</span></h2><p>We start by making room for the real barriers people face—and the practical possibilities that open when they are supported.</p></div>
+            <div className="problem-grid">{problemCards.map((card) => <article className={`problem-card ${card.color}`} key={card.number}><div className="problem-card-top"><span>{card.number}</span><ArrowUpRight size={18} /></div><h3>{card.title}</h3><p>{card.text}</p></article>)}</div>
           </div>
         </section>
 
-        <section id="programs" className="programs-section section-pad">
+        <section id="focus" className="solution-reference section-white">
           <div className="page-width">
-            <div className="section-heading programs-heading">
-              <div>
-                <p className="eyebrow"><span className="eyebrow-dot" /> Where it becomes practice</p>
-                <h2>Start with a skill.<br /><span className="highlight">Leave with a direction.</span></h2>
-              </div>
-              <p>Our first programs turn good intentions into useful confidence—one voice, one idea, one responsible next step at a time.</p>
-            </div>
-            <div className="program-grid">
-              <article className="program-card program-card-large">
-                <div className="program-image-wrap"><img src={publicSpeaking} alt="Young adults practicing public speaking with an older mentor" /><span className="program-index">01</span></div>
-                <div className="program-card-copy"><p className="card-kicker">Voice / presence / courage</p><h3>Public<br /><span className="highlight">Speaking</span></h3><p>Find the words, the rhythm, and the grounded confidence to say what matters—whether you are addressing a room or beginning with one person.</p><a className="text-link ink-link" href="#connect">Ask about the next session <ArrowUpRight size={17} /></a></div>
-              </article>
-              <article className="program-card program-card-small">
-                <div className="program-image-wrap"><img src={entrepreneurship} alt="A young woman and older mentor working on a business idea" /><span className="program-index">02</span></div>
-                <div className="program-card-copy"><p className="card-kicker">Ideas / enterprise / responsibility</p><h3>Entrepreneurship</h3><p>Turn an idea into a thoughtful beginning: understand the problem, test the value, and build with people—not just for profit.</p><a className="text-link ink-link" href="#connect">Bring an idea <ArrowUpRight size={17} /></a></div>
-              </article>
-            </div>
+            <div className="center-heading"><p className="reference-eyebrow"><span /> The solution</p><h2>Inspiration becomes impact<br /><span>through practice.</span></h2><p>Our focus areas give people a strong foundation for the next conversation, the next idea, and the next responsible decision.</p></div>
+            <div className="solution-grid">{solutionCards.map(({ icon: Icon, title, text }) => <article className="solution-card" key={title}><div className="solution-icon"><Icon size={29} strokeWidth={1.6} /></div><h3>{title}</h3><p>{text}</p><a className="reference-text-link" href="#initiatives">Read more <ArrowRight size={18} /></a></article>)}</div>
           </div>
         </section>
 
-        <section className="mission-section section-pad">
-          <div className="page-width mission-grid">
-            <div className="mission-label"><span>02</span><span>Our mission</span></div>
-            <div className="mission-quote"><p>“We equip people to become responsible leaders who use their capabilities to make a positive difference in the world.”</p><div className="quote-rule" /><span>Young Beginners Inspiration</span></div>
-            <div className="mission-aside"><p>We do this through an open platform for learning, mentorship, and meaningful exchange between generations.</p><a className="button button-outline-light" href="#connect">Join the circle <ArrowUpRight size={17} /></a></div>
-          </div>
+        <section id="initiatives" className="initiatives-reference section-cream">
+          <div className="page-width"><div className="center-heading"><p className="reference-eyebrow"><span /> Our programs</p><h2>Learn something.<br /><span>Lead somewhere.</span></h2><p>Our programs are designed to leave people with more than inspiration: a skill, a connection, and a next step they can use.</p></div><div className="initiative-grid">{initiativeCards.map((card) => <article className="initiative-card" key={card.number}><div className="initiative-image"><img src={card.image} alt="" /><span>{card.number}</span></div><div className="initiative-copy"><p className="initiative-kicker">{card.kicker}</p><h3>{card.title}</h3><p>{card.text}</p><a className="reference-text-link" href="#connect">Learn more <ArrowRight size={18} /></a></div></article>)}</div></div>
         </section>
 
-        <section className="community-section section-pad">
-          <div className="page-width community-grid">
-            <div className="community-image-wrap"><img src={community} alt="Young people and elders sharing a conversation outdoors" /><div className="image-caption">Wisdom moves in more than one direction.</div></div>
-            <div className="community-copy"><p className="eyebrow"><span className="eyebrow-dot" /> Why this work matters</p><h2>Inspiration is not an age group. It is a <span className="highlight">practice.</span></h2><p>Some people need a place to begin. Others have a lifetime of lessons waiting to be shared. Our work connects both truths so that learning becomes mutual, leadership becomes responsible, and possibility becomes practical.</p><div className="steps-list">{steps.map((step, index) => <div className="step-item" key={step}><span>0{index + 1}</span><strong>{step}</strong><Check size={17} /></div>)}</div></div>
-          </div>
+        <section className="why-reference section-blue">
+          <div className="page-width"><div className="center-heading light-heading"><p className="reference-eyebrow light"><span /> Why Young Beginners Inspiration?</p><h2>A platform that believes<br /><span>everyone can begin.</span></h2><p>We bring an open, practical, intergenerational approach to the work of becoming.</p></div><div className="reasons-grid">{reasons.map(({ icon: Icon, title, text }) => <article className="reason-card" key={title}><Icon size={31} strokeWidth={1.5} /><h3>{title}</h3><p>{text}</p></article>)}</div></div>
         </section>
 
-        <section id="connect" className="connect-section section-pad">
-          <div className="page-width connect-grid">
-            <div className="connect-copy"><p className="eyebrow"><span className="eyebrow-dot" /> Make room for possibility</p><h2>There is a place for your <span className="highlight">voice</span> here.</h2><p>Stay close to new sessions, collaborations, and ways to support a platform that believes potential is worth investing in at every age.</p><div className="connect-options"><a href="mailto:hello@youngbeginnersinspiration.org"><span>For a conversation</span><strong>hello@youngbeginnersinspiration.org</strong><ArrowUpRight size={17} /></a><a href="#newsletter"><span>For occasional updates</span><strong>Join the newsletter below</strong><ArrowDownRight size={17} /></a></div></div>
-            <div id="newsletter" className="newsletter-card"><HandHeart size={27} strokeWidth={1.5} /><p className="card-kicker">A note from the platform</p><h3>Bring your curiosity.<br /><span className="highlight">We’ll bring the next invitation.</span></h3><form onSubmit={handleNewsletter}><label htmlFor="newsletter-name">Your name</label><input id="newsletter-name" name="name" type="text" placeholder="First and last name" required /><label htmlFor="newsletter-email">Your email</label><input id="newsletter-email" name="email" type="email" placeholder="you@example.com" required /><button className="button button-dark" type="submit">Keep me close <ArrowUpRight size={17} /></button></form><small>We only send meaningful updates. No noise, no selling your details.</small></div>
-          </div>
-        </section>
+        <section id="connect" className="join-reference section-red"><div className="page-width join-grid"><div><p className="reference-eyebrow light"><span /> Be part of the beginning</p><h2>There is room<br />for your <span>voice.</span></h2></div><div><p>Whether you want to learn, mentor, collaborate, volunteer, or support the work, there is a meaningful way to join this platform.</p><a className="reference-button white-button" href="mailto:hello@youngbeginnersinspiration.org">Join us today <ArrowUpRight size={18} /></a></div></div></section>
+
+        <section id="updates" className="updates-reference section-white"><div className="page-width"><div className="updates-heading"><div><p className="reference-eyebrow"><span /> From the platform</p><h2>Ideas worth<br /><span>carrying forward.</span></h2></div><p>Short notes and practical prompts for people finding their voice, building capability, and making a difference.</p></div><div className="updates-grid"><article><div className="update-number">01</div><h3>Start with the room you are in</h3><p>Leadership begins in ordinary places: the conversation, responsibility, and courage already within reach.</p><a className="reference-text-link" href="#connect">Read more <ArrowRight size={18} /></a></article><article><div className="update-number">02</div><h3>An idea becomes useful when it serves</h3><p>Entrepreneurship is not only about starting. It is about noticing a need and building with care.</p><a className="reference-text-link" href="#connect">Read more <ArrowRight size={18} /></a></article><article><div className="update-number">03</div><h3>Your voice gets stronger in practice</h3><p>Public speaking grows through small brave repetitions—and people who make it safe to try.</p><a className="reference-text-link" href="#connect">Read more <ArrowRight size={18} /></a></article></div></div></section>
+
+        <section className="newsletter-reference section-cream"><div className="page-width newsletter-reference-inner"><div><p className="reference-eyebrow"><span /> Stay connected</p><h2>Make room for<br /><span>the next invitation.</span></h2></div><form onSubmit={handleNewsletter}><label htmlFor="reference-name">Full name</label><input id="reference-name" name="name" placeholder="First & last name" required /><label htmlFor="reference-email">Email</label><input id="reference-email" name="email" type="email" placeholder="Email address" required /><button className="reference-button blue-button" type="submit">Subscribe <ArrowUpRight size={18} /></button></form></div></section>
       </main>
 
-      <footer className="site-footer">
-        <div className="page-width footer-top">
-          <div className="footer-brand"><a className="brand brand-footer" href="#top"><img src={mark} alt="Young Beginners Inspiration logo" className="brand-mark" /><span className="brand-name"><span>Young Beginners</span><span>Inspiration</span></span></a><p>A platform for the young and the aged to inspire, learn, and become.</p></div>
-          <div className="footer-nav"><div><span className="footer-label">Explore</span><a href="#about">About us</a><a href="#focus">Our focus</a><a href="#programs">Programs</a></div><div><span className="footer-label">Take part</span><a href="#connect">Get involved</a><a href="#newsletter">Newsletter</a><a href="mailto:hello@youngbeginnersinspiration.org">Contact us</a></div></div>
-          <div className="footer-note"><span className="footer-label">The invitation</span><p>“The future is not waiting for perfect people. It is waiting for participating ones.”</p><a className="text-link gold-link" href="#connect">Find your way in <ArrowUpRight size={17} /></a></div>
-        </div>
-        <div className="page-width footer-bottom"><span>© 2026 Young Beginners Inspiration</span><span>Leadership · Education · Business</span><a href="#top">Back to top <ArrowUpRight size={14} /></a></div>
-      </footer>
+      <footer className="reference-footer"><div className="page-width footer-reference-grid"><div className="footer-reference-brand"><a className="reference-brand footer-brand" href="#top"><img src={mark} alt="Young Beginners Inspiration logo" /><span>Young Beginners<br />Inspiration</span></a><p>Equipping the young and the aged to inspire, learn, and become responsible leaders.</p><a className="reference-button yellow-button" href="#connect">Support us <ArrowUpRight size={17} /></a></div><div className="footer-reference-links"><div><h4>Explore</h4><a href="#about">About us</a><a href="#focus">Focus areas</a><a href="#initiatives">Programs</a><a href="#updates">Media</a></div><div><h4>Join us</h4><a href="#connect">Volunteer</a><a href="#connect">Partner with us</a><a href="mailto:hello@youngbeginnersinspiration.org">Contact us</a></div></div><div className="footer-reference-note"><h4>Our belief</h4><p>“Every generation has something valuable to share.”</p><div className="footer-socials"><a href="#connect" aria-label="Facebook">f</a><a href="#connect" aria-label="Instagram">◎</a><a href="#connect" aria-label="LinkedIn">in</a></div></div></div><div className="page-width footer-reference-bottom"><span>© 2026 Young Beginners Inspiration</span><span>Leadership · Education · Business</span><a href="#top">Back to top <ArrowUpRight size={14} /></a></div></footer>
     </div>
   );
 }

@@ -1,5 +1,9 @@
 # Young Beginners Inspiration — Design Direction
 
+## Reference Ground Truth
+
+The current homepage revision follows **worldinspiringnetwork.org** as the ground-truth visual reference: a white utility header, compact navigation, documentary full-height hero, bold white headline, centered mobile composition, direct support CTA, and a nonprofit storytelling sequence that moves from who we are to the opportunity, solution, programs, reasons to believe, involvement, updates, newsletter, and footer. Fidelity to that structure takes priority over the previous editorial direction. The supplied YBI logo colors—deep blue, red, yellow, and orange—replace the reference site’s green palette.
+
 ## Three Initial Directions
 
 ### Theme Name: The Commons of Becoming
