@@ -15,3 +15,7 @@
 - [x] Build shared header/footer navigation that links to each subpage and back home.
 - [x] Add useful, organization-specific content and CTAs to each subpage.
 - [x] Verify route loading, navigation, responsive layouts, and save an updated checkpoint.
+- [x] Create a dedicated Gallery route and add it to the main and footer navigation.
+- [x] Add a browser-based photo uploader with previews, removal controls, and local persistence.
+- [x] Add polished image reveal, hover, and lightbox animations with reduced-motion support.
+- [x] Verify the Gallery page on desktop and mobile and save an updated checkpoint.

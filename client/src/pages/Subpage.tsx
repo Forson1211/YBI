@@ -92,6 +92,7 @@ const navItems = [
   ["Programs", "/programs"],
   ["Join Us", "/join-us"],
   ["Media", "/media"],
+  ["Gallery", "/gallery"],
 ];
 
 function PageHeader({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (open: boolean) => void }) {
@@ -99,7 +100,7 @@ function PageHeader({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen:
 }
 
 function PageFooter() {
-  return <footer className="reference-footer"><div className="page-width footer-reference-grid"><div className="footer-reference-brand"><a className="reference-brand footer-brand" href="/"><img src={mark} alt="Young Beginners Inspiration logo" /><span>Young Beginners<br />Inspiration</span></a><p>Equipping the young and the aged to inspire, learn, and become responsible leaders.</p><a className="reference-button yellow-button" href="/join-us">Support us <ArrowUpRight size={17} /></a></div><div className="footer-reference-links"><div><h4>Explore</h4>{navItems.slice(0, 3).map(([label, href]) => <a href={href} key={href}>{label}</a>)}</div><div><h4>Join us</h4><a href="/join-us">Volunteer</a><a href="/join-us">Partner with us</a><a href="mailto:hello@youngbeginnersinspiration.org">Contact us</a></div></div><div className="footer-reference-note"><h4>Our belief</h4><p>“Every generation has something valuable to share.”</p><div className="footer-socials"><a href="/join-us" aria-label="Facebook">f</a><a href="/join-us" aria-label="Instagram">◎</a><a href="/join-us" aria-label="LinkedIn">in</a></div></div></div><div className="page-width footer-reference-bottom"><span>© 2026 Young Beginners Inspiration</span><span>Leadership · Education · Business</span><a href="/">Back home <ArrowUpRight size={14} /></a></div></footer>;
+  return <footer className="reference-footer"><div className="page-width footer-reference-grid"><div className="footer-reference-brand"><a className="reference-brand footer-brand" href="/"><img src={mark} alt="Young Beginners Inspiration logo" /><span>Young Beginners<br />Inspiration</span></a><p>Equipping the young and the aged to inspire, learn, and become responsible leaders.</p><a className="reference-button yellow-button" href="/join-us">Support us <ArrowUpRight size={17} /></a></div><div className="footer-reference-links"><div><h4>Explore</h4>{navItems.slice(0, 3).map(([label, href]) => <a href={href} key={href}>{label}</a>)}<a href="/media">Media</a><a href="/gallery">Gallery</a></div><div><h4>Join us</h4><a href="/join-us">Volunteer</a><a href="/join-us">Partner with us</a><a href="mailto:hello@youngbeginnersinspiration.org">Contact us</a></div></div><div className="footer-reference-note"><h4>Our belief</h4><p>“Every generation has something valuable to share.”</p><div className="footer-socials"><a href="/join-us" aria-label="Facebook">f</a><a href="/join-us" aria-label="Instagram">◎</a><a href="/join-us" aria-label="LinkedIn">in</a></div></div></div><div className="page-width footer-reference-bottom"><span>© 2026 Young Beginners Inspiration</span><span>Leadership · Education · Business</span><a href="/">Back home <ArrowUpRight size={14} /></a></div></footer>;
 }
 
 export default function Subpage({ page }: { page: SubpageKey }) {

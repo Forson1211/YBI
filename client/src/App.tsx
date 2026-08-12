@@ -8,6 +8,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Subpage from "./pages/Subpage";
+import Gallery from "./pages/Gallery";
 
 
 function Router() {
@@ -19,6 +20,7 @@ function Router() {
       <Route path={"/programs"}><Subpage page="programs" /></Route>
       <Route path={"/join-us"}><Subpage page="join-us" /></Route>
       <Route path={"/media"}><Subpage page="media" /></Route>
+      <Route path={"/gallery"} component={Gallery} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
