@@ -2,6 +2,7 @@
 // documentary hero, centered mobile-first copy, bold support CTA, and a nonprofit
 // storytelling sequence. Adapted for YBI blue, red, yellow, and orange.
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "wouter";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 import { createImageWallRows, type ImageWallPhoto } from "@/lib/imageWall";
@@ -135,7 +136,7 @@ export default function Home() {
             <span>Young Beginners<br />Inspiration</span>
           </a>
           <PublicNavigation menuOpen={menuOpen} onNavigate={closeMenu} />
-          <a className="header-support" href="/join-us" onClick={closeMenu}><HandHeart size={22} /><span>Support Us</span></a>
+          <Link className="header-support" href="/join-us" onClick={closeMenu}><HandHeart size={22} /><span>Support Us</span></Link>
         </div>
       </header>
 
@@ -159,7 +160,7 @@ export default function Home() {
               <h2>People grow when they have a place to <span>begin.</span></h2>
               <p className="large-paragraph">Young Beginners Inspiration is a non-profit organization creating a platform that gives both the young and the old age space to inspire and be impacted.</p>
               <p>We believe every generation has something valuable to share. Through learning, public speaking, entrepreneurship, and meaningful connection, we help potential become responsible leadership.</p>
-              <a className="reference-text-link" href="/about">Discover more <ArrowRight size={18} /></a>
+              <Link className="reference-text-link" href="/about">Discover more <ArrowRight size={18} /></Link>
             </div>
             <figure className="about-reference-image"><RotatingAboutImage /></figure>
           </div>
@@ -175,7 +176,7 @@ export default function Home() {
         <section id="focus" className="solution-reference section-white">
           <div className="page-width">
             <div className="section-split-heading"><div><p className="reference-eyebrow"><span /> The solution</p><h2>Inspiration becomes impact<br /><span>through practice.</span></h2></div><p>Our focus areas give people a strong foundation for the next conversation, the next idea, and the next responsible decision.</p></div>
-            <div className="solution-grid">{solutionCards.map(({ icon: Icon, title, text }) => <article className="solution-card" key={title}><div className="solution-icon"><Icon size={29} strokeWidth={1.6} /></div><h3>{title}</h3><p>{text}</p><a className="reference-text-link" href="/focus-areas">Read more <ArrowRight size={18} /></a></article>)}</div>
+            <div className="solution-grid">{solutionCards.map(({ icon: Icon, title, text }) => <article className="solution-card" key={title}><div className="solution-icon"><Icon size={29} strokeWidth={1.6} /></div><h3>{title}</h3><p>{text}</p><Link className="reference-text-link" href="/focus-areas">Read more <ArrowRight size={18} /></Link></article>)}</div>
           </div>
         </section>
 
@@ -187,9 +188,9 @@ export default function Home() {
           <div className="page-width"><div className="section-split-heading light-heading"><div><p className="reference-eyebrow light"><span /> Why Young Beginners Inspiration?</p><h2>A platform that believes<br /><span>everyone can begin.</span></h2></div><p>We bring an open, practical, intergenerational approach to the work of becoming.</p></div><div className="reasons-grid">{reasons.map(({ icon: Icon, title, text }) => <article className="reason-card" key={title}><Icon size={31} strokeWidth={1.5} /><h3>{title}</h3><p>{text}</p></article>)}</div></div>
         </section>
 
-        <section id="connect" className="join-reference section-red"><div className="page-width join-grid"><div><p className="reference-eyebrow light"><span /> Be part of the beginning</p><h2>There is room<br />for your <span>voice.</span></h2></div><div><p>Whether you want to learn, mentor, collaborate, volunteer, or support the work, there is a meaningful way to join this platform.</p><a className="reference-button white-button" href="/join-us">Join us today <ArrowUpRight size={18} /></a></div></div></section>
+        <section id="connect" className="join-reference section-red"><div className="page-width join-grid"><div><p className="reference-eyebrow light"><span /> Be part of the beginning</p><h2>There is room<br />for your <span>voice.</span></h2></div><div><p>Whether you want to learn, mentor, collaborate, volunteer, or support the work, there is a meaningful way to join this platform.</p><Link className="reference-button white-button" href="/join-us">Join us today <ArrowUpRight size={18} /></Link></div></div></section>
 
-        <section id="updates" className="updates-reference section-white"><div className="page-width"><div className="updates-heading"><div><p className="reference-eyebrow"><span /> From the platform</p><h2>Ideas worth<br /><span>carrying forward.</span></h2></div><p>Short notes and practical prompts for people finding their voice, building capability, and making a difference.</p></div><div className="updates-grid">{homepageUpdates.map((update) => <article className="update-news-card" key={update.category}><a href="/media" aria-label={`Read ${update.title}`}><div className="update-news-image"><img src={update.image} alt={update.imageAlt} /><span className="update-category">{update.category}</span></div><div className="update-news-copy"><h3>{update.title}</h3><p className="update-news-summary">{update.summary}</p></div><div className="update-news-meta"><span>{update.source}</span><span>{update.detail}</span></div></a></article>)}</div></div></section>
+        <section id="updates" className="updates-reference section-white"><div className="page-width"><div className="updates-heading"><div><p className="reference-eyebrow"><span /> From the platform</p><h2>Ideas worth<br /><span>carrying forward.</span></h2></div><p>Short notes and practical prompts for people finding their voice, building capability, and making a difference.</p></div><div className="updates-grid">{homepageUpdates.map((update) => <article className="update-news-card" key={update.category}><Link href="/media" aria-label={`Read ${update.title}`}><div className="update-news-image"><img src={update.image} alt={update.imageAlt} /><span className="update-category">{update.category}</span></div><div className="update-news-copy"><h3>{update.title}</h3><p className="update-news-summary">{update.summary}</p></div><div className="update-news-meta"><span>{update.source}</span><span>{update.detail}</span></div></Link></article>)}</div></div></section>
 
         <section className="home-image-wall" aria-labelledby="image-wall-title">
           <div className="page-width image-wall-heading">
@@ -197,7 +198,7 @@ export default function Home() {
               <p className="reference-eyebrow"><span /> From the YBI community</p>
               <h2 id="image-wall-title">Every gathering<br /><span>moves us forward.</span></h2>
             </div>
-            <a className="reference-text-link" href="/gallery">View gallery <ArrowRight size={18} /></a>
+            <Link className="reference-text-link" href="/gallery">View gallery <ArrowRight size={18} /></Link>
           </div>
           <div className="image-wall-viewport" aria-hidden="true">
             {imageWallRows.map((row, rowIndex) => (

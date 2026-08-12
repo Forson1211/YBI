@@ -113,3 +113,7 @@
 - [x] Add a smooth, accessible open and close animation to the mobile hamburger menu without changing its visual design.
 - [x] Validate the mobile layout and navigation animation at representative physical-device sizes, run checks, and save a checkpoint.
 - [x] Save a checkpoint for the verified physical-mobile and hamburger-menu animation refinement.
+- [x] Audit the public route navigation flow for avoidable full-page reloads and loading delays.
+- [x] Optimize internal subpage navigation for faster transitions without changing the YBI design.
+- [x] Validate public route performance, run checks, and save a checkpoint.
+- [x] Save a checkpoint for the verified fast public-route navigation refinement.

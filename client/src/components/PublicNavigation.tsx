@@ -7,6 +7,7 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { useEffect, useState } from "react";
+import { Link } from "wouter";
 
 type DropdownLink = {
   label: string;
@@ -92,16 +93,16 @@ export default function PublicNavigation({ menuOpen, onNavigate }: { menuOpen: b
                     <NavigationMenuContent className="ybi-nav-dropdown">
                       {item.items.map((link) => (
                         <NavigationMenuLink asChild key={link.label}>
-                          <a className="ybi-dropdown-link" href={link.href}>
+                          <Link className="ybi-dropdown-link" href={link.href}>
                             {link.label}
-                          </a>
+                          </Link>
                         </NavigationMenuLink>
                       ))}
                     </NavigationMenuContent>
                   </>
                 ) : (
                   <NavigationMenuLink asChild>
-                    <a className="ybi-nav-link" href={item.href}>{item.label}</a>
+                    <Link className="ybi-nav-link" href={item.href}>{item.label}</Link>
                   </NavigationMenuLink>
                 )}
               </NavigationMenuItem>
@@ -121,9 +122,9 @@ export default function PublicNavigation({ menuOpen, onNavigate }: { menuOpen: b
                 {item.label}<span aria-hidden="true" />
               </button>
               <div aria-hidden={!isExpanded} className={`mobile-nav-submenu${isExpanded ? " is-expanded" : ""}`} id={submenuId}>
-                {item.items.map((link) => <a href={link.href} key={link.label} onClick={onNavigate}>{link.label}</a>)}
+                {item.items.map((link) => <Link href={link.href} key={link.label} onClick={onNavigate}>{link.label}</Link>)}
               </div>
-            </> : <a className="mobile-nav-parent mobile-nav-direct-link" href={item.href} onClick={onNavigate}>{item.label}</a>}
+            </> : <Link className="mobile-nav-parent mobile-nav-direct-link" href={item.href} onClick={onNavigate}>{item.label}</Link>}
           </div>;
         })}
       </div>

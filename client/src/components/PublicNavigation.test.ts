@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { getNextMobileSubmenu, publicNavItems } from "./PublicNavigation";
 
@@ -35,5 +36,12 @@ describe("public navigation structure", () => {
     expect(getNextMobileSubmenu(null, "About")).toBe("About");
     expect(getNextMobileSubmenu("About", "About")).toBeNull();
     expect(getNextMobileSubmenu("About", "Programs")).toBe("Programs");
+  });
+
+  it("uses client-side links for fast primary navigation", () => {
+    const source = readFileSync(new URL("./PublicNavigation.tsx", import.meta.url), "utf8");
+    expect(source).toContain('import { Link } from "wouter";');
+    expect(source).toContain('<Link className="ybi-nav-link" href={item.href}>');
+    expect(source).toContain('<Link className="ybi-dropdown-link" href={link.href}>');
   });
 });
