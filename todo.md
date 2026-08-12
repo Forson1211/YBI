@@ -33,3 +33,8 @@
 - [x] Remove the detached vertical kicker and yellow note-card treatment from the homepage introduction.
 - [x] Verify the revised introductory composition at desktop and mobile sizes and save an updated checkpoint.
 - [x] Save a new checkpoint for the verified homepage introduction redesign.
+- [x] Increase desktop navigation label size and spacing for stronger header presence.
+- [x] Add accessible desktop dropdown menus and mobile-compatible nested navigation for key site sections.
+- [x] Recompose the opportunity section as a left-aligned header-grid layout.
+- [x] Verify dropdown behavior, mobile navigation, and opportunity copy alignment before saving an updated checkpoint.
+- [x] Save the verified navigation and opportunity alignment refinement as a checkpoint.

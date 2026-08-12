@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import { ArrowRight, ArrowUpRight, BookOpen, BriefcaseBusiness, HandHeart, Lightbulb, Menu, Mic2, Sparkles, UsersRound, X } from "lucide-react";
+import PublicNavigation from "@/components/PublicNavigation";
 
 const mark = "/manus-storage/ybi-logo_a28c9057.png";
 const publicSpeaking = "/manus-storage/ybi-public-speaking_08161e85.jpg";
@@ -96,7 +97,7 @@ const navItems = [
 ];
 
 function PageHeader({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen: (open: boolean) => void }) {
-  return <header className="reference-header"><div className="reference-header-inner"><button className="mobile-menu-button" type="button" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X size={27} /> : <Menu size={29} />}</button><a className="reference-brand" href="/" aria-label="Young Beginners Inspiration home"><img src={mark} alt="Young Beginners Inspiration logo" /><span>Young Beginners<br />Inspiration</span></a><nav className={`reference-nav ${menuOpen ? "is-open" : ""}`}>{navItems.map(([label, href]) => <a href={href} key={href} onClick={() => setMenuOpen(false)}>{label}</a>)}</nav><a className="header-support" href="/join-us" onClick={() => setMenuOpen(false)}><HandHeart size={22} /><span>Support Us</span></a></div></header>;
+  return <header className="reference-header"><div className="reference-header-inner"><button className="mobile-menu-button" type="button" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X size={27} /> : <Menu size={29} />}</button><a className="reference-brand" href="/" aria-label="Young Beginners Inspiration home"><img src={mark} alt="Young Beginners Inspiration logo" /><span>Young Beginners<br />Inspiration</span></a><PublicNavigation menuOpen={menuOpen} onNavigate={() => setMenuOpen(false)} /><a className="header-support" href="/join-us" onClick={() => setMenuOpen(false)}><HandHeart size={22} /><span>Support Us</span></a></div></header>;
 }
 
 function PageFooter() {

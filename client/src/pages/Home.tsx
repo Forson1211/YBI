@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
+import PublicNavigation from "@/components/PublicNavigation";
 import {
   ArrowDown,
   ArrowRight,
@@ -74,14 +75,7 @@ export default function Home() {
             <img src={mark} alt="Young Beginners Inspiration logo" />
             <span>Young Beginners<br />Inspiration</span>
           </a>
-          <nav className={`reference-nav ${menuOpen ? "is-open" : ""}`}>
-            <a href="/about" onClick={closeMenu}>About</a>
-            <a href="/focus-areas" onClick={closeMenu}>Focus Areas</a>
-            <a href="/programs" onClick={closeMenu}>Programs</a>
-            <a href="/join-us" onClick={closeMenu}>Join Us</a>
-            <a href="/media" onClick={closeMenu}>Media</a>
-            <a href="/gallery" onClick={closeMenu}>Gallery</a>
-          </nav>
+          <PublicNavigation menuOpen={menuOpen} onNavigate={closeMenu} />
           <a className="header-support" href="/join-us" onClick={closeMenu}><HandHeart size={22} /><span>Support Us</span></a>
         </div>
       </header>
@@ -116,7 +110,7 @@ export default function Home() {
 
         <section className="problem-reference section-cream">
           <div className="page-width">
-            <div className="center-heading"><p className="reference-eyebrow"><span /> The opportunity</p><h2>What happens when potential<br /><span>gets a platform?</span></h2><p>We start by making room for the real barriers people face—and the practical possibilities that open when they are supported.</p></div>
+            <div className="opportunity-heading"><p className="reference-eyebrow"><span /> The opportunity</p><h2>What happens when potential<br /><span>gets a platform?</span></h2><p>We start by making room for the real barriers people face—and the practical possibilities that open when they are supported.</p></div>
             <div className="problem-grid">{problemCards.map((card) => <article className={`problem-card ${card.color}`} key={card.number}><div className="problem-card-top"><span>{card.number}</span><ArrowUpRight size={18} /></div><h3>{card.title}</h3><p>{card.text}</p></article>)}</div>
           </div>
         </section>
