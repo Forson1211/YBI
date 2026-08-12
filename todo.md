@@ -11,3 +11,7 @@
 - [x] Verify the rebuilt homepage against the provided reference screenshot at mobile and desktop breakpoints.
 - [x] Replace the current typography stack with Lato across headings, body copy, navigation, labels, and buttons.
 - [x] Verify Lato rendering at desktop and mobile sizes and save an updated checkpoint.
+- [x] Create distinct routes for About, Focus Areas, Programs, Join Us, and Media.
+- [x] Build shared header/footer navigation that links to each subpage and back home.
+- [x] Add useful, organization-specific content and CTAs to each subpage.
+- [x] Verify route loading, navigation, responsive layouts, and save an updated checkpoint.
