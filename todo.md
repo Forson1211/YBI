@@ -89,3 +89,6 @@
 - [x] Redesign the homepage newsletter area into a more polished, visually inviting call-to-action.
 - [x] Enlarge the second Who We Are photo to give it stronger visual presence alongside the introduction.
 - [x] Verify the newsletter and enlarged Who We Are photo on desktop and mobile, run checks, and save a checkpoint.
+- [x] Smooth the Who We Are image rotation and zoom so each transition feels gradual and natural.
+- [x] Optimize the hero background crop, overlay, and content spacing for clear presentation across mobile device sizes.
+- [x] Verify the refined motion and mobile hero across representative viewports, run checks, and save a checkpoint.

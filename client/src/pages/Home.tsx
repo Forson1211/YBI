@@ -88,7 +88,7 @@ function RotatingAboutImage() {
 
   useEffect(() => {
     if (reducedMotion) return;
-    const rotation = window.setInterval(() => changeImage(1), 6000);
+    const rotation = window.setInterval(() => changeImage(1), 8200);
     return () => window.clearInterval(rotation);
   }, [reducedMotion]);
 
