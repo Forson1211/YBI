@@ -68,3 +68,6 @@
 - [x] Expand the animated image wall into a near-full-viewport homepage visual section with larger, dense photo tiles.
 - [x] Preserve the top/bottom right-to-left motion and middle left-to-right motion while scaling the section responsively.
 - [x] Verify the enlarged desktop and mobile image wall, tests, production build, and save a checkpoint.
+- [x] Redesign the homepage update cards as visual news cards matching the supplied reference: image, category label, headline, and metadata footer.
+- [x] Keep the updated cards responsive and aligned to the shared YBI content grid.
+- [x] Verify the revised update cards on desktop and mobile, run checks, and save a checkpoint.

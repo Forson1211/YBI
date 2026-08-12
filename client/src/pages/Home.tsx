@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 import { createImageWallRows, type ImageWallPhoto } from "@/lib/imageWall";
+import { homepageUpdates } from "@/lib/homeUpdates";
 import PublicNavigation from "@/components/PublicNavigation";
 import {
   ArrowDown,
@@ -148,7 +149,7 @@ export default function Home() {
 
         <section id="connect" className="join-reference section-red"><div className="page-width join-grid"><div><p className="reference-eyebrow light"><span /> Be part of the beginning</p><h2>There is room<br />for your <span>voice.</span></h2></div><div><p>Whether you want to learn, mentor, collaborate, volunteer, or support the work, there is a meaningful way to join this platform.</p><a className="reference-button white-button" href="/join-us">Join us today <ArrowUpRight size={18} /></a></div></div></section>
 
-        <section id="updates" className="updates-reference section-white"><div className="page-width"><div className="updates-heading"><div><p className="reference-eyebrow"><span /> From the platform</p><h2>Ideas worth<br /><span>carrying forward.</span></h2></div><p>Short notes and practical prompts for people finding their voice, building capability, and making a difference.</p></div><div className="updates-grid"><article><div className="update-number">01</div><h3>Start with the room you are in</h3><p>Leadership begins in ordinary places: the conversation, responsibility, and courage already within reach.</p><a className="reference-text-link" href="/media">Read more <ArrowRight size={18} /></a></article><article><div className="update-number">02</div><h3>An idea becomes useful when it serves</h3><p>Entrepreneurship is not only about starting. It is about noticing a need and building with care.</p><a className="reference-text-link" href="/media">Read more <ArrowRight size={18} /></a></article><article><div className="update-number">03</div><h3>Your voice gets stronger in practice</h3><p>Public speaking grows through small brave repetitions—and people who make it safe to try.</p><a className="reference-text-link" href="/media">Read more <ArrowRight size={18} /></a></article></div></div></section>
+        <section id="updates" className="updates-reference section-white"><div className="page-width"><div className="updates-heading"><div><p className="reference-eyebrow"><span /> From the platform</p><h2>Ideas worth<br /><span>carrying forward.</span></h2></div><p>Short notes and practical prompts for people finding their voice, building capability, and making a difference.</p></div><div className="updates-grid">{homepageUpdates.map((update) => <article className="update-news-card" key={update.category}><a href="/media" aria-label={`Read ${update.title}`}><div className="update-news-image"><img src={update.image} alt={update.imageAlt} /><span className="update-category">{update.category}</span></div><div className="update-news-copy"><h3>{update.title}</h3></div><div className="update-news-meta"><span>{update.source}</span><span>{update.detail}</span></div></a></article>)}</div></div></section>
 
         <section className="home-image-wall" aria-labelledby="image-wall-title">
           <div className="page-width image-wall-heading">
