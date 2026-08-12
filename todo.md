@@ -56,3 +56,6 @@
 - [x] Verify the expanded first-screen hero on desktop and mobile, then save a checkpoint.
 - [x] Extend the hero background to the entire viewport height beneath the header so no white content area appears in the first screen.
 - [x] Verify the full viewport hero at desktop and mobile sizes, then save a checkpoint.
+- [x] Left-align the Solution, Programs, and Why YBI section labels, headings, and supporting copy shown in the supplied screenshots.
+- [x] Verify the revised homepage section alignment on desktop and mobile, then save a checkpoint.
+- [x] Save a checkpoint for the verified left-aligned homepage section refinement.
