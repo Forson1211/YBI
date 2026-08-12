@@ -27,7 +27,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .ybi-navigation-list { gap: 2px !important; }
 .ybi-nav-trigger, .ybi-nav-link { height: 46px !important; padding: 0 15px !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; color: var(--blue-deep) !important; text-transform: none; font-family: 'Lato', Arial, sans-serif; font-size: 15px !important; font-weight: 700 !important; letter-spacing: -.01em; transition: color .18s ease, background .18s ease; }
 .ybi-nav-trigger { display: inline-flex !important; align-items: center !important; justify-content: center; }
-.ybi-nav-link { display: inline-flex !important; align-items: center; }
+.ybi-nav-link { display: inline-flex !important; flex-direction: row !important; align-items: center !important; justify-content: center !important; }
 .ybi-nav-trigger:hover, .ybi-nav-trigger[data-state="open"], .ybi-nav-link:hover { background: rgba(255,208,0,.22) !important; color: var(--blue-deep) !important; }
 .ybi-nav-trigger > svg { display: none !important; }
 .ybi-nav-trigger::after { content: ""; display: inline-block; width: 0; height: 0; margin: 3px 0 0 8px; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 6px solid var(--blue-deep); transition: transform .18s var(--ease), border-color .18s ease; }

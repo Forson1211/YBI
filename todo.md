@@ -43,3 +43,5 @@
 - [x] Verify desktop and mobile header presentation and save an updated checkpoint.
 - [x] Save the solid-triangle navigation refinement as a new checkpoint.
 - [x] Save a checkpoint after the verified solid-triangle dropdown-arrow and header-spacing refinement.
+- [x] Align the Gallery direct-navigation link to the same visual baseline and vertical center as the dropdown navigation labels.
+- [x] Verify the corrected Gallery alignment on desktop and mobile, run checks, and save a checkpoint.
