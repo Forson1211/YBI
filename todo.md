@@ -105,3 +105,7 @@
 - [x] Verify image-wall continuity and responsive presentation on desktop and mobile, run checks, and save a checkpoint.
 - [x] Add Gallery as a live destination within the Media dropdown navigation.
 - [x] Remove the separate Gallery item from the primary navigation bar while retaining Gallery under Media.
+- [x] Keep the public header fixed and visible while visitors scroll the page.
+- [x] Align the YBI logo, navigation labels, and Support Us action on one shared horizontal header line.
+- [x] Verify the fixed header and alignment on desktop and mobile, run checks, and save a checkpoint.
+- [x] Save a checkpoint for the verified fixed-header refinement.
