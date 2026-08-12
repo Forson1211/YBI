@@ -77,3 +77,9 @@
 - [x] Restore the homepage update-card images as static photographs.
 - [x] Add the swipe-and-zoom rotation to the circled Who We Are image beside the homepage introduction.
 - [x] Preserve responsive layout and reduced-motion support, then verify the corrected animation and save a checkpoint.
+- [x] Apply the Updates section’s left-heading/right-supporting-copy layout to the remaining homepage section introductions.
+- [x] Preserve existing section cards, YBI typography, content-grid alignment, and mobile stacking behavior.
+- [x] Verify the consistent section-header layout on desktop and mobile, run checks, and save a checkpoint.
+- [x] Change the homepage visual-news card images to square frames that show each YBI photograph clearly.
+- [x] Add concise explanatory post summaries beneath every visual-news card headline.
+- [x] Verify the refined cards on desktop and mobile, run checks, and save a checkpoint.

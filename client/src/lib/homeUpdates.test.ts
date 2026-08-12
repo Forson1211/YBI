@@ -8,6 +8,7 @@ describe("homepageUpdates", () => {
 
     for (const update of homepageUpdates) {
       expect(update.title).toBeTruthy();
+      expect(update.summary).toBeTruthy();
       expect(update.source).toBeTruthy();
       expect(update.detail).toBeTruthy();
       expect(update.image).toMatch(/^\/manus-storage\//);
