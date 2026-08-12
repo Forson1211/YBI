@@ -74,3 +74,6 @@
 - [x] Add a smooth swipe-and-zoom rotation so the homepage visual-news cards cycle through different YBI images.
 - [x] Preserve category labels, accessible card links, responsive sizing, and reduced-motion support during image rotation.
 - [x] Verify the animated cards on desktop and mobile, run checks, and save a checkpoint.
+- [x] Restore the homepage update-card images as static photographs.
+- [x] Add the swipe-and-zoom rotation to the circled Who We Are image beside the homepage introduction.
+- [x] Preserve responsive layout and reduced-motion support, then verify the corrected animation and save a checkpoint.

@@ -10,12 +10,8 @@ describe("homepageUpdates", () => {
       expect(update.title).toBeTruthy();
       expect(update.source).toBeTruthy();
       expect(update.detail).toBeTruthy();
-      expect(update.media).toHaveLength(3);
-      expect(new Set(update.media.map((image) => image.src)).size).toBe(3);
-      for (const image of update.media) {
-        expect(image.src).toMatch(/^\/manus-storage\//);
-        expect(image.alt).toBeTruthy();
-      }
+      expect(update.image).toMatch(/^\/manus-storage\//);
+      expect(update.imageAlt).toBeTruthy();
     }
   });
 });
