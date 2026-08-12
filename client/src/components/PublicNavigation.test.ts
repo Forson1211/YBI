@@ -9,13 +9,12 @@ describe("public navigation structure", () => {
       "Programs",
       "Join Us",
       "Media",
-      "Gallery",
       "Contact",
     ]);
 
     const dropdownLabels = publicNavItems.filter((item) => item.items).map((item) => item.label);
     expect(dropdownLabels).toEqual(["About", "Focus Areas", "Programs", "Join Us", "Media"]);
-    expect(publicNavItems.find((item) => item.label === "Gallery")?.items).toBeUndefined();
+    expect(publicNavItems.find((item) => item.label === "Gallery")).toBeUndefined();
     expect(publicNavItems.find((item) => item.label === "Contact")?.href).toBe("/contact");
 
     expect(publicNavItems.find((item) => item.label === "About")?.items).toContainEqual({
