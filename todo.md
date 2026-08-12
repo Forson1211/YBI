@@ -54,3 +54,5 @@
 - [x] Verify desktop and mobile hero presentation, then save a checkpoint.
 - [x] Extend the desktop hero background photograph down to the start of the white content section, filling the full first screen below the header.
 - [x] Verify the expanded first-screen hero on desktop and mobile, then save a checkpoint.
+- [x] Extend the hero background to the entire viewport height beneath the header so no white content area appears in the first screen.
+- [x] Verify the full viewport hero at desktop and mobile sizes, then save a checkpoint.
