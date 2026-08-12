@@ -15,5 +15,10 @@ describe("public navigation structure", () => {
     const dropdownLabels = publicNavItems.filter((item) => item.items).map((item) => item.label);
     expect(dropdownLabels).toEqual(["About", "Focus Areas", "Programs", "Join Us", "Media"]);
     expect(publicNavItems.find((item) => item.label === "Gallery")?.items).toBeUndefined();
+
+    expect(publicNavItems.find((item) => item.label === "About")?.items).toContainEqual({
+      label: "Our Team",
+      href: "/team",
+    });
   });
 });

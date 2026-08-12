@@ -45,3 +45,6 @@
 - [x] Save a checkpoint after the verified solid-triangle dropdown-arrow and header-spacing refinement.
 - [x] Align the Gallery direct-navigation link to the same visual baseline and vertical center as the dropdown navigation labels.
 - [x] Verify the corrected Gallery alignment on desktop and mobile, run checks, and save a checkpoint.
+- [x] Redesign public dropdown menus as simple single-column item lists matching the supplied reference, with a deep-blue hover/active state.
+- [x] Create an Our Team page and add it as an About dropdown item.
+- [x] Verify desktop and mobile navigation, Our Team routing, tests, and production build before saving a checkpoint.

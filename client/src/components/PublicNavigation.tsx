@@ -1,4 +1,3 @@
-import { ArrowUpRight } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -10,7 +9,6 @@ import {
 
 type DropdownLink = {
   label: string;
-  description: string;
   href: string;
 };
 
@@ -25,44 +23,44 @@ export const publicNavItems: PublicNavItem[] = [
     label: "About",
     href: "/about",
     items: [
-      { label: "Who we are", description: "Our purpose and intergenerational approach.", href: "/about" },
-      { label: "Vision & mission", description: "The difference we are working toward.", href: "/about" },
-      { label: "Our approach", description: "How learning becomes shared progress.", href: "/about" },
+      { label: "About Us", href: "/about" },
+      { label: "Our Team", href: "/team" },
+      { label: "Our Approach", href: "/about" },
     ],
   },
   {
     label: "Focus Areas",
     href: "/focus-areas",
     items: [
-      { label: "Leadership", description: "Responsible influence for everyday life.", href: "/focus-areas" },
-      { label: "Education", description: "Practical, active learning together.", href: "/focus-areas" },
-      { label: "Business", description: "Useful ideas built with integrity.", href: "/focus-areas" },
+      { label: "Leadership", href: "/focus-areas" },
+      { label: "Education", href: "/focus-areas" },
+      { label: "Business", href: "/focus-areas" },
     ],
   },
   {
     label: "Programs",
     href: "/programs",
     items: [
-      { label: "Public speaking", description: "Voice, presence, and courage in practice.", href: "/programs" },
-      { label: "Entrepreneurship", description: "Turn a meaningful idea into a beginning.", href: "/programs" },
-      { label: "Generations in conversation", description: "Exchange insight across lived experience.", href: "/programs" },
+      { label: "Public Speaking", href: "/programs" },
+      { label: "Entrepreneurship", href: "/programs" },
+      { label: "Generations in Conversation", href: "/programs" },
     ],
   },
   {
     label: "Join Us",
     href: "/join-us",
     items: [
-      { label: "Participate", description: "Learn, practise, and meet the platform.", href: "/join-us" },
-      { label: "Mentor", description: "Share experience with an emerging leader.", href: "/join-us" },
-      { label: "Partner", description: "Build opportunities and resources with us.", href: "/join-us" },
+      { label: "Participate", href: "/join-us" },
+      { label: "Mentor", href: "/join-us" },
+      { label: "Partner", href: "/join-us" },
     ],
   },
   {
     label: "Media",
     href: "/media",
     items: [
-      { label: "Platform stories", description: "Notes and reflections from the YBI community.", href: "/media" },
-      { label: "Stay connected", description: "Find the next invitation and update.", href: "/media" },
+      { label: "Platform Stories", href: "/media" },
+      { label: "Stay Connected", href: "/media" },
     ],
   },
   { label: "Gallery", href: "/gallery" },
@@ -83,8 +81,7 @@ export default function PublicNavigation({ menuOpen, onNavigate }: { menuOpen: b
                       {item.items.map((link) => (
                         <NavigationMenuLink asChild key={link.label}>
                           <a className="ybi-dropdown-link" href={link.href}>
-                            <span><strong>{link.label}</strong><small>{link.description}</small></span>
-                            <ArrowUpRight size={15} aria-hidden="true" />
+                            {link.label}
                           </a>
                         </NavigationMenuLink>
                       ))}

@@ -10,7 +10,7 @@ const publicSpeaking = "/manus-storage/ybi-public-speaking_08161e85.jpg";
 const entrepreneurship = "/manus-storage/ybi-entrepreneurship_d7a3f3ed.jpg";
 const community = "/manus-storage/ybi-community_b2ad3c56.jpg";
 
-export type SubpageKey = "about" | "focus-areas" | "programs" | "join-us" | "media";
+export type SubpageKey = "about" | "team" | "focus-areas" | "programs" | "join-us" | "media";
 
 type PageItem = { eyebrow: string; title: string; text: string; icon?: LucideIcon; image?: string };
 
@@ -28,6 +28,20 @@ const pageContent: Record<SubpageKey, { eyebrow: string; title: string; accent: 
       { eyebrow: "Our approach", title: "Learn both ways", text: "We design practical spaces where mentorship is mutual, participation is active, and every person can contribute to the room.", icon: UsersRound },
     ],
     ctaTitle: "Bring your experience.", ctaText: "There is room here for the person beginning and the person ready to share what they have learned.", ctaLabel: "Join us", ctaHref: "/join-us",
+  },
+  team: {
+    eyebrow: "Our team",
+    title: "People who make",
+    accent: "space for possibility.",
+    intro: "Young Beginners Inspiration is carried forward by people who believe every generation has something valuable to offer.",
+    statement: "A shared purpose grows through people who show up for one another.",
+    aside: "Our team brings participants, mentors, partners, and practical opportunities together so each person has room to learn, contribute, and lead responsibly.",
+    items: [
+      { eyebrow: "Community", title: "Create welcoming spaces", text: "We help make the platform a place where young and aged people can meet, speak, listen, and learn with respect.", icon: UsersRound },
+      { eyebrow: "Programs", title: "Turn learning into action", text: "We shape practical experiences that build confidence in leadership, education, business, public speaking, and entrepreneurship.", icon: Lightbulb },
+      { eyebrow: "Partnerships", title: "Connect people and possibility", text: "We work to grow relationships and resources that open doors for participants, mentors, and the wider community.", icon: HandHeart },
+    ],
+    ctaTitle: "Could your experience strengthen the team?", ctaText: "If you have time, ideas, or lived experience to share, we would be glad to start a conversation.", ctaLabel: "Connect with YBI", ctaHref: "/join-us",
   },
   "focus-areas": {
     eyebrow: "What we focus on",
@@ -89,6 +103,7 @@ const pageContent: Record<SubpageKey, { eyebrow: string; title: string; accent: 
 
 const navItems = [
   ["About", "/about"],
+  ["Our Team", "/team"],
   ["Focus Areas", "/focus-areas"],
   ["Programs", "/programs"],
   ["Join Us", "/join-us"],
@@ -101,7 +116,7 @@ function PageHeader({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen:
 }
 
 function PageFooter() {
-  return <footer className="reference-footer"><div className="page-width footer-reference-grid"><div className="footer-reference-brand"><a className="reference-brand footer-brand" href="/"><img src={mark} alt="Young Beginners Inspiration logo" /><span>Young Beginners<br />Inspiration</span></a><p>Equipping the young and the aged to inspire, learn, and become responsible leaders.</p><a className="reference-button yellow-button" href="/join-us">Support us <ArrowUpRight size={17} /></a></div><div className="footer-reference-links"><div><h4>Explore</h4>{navItems.slice(0, 3).map(([label, href]) => <a href={href} key={href}>{label}</a>)}<a href="/media">Media</a><a href="/gallery">Gallery</a></div><div><h4>Join us</h4><a href="/join-us">Volunteer</a><a href="/join-us">Partner with us</a><a href="mailto:hello@youngbeginnersinspiration.org">Contact us</a></div></div><div className="footer-reference-note"><h4>Our belief</h4><p>“Every generation has something valuable to share.”</p><div className="footer-socials"><a href="/join-us" aria-label="Facebook">f</a><a href="/join-us" aria-label="Instagram">◎</a><a href="/join-us" aria-label="LinkedIn">in</a></div></div></div><div className="page-width footer-reference-bottom"><span>© 2026 Young Beginners Inspiration</span><span>Leadership · Education · Business</span><a href="/">Back home <ArrowUpRight size={14} /></a></div></footer>;
+  return <footer className="reference-footer"><div className="page-width footer-reference-grid"><div className="footer-reference-brand"><a className="reference-brand footer-brand" href="/"><img src={mark} alt="Young Beginners Inspiration logo" /><span>Young Beginners<br />Inspiration</span></a><p>Equipping the young and the aged to inspire, learn, and become responsible leaders.</p><a className="reference-button yellow-button" href="/join-us">Support us <ArrowUpRight size={17} /></a></div><div className="footer-reference-links"><div><h4>Explore</h4>{navItems.slice(0, 4).map(([label, href]) => <a href={href} key={href}>{label}</a>)}<a href="/media">Media</a><a href="/gallery">Gallery</a></div><div><h4>Join us</h4><a href="/join-us">Volunteer</a><a href="/join-us">Partner with us</a><a href="mailto:hello@youngbeginnersinspiration.org">Contact us</a></div></div><div className="footer-reference-note"><h4>Our belief</h4><p>“Every generation has something valuable to share.”</p><div className="footer-socials"><a href="/join-us" aria-label="Facebook">f</a><a href="/join-us" aria-label="Instagram">◎</a><a href="/join-us" aria-label="LinkedIn">in</a></div></div></div><div className="page-width footer-reference-bottom"><span>© 2026 Young Beginners Inspiration</span><span>Leadership · Education · Business</span><a href="/">Back home <ArrowUpRight size={14} /></a></div></footer>;
 }
 
 export default function Subpage({ page }: { page: SubpageKey }) {
