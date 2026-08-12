@@ -86,3 +86,6 @@
 - [x] Adjust the rotating Who We Are photo frame to a shorter, wider horizontal proportion.
 - [x] Enhance the footer with additional useful navigation and engagement features without inventing organization contact details.
 - [x] Verify the wider image and enriched footer on desktop and mobile, run checks, and save a checkpoint.
+- [x] Redesign the homepage newsletter area into a more polished, visually inviting call-to-action.
+- [x] Enlarge the second Who We Are photo to give it stronger visual presence alongside the introduction.
+- [x] Verify the newsletter and enlarged Who We Are photo on desktop and mobile, run checks, and save a checkpoint.

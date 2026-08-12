@@ -7,6 +7,7 @@ import { trpc } from "@/lib/trpc";
 import { createImageWallRows, type ImageWallPhoto } from "@/lib/imageWall";
 import { homepageUpdates } from "@/lib/homeUpdates";
 import { footerImpactActions, footerNavigation } from "@/lib/footerNavigation";
+import { aboutMediaSlides } from "@/lib/aboutMedia";
 import PublicNavigation from "@/components/PublicNavigation";
 import {
   ArrowDown,
@@ -27,9 +28,9 @@ import {
 
 const mark = "/manus-storage/ybi-logo_a28c9057.png";
 const hero = "/manus-storage/ybi-hero_42b78e95.jpg";
-const publicSpeaking = "/manus-storage/ybi-public-speaking_08161e85.jpg";
-const entrepreneurship = "/manus-storage/ybi-entrepreneurship_d7a3f3ed.jpg";
-const community = "/manus-storage/ybi-community_b2ad3c56.jpg";
+const publicSpeaking = aboutMediaSlides[0].src;
+const community = aboutMediaSlides[1].src;
+const entrepreneurship = aboutMediaSlides[2].src;
 
 const imageWallFallback: ImageWallPhoto[] = [
   { src: publicSpeaking, alt: "Young people developing public-speaking confidence" },
@@ -62,12 +63,6 @@ const reasons = [
   { icon: HandHeart, title: "Open-hearted", text: "We build a platform where people can be seen, heard, and equipped." },
 ];
 
-const aboutImageSlides = [
-  { src: publicSpeaking, alt: "Young people taking part in a Young Beginners Inspiration learning session" },
-  { src: entrepreneurship, alt: "A Young Beginners Inspiration participant developing an entrepreneurial idea" },
-  { src: community, alt: "People taking part in an intergenerational Young Beginners Inspiration conversation" },
-];
-
 function RotatingAboutImage() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [exitingIndex, setExitingIndex] = useState<number | null>(null);
@@ -79,7 +74,7 @@ function RotatingAboutImage() {
     setActiveIndex((currentIndex) => {
       setExitingIndex(currentIndex);
       setDirection(step);
-      return (currentIndex + step + aboutImageSlides.length) % aboutImageSlides.length;
+      return (currentIndex + step + aboutMediaSlides.length) % aboutMediaSlides.length;
     });
   };
 
@@ -98,7 +93,7 @@ function RotatingAboutImage() {
   }, [reducedMotion]);
 
   return <div aria-label="Images from Young Beginners Inspiration activities" className="about-image-rotator" onTouchStart={(event) => { touchStartX.current = event.touches[0]?.clientX ?? null; }} onTouchEnd={(event) => { const endX = event.changedTouches[0]?.clientX; if (touchStartX.current === null || endX === undefined) return; const distance = endX - touchStartX.current; touchStartX.current = null; if (Math.abs(distance) < 36) return; changeImage(distance < 0 ? 1 : -1); }}>
-    {aboutImageSlides.map((image, index) => <img aria-hidden="true" alt="" className={`about-rotating-image${index === activeIndex ? " is-active" : ""}${index === exitingIndex ? " is-exiting" : ""}${direction === -1 ? " is-reverse" : ""}`} key={image.src} src={image.src} />)}
+    {aboutMediaSlides.map((image, index) => <img aria-hidden="true" alt="" className={`about-rotating-image${index === activeIndex ? " is-active" : ""}${index === exitingIndex ? " is-exiting" : ""}${direction === -1 ? " is-reverse" : ""}`} key={image.src} src={image.src} />)}
   </div>;
 }
 
@@ -211,7 +206,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="newsletter" className="newsletter-reference section-cream"><div className="page-width newsletter-reference-inner"><div><p className="reference-eyebrow"><span /> Stay connected</p><h2>Make room for<br /><span>the next invitation.</span></h2></div><form onSubmit={handleNewsletter}><label htmlFor="reference-name">Full name</label><input id="reference-name" name="name" placeholder="First & last name" required /><label htmlFor="reference-email">Email</label><input id="reference-email" name="email" type="email" placeholder="Email address" required /><button className="reference-button blue-button" type="submit">Subscribe <ArrowUpRight size={18} /></button></form></div></section>
+        <section id="newsletter" className="newsletter-reference section-cream"><div className="page-width newsletter-reference-inner"><div className="newsletter-intro"><p className="reference-eyebrow"><span /> Stay connected</p><h2>Make room for<br /><span>the next invitation.</span></h2><p>Thoughtful updates on leadership, learning, entrepreneurship, and the people building a positive difference together.</p><div className="newsletter-topics"><span>Leadership</span><span>Learning</span><span>Community</span></div></div><div className="newsletter-signup-card"><p className="newsletter-card-kicker">Keep the conversation moving</p><form onSubmit={handleNewsletter}><div className="newsletter-field"><label htmlFor="reference-name">Full name</label><input id="reference-name" name="name" placeholder="First & last name" required /></div><div className="newsletter-field"><label htmlFor="reference-email">Email</label><input id="reference-email" name="email" type="email" placeholder="Email address" required /></div><button className="reference-button blue-button" type="submit">Subscribe <ArrowUpRight size={18} /></button><p className="newsletter-form-note">Practical notes, meaningful invitations, and stories from the YBI community.</p></form></div></div></section>
       </main>
 
       <footer className="reference-footer"><div className="page-width footer-reference-grid"><div className="footer-reference-brand"><a className="reference-brand footer-brand" href="/"><img src={mark} alt="Young Beginners Inspiration logo" /><span>Young Beginners<br />Inspiration</span></a><p>Equipping the young and the aged to inspire, learn, and become responsible leaders.</p><a className="reference-button yellow-button" href="/join-us">Support us <ArrowUpRight size={17} /></a></div><div className="footer-reference-links">{footerNavigation.map((group) => <div key={group.title}><h4>{group.title}</h4>{group.links.map((link) => <a href={link.href} key={link.label}>{link.label}</a>)}</div>)}</div><div className="footer-reference-note"><h4>Our belief</h4><p>“Every generation has something valuable to share.”</p><div className="footer-socials"><a href="/join-us" aria-label="Facebook">f</a><a href="/join-us" aria-label="Instagram">◎</a><a href="/join-us" aria-label="LinkedIn">in</a></div><div className="footer-impact-card"><span>Make an impact</span><p>Find a meaningful way to learn, lead, volunteer, or partner with YBI.</p><div>{footerImpactActions.map((action) => <a href={action.href} key={action.label}>{action.label} <ArrowUpRight size={14} /></a>)}</div></div></div></div><div className="page-width footer-reference-bottom"><span>© 2026 Young Beginners Inspiration</span><span>Leadership · Education · Business</span><a href="/">Back home <ArrowUpRight size={14} /></a></div></footer>
