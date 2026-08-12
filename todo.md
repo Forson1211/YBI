@@ -50,3 +50,5 @@
 - [x] Verify desktop and mobile navigation, Our Team routing, tests, and production build before saving a checkpoint.
 - [x] Left-align all desktop dropdown menu item labels to match the supplied reference.
 - [x] Verify the dropdown alignment and save a checkpoint.
+- [x] Expand the desktop hero photo so it fills the entire hero background and keeps the speaker and audience clearly visible.
+- [x] Verify desktop and mobile hero presentation, then save a checkpoint.
