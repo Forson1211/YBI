@@ -47,7 +47,7 @@ Interactions should feel like turning a page or joining a conversation: links un
 Use restrained reveal-on-scroll transitions with 30–70ms stagger between related items, subtle image scale on hover, and 180–260ms ease-out transitions. Keep the editorial layout steady; animate opacity and transform only. Respect `prefers-reduced-motion` and never make essential information depend on movement.
 
 ### Typography System
-Use **Fraunces** for display headlines and pull quotes: expressive, slightly human, and distinctive without feeling ornamental. Use **DM Sans** for body copy, navigation, labels, and buttons: clear at small sizes and friendly in tone. All text remains upright; color and weight create emphasis instead of italic styling. Labels are uppercase with generous letter spacing.
+Use **Lato** across the entire website for a clean, confident, accessible nonprofit voice. Use the 900 weight for large headlines, 700 for emphasis and navigation, and 400 for body copy. All text remains upright; color and weight create emphasis instead of italic styling. Labels are uppercase with generous letter spacing.
 
 ### Brand Essence
 **Positioning:** A cross-generational nonprofit platform helping people find their voice, build practical capability, and use both for the good of their communities.

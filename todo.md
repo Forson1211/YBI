@@ -9,3 +9,5 @@
 - [x] Rework the hero into a centered, image-led, full-height presentation with reference-inspired typography and spacing.
 - [x] Add the reference-inspired nonprofit homepage rhythm: about, problem, solution, initiatives, why us, involvement, updates, newsletter, and footer sections.
 - [x] Verify the rebuilt homepage against the provided reference screenshot at mobile and desktop breakpoints.
+- [x] Replace the current typography stack with Lato across headings, body copy, navigation, labels, and buttons.
+- [x] Verify Lato rendering at desktop and mobile sizes and save an updated checkpoint.
