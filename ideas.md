@@ -1,0 +1,68 @@
+# Young Beginners Inspiration — Design Direction
+
+## Three Initial Directions
+
+### Theme Name: The Commons of Becoming
+**Very Brief Intro:** A warm, editorial nonprofit identity that treats growth as a shared table: generous margins, confident type, tactile paper tones, and photography that feels human rather than staged.
+**Probability:** 0.07
+
+### Theme Name: River of Possibility
+**Very Brief Intro:** A bright, optimistic direction shaped by flowing lines, sunlit greens, and layered moments of learning. The interface moves like a current from story to action.
+**Probability:** 0.03
+
+### Theme Name: Signal & Spark
+**Very Brief Intro:** A high-contrast, energetic system using charcoal, electric lime, and editorial collage to make youth leadership feel urgent and contemporary without becoming corporate.
+**Probability:** 0.09
+
+## Chosen Direction: The Commons of Becoming
+
+### Design Movement
+Contemporary African editorialism meets civic humanism: a print-inspired, image-led nonprofit identity with a tactile, grounded warmth. It borrows the confidence of independent magazines and the generosity of community noticeboards, then adds digital clarity and motion.
+
+### Core Principles
+1. **People before polish.** Photography, quotes, and language must feel lived-in, intergenerational, and specific.
+2. **Progress has texture.** Use paper grain, fine rules, soft shadows, and imperfect organic shapes instead of glossy gradients or generic cards.
+3. **Editorial rhythm.** Alternate wide statements, offset columns, and intimate content blocks. Avoid a single centered stack.
+4. **Invitation over persuasion.** Calls to action should feel like an open door to participation, not a hard sell.
+
+### Color Philosophy
+The base is a warm parchment, giving the site the emotional quality of a well-kept field notebook. Deep forest ink signals trust and stewardship. A marigold accent carries optimism and visibility, while coral provides an occasional human pulse for moments of action. The palette is intentionally sun-warmed rather than digitally bright.
+
+### Layout Paradigm
+Use an asymmetric editorial canvas with a left-aligned content spine and a secondary rail for annotations, statistics, or invitations. Hero content sits low and left over an image with a strong overlay; later sections break the page into offset bands, split panels, and horizontal story rails. The goal is to create a sense of discovery as the user scrolls.
+
+### Signature Elements
+- **The open-circle mark:** a hand-drawn-style ring with a rising spark, representing a meeting point between generations and a next step.
+- **Margin notes:** small uppercase labels, vertical rules, and short side annotations that make the page feel curated and active.
+- **Sunlit highlight:** marigold blocks and underlines that appear behind key words, like a highlighter swipe in a workshop notebook.
+
+### Interaction Philosophy
+Interactions should feel like turning a page or joining a conversation: links underline with a drawn-line effect, buttons lift subtly, and cards reveal a little more of their image on hover. Mobile navigation should be clear and calm. Forms should acknowledge participation immediately with a concise, human confirmation.
+
+### Animation
+Use restrained reveal-on-scroll transitions with 30–70ms stagger between related items, subtle image scale on hover, and 180–260ms ease-out transitions. Keep the editorial layout steady; animate opacity and transform only. Respect `prefers-reduced-motion` and never make essential information depend on movement.
+
+### Typography System
+Use **Fraunces** for display headlines and pull quotes: expressive, slightly human, and distinctive without feeling ornamental. Use **DM Sans** for body copy, navigation, labels, and buttons: clear at small sizes and friendly in tone. Headlines use tight line-height and occasional italic emphasis; labels are uppercase with generous letter spacing.
+
+### Brand Essence
+**Positioning:** A cross-generational nonprofit platform helping people find their voice, build practical capability, and use both for the good of their communities.
+
+**Personality:** generous, brave, grounded.
+
+### Brand Voice
+Headlines are direct, hopeful, and a little poetic. CTAs are active invitations. Microcopy is warm, concise, and never bureaucratic.
+
+Example headline: “Your voice is a beginning.”
+
+Example CTA: “Make room for possibility.”
+
+### Wordmark & Logo
+The wordmark is set in a high-contrast serif with a small open-circle-and-spark symbol replacing the dot over the “i” in Inspiration. The mark should work alone as a favicon and at larger sizes in the footer: an imperfect open ring, interrupted by a rising four-point spark.
+
+### Signature Brand Color
+**Workshop Marigold — `#E5A928`**. It is warm, visible, and ownable: the color of sunlight on a community hall floor, a highlighted idea, and the first brave note in a speaker’s notebook.
+
+## Content Commitments
+
+The site will clearly communicate the organization’s vision and mission, foreground **Public Speaking** and **Entrepreneurship**, and position **Leadership, Education, and Business** as the three focus areas. It will include accessible pathways to learn, participate, volunteer, and support the work without inventing impact statistics, testimonials, or partner claims.

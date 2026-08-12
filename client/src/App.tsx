@@ -1,3 +1,5 @@
+// Design reminder: The Commons of Becoming — warm editorial nonprofit design,
+// asymmetric rhythm, forest ink + Workshop Marigold, and human invitation over polish.
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
@@ -28,7 +30,6 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider
         defaultTheme="light"
-        // switchable
       >
         <TooltipProvider>
           <Toaster />
