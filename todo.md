@@ -52,3 +52,5 @@
 - [x] Verify the dropdown alignment and save a checkpoint.
 - [x] Expand the desktop hero photo so it fills the entire hero background and keeps the speaker and audience clearly visible.
 - [x] Verify desktop and mobile hero presentation, then save a checkpoint.
+- [x] Extend the desktop hero background photograph down to the start of the white content section, filling the full first screen below the header.
+- [x] Verify the expanded first-screen hero on desktop and mobile, then save a checkpoint.
