@@ -83,3 +83,6 @@
 - [x] Change the homepage visual-news card images to square frames that show each YBI photograph clearly.
 - [x] Add concise explanatory post summaries beneath every visual-news card headline.
 - [x] Verify the refined cards on desktop and mobile, run checks, and save a checkpoint.
+- [x] Adjust the rotating Who We Are photo frame to a shorter, wider horizontal proportion.
+- [x] Enhance the footer with additional useful navigation and engagement features without inventing organization contact details.
+- [x] Verify the wider image and enriched footer on desktop and mobile, run checks, and save a checkpoint.
