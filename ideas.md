@@ -26,7 +26,7 @@ Contemporary African editorialism meets civic humanism: a print-inspired, image-
 4. **Invitation over persuasion.** Calls to action should feel like an open door to participation, not a hard sell.
 
 ### Color Philosophy
-The base is a warm parchment, giving the site the emotional quality of a well-kept field notebook. Deep forest ink signals trust and stewardship. A marigold accent carries optimism and visibility, while coral provides an occasional human pulse for moments of action. The palette is intentionally sun-warmed rather than digitally bright.
+The logo is the source of truth for the visual system. Deep blue carries trust and clarity, red brings conviction and human energy, yellow creates optimism and visibility, and orange adds warmth to moments of action. Light cream surfaces keep the logo colors vivid without competing with the organization’s message.
 
 ### Layout Paradigm
 Use an asymmetric editorial canvas with a left-aligned content spine and a secondary rail for annotations, statistics, or invitations. Hero content sits low and left over an image with a strong overlay; later sections break the page into offset bands, split panels, and horizontal story rails. The goal is to create a sense of discovery as the user scrolls.
@@ -43,7 +43,7 @@ Interactions should feel like turning a page or joining a conversation: links un
 Use restrained reveal-on-scroll transitions with 30–70ms stagger between related items, subtle image scale on hover, and 180–260ms ease-out transitions. Keep the editorial layout steady; animate opacity and transform only. Respect `prefers-reduced-motion` and never make essential information depend on movement.
 
 ### Typography System
-Use **Fraunces** for display headlines and pull quotes: expressive, slightly human, and distinctive without feeling ornamental. Use **DM Sans** for body copy, navigation, labels, and buttons: clear at small sizes and friendly in tone. Headlines use tight line-height and occasional italic emphasis; labels are uppercase with generous letter spacing.
+Use **Fraunces** for display headlines and pull quotes: expressive, slightly human, and distinctive without feeling ornamental. Use **DM Sans** for body copy, navigation, labels, and buttons: clear at small sizes and friendly in tone. All text remains upright; color and weight create emphasis instead of italic styling. Labels are uppercase with generous letter spacing.
 
 ### Brand Essence
 **Positioning:** A cross-generational nonprofit platform helping people find their voice, build practical capability, and use both for the good of their communities.
@@ -61,7 +61,7 @@ Example CTA: “Make room for possibility.”
 The wordmark is set in a high-contrast serif with a small open-circle-and-spark symbol replacing the dot over the “i” in Inspiration. The mark should work alone as a favicon and at larger sizes in the footer: an imperfect open ring, interrupted by a rising four-point spark.
 
 ### Signature Brand Color
-**Workshop Marigold — `#E5A928`**. It is warm, visible, and ownable: the color of sunlight on a community hall floor, a highlighted idea, and the first brave note in a speaker’s notebook.
+**YBI Yellow — `#FFD000`**, supported by logo blue `#0B5D7B`, logo red `#EF2B1F`, and logo orange `#FF9F0A`. Together they create a recognizable, optimistic identity rooted in the supplied mark.
 
 ## Content Commitments
 
