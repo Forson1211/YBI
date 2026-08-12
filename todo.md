@@ -25,3 +25,7 @@
 - [x] Add admin management screens for gallery photos, programs, updates, and site content.
 - [x] Connect dashboard forms to persistent data and storage with loading, success, and error states.
 - [x] Verify public footer, admin authentication, CRUD flows, responsive layouts, and save a stable checkpoint.
+- [x] Audit header and public content horizontal offsets across desktop and mobile.
+- [x] Apply a shared container grid so hero, page sections, gallery content, footer, and header align consistently.
+- [x] Verify alignment at desktop and mobile sizes and save an updated checkpoint.
+- [x] Save the verified header-to-content alignment refinement as a new checkpoint.
