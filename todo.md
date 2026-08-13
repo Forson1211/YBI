@@ -117,3 +117,27 @@
 - [x] Optimize internal subpage navigation for faster transitions without changing the YBI design.
 - [x] Validate public route performance, run checks, and save a checkpoint.
 - [x] Save a checkpoint for the verified fast public-route navigation refinement.
+- [x] Audit the existing admin dashboard, protected procedures, and database schema for expansion opportunities.
+- [x] Add values-aligned admin tools for program delivery, community participation, content governance, and organizational updates.
+- [x] Expand dashboard insights with meaningful operational summaries and clear follow-up actions.
+- [x] Validate protected admin workflows, responsive dashboard behavior, tests, and production build before saving a checkpoint.
+- [x] Add a protected community inbox fed by the public Contact Us form, with response-status and staff-note management.
+- [x] Add a program calendar manager for YBI sessions, dates, locations, capacity, and publish readiness.
+- [x] Add an opportunity board manager for volunteering, mentoring, public-speaking, and partnership calls.
+- [x] Add a values-aligned impact tracker for administrator-entered progress indicators and goals.
+- [x] Add expanded operational overview metrics and direct management shortcuts for the new dashboard areas.
+- [x] Verify the final admin control-center sections provide real loading, error, empty, create, edit, and removal states for inbox, sessions, opportunities, and impact records.
+- [x] Verify public Contact Us submission reaches the protected community inbox with clear success and failure feedback.
+- [x] Add regression coverage for public contact intake and expanded protected administrative procedures beyond access-control checks.
+- [x] Save a checkpoint only after expanded admin workflow verification is complete.
+- [x] Add explicit regression tests for successful protected list, save, and removal procedure flows using isolated mocked persistence.
+- [x] Add clear mutation-error feedback for enquiry, session, opportunity, and impact-record removal actions.
+- [x] Clarify the inquiry creation flow in the admin interface: community enquiries are created through the public Contact Us form and managed in the protected inbox.
+- [x] Add smooth, non-disruptive entry transitions when navigating among public YBI subpages.
+- [x] Make the desktop YBI Admin side panel fixed during dashboard scrolling and restore the official YBI logo in its header.
+- [x] Correct dashboard content containment so the control center fits cleanly beside the sidebar on desktop and within the mobile viewport.
+- [x] Validate public-page motion and the refined admin shell on desktop and mobile, run checks, and save a checkpoint.
+- [x] Verify and preserve the official YBI logo rendering in the fixed desktop admin sidebar header.
+- [x] Save a new checkpoint for the verified public-page motion and refined YBI admin-shell changes.
+- [x] Save a recoverable checkpoint for the completed expanded YBI admin workflows.
+- [x] Save a recoverable checkpoint for the verified public-page transitions and refined YBI admin shell.

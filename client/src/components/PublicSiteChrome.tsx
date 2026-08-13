@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { ArrowUpRight, HandHeart, Menu, X } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import PublicNavigation from "@/components/PublicNavigation";
 import { footerImpactActions, footerNavigation } from "@/lib/footerNavigation";
 
@@ -79,5 +79,7 @@ export function PublicFooter() {
 }
 
 export function PublicPageShell({ children }: { children: ReactNode }) {
-  return <div className="reference-site-shell"><PublicHeader />{children}<PublicFooter /></div>;
+  const [location] = useLocation();
+
+  return <div className="reference-site-shell"><PublicHeader /><div className="public-route-enter" key={location}>{children}</div><PublicFooter /></div>;
 }

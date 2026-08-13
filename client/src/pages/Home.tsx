@@ -140,7 +140,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main id="top">
+      <main id="top" className="public-route-enter">
         <section className="reference-hero" aria-labelledby="hero-title">
           <img className="reference-hero-image" src={hero} alt="A young woman speaking to an intergenerational audience" />
           <div className="reference-hero-overlay" />

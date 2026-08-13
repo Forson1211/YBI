@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { startLogin } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BookOpen, Image, LayoutDashboard, LogOut, Newspaper, PanelLeft, PanelsTopLeft } from "lucide-react";
+import { BookOpen, CalendarDays, HandHeart, Image, LayoutDashboard, LogOut, MessageSquareHeart, Newspaper, PanelLeft, PanelsTopLeft, Target } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -33,12 +33,17 @@ const menuItems = [
   { icon: BookOpen, label: "Programs", path: "/admin/programs" },
   { icon: Newspaper, label: "Updates", path: "/admin/updates" },
   { icon: PanelsTopLeft, label: "Site content", path: "/admin/content" },
+  { icon: CalendarDays, label: "Program calendar", path: "/admin/sessions" },
+  { icon: MessageSquareHeart, label: "Community inbox", path: "/admin/inquiries" },
+  { icon: HandHeart, label: "Opportunities", path: "/admin/opportunities" },
+  { icon: Target, label: "Impact tracker", path: "/admin/impact" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
 const DEFAULT_WIDTH = 280;
 const MIN_WIDTH = 200;
 const MAX_WIDTH = 480;
+const ybiMark = "/manus-storage/ybi-logo_a28c9057.png";
 
 export default function DashboardLayout({
   children,
@@ -169,13 +174,10 @@ function DashboardLayoutContent({
               >
                 <PanelLeft className="h-4 w-4 text-muted-foreground" />
               </button>
-              {!isCollapsed ? (
-                <div className="flex items-center gap-2 min-w-0">
-                    <span className="font-semibold tracking-tight truncate">
-                      YBI Admin
-                  </span>
-                </div>
-              ) : null}
+              <div className="admin-sidebar-brand">
+                <img src={ybiMark} alt="Young Beginners Inspiration" />
+                {!isCollapsed ? <span>YBI Admin</span> : null}
+              </div>
             </div>
           </SidebarHeader>
 
@@ -243,22 +245,19 @@ function DashboardLayoutContent({
         />
       </div>
 
-      <SidebarInset>
+      <SidebarInset className="admin-content-inset">
         {isMobile && (
           <div className="flex border-b h-14 items-center justify-between bg-background/95 px-2 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
             <div className="flex items-center gap-2">
               <SidebarTrigger className="h-9 w-9 rounded-lg bg-background" />
               <div className="flex items-center gap-3">
-                <div className="flex flex-col gap-1">
-                  <span className="tracking-tight text-foreground">
-                    {activeMenuItem?.label ?? "Menu"}
-                  </span>
-                </div>
+                <img className="admin-mobile-mark" src={ybiMark} alt="Young Beginners Inspiration" />
+                <div className="flex flex-col gap-1"><span className="tracking-tight text-foreground">YBI Admin</span><span className="admin-mobile-section">{activeMenuItem?.label ?? "Menu"}</span></div>
               </div>
             </div>
           </div>
         )}
-        <main className="flex-1 p-4">{children}</main>
+        <main className="admin-shell-main">{children}</main>
       </SidebarInset>
     </>
   );

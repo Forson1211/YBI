@@ -1,9 +1,13 @@
 import { count, desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
+  communityInquiries,
   galleryPhotos,
+  impactMetrics,
   InsertUser,
+  opportunities,
   programs,
+  programSessions,
   siteContent,
   updates,
   users,
@@ -104,18 +108,156 @@ async function requireDb() {
 
 export async function getDashboardOverview() {
   const db = await requireDb();
-  const [gallery, programCount, updateCount, contentCount] = await Promise.all([
+  const [gallery, programCount, updateCount, contentCount, inquiryCount, sessionCount, opportunityCount, metricCount] = await Promise.all([
     db.select({ value: count() }).from(galleryPhotos),
     db.select({ value: count() }).from(programs),
     db.select({ value: count() }).from(updates),
     db.select({ value: count() }).from(siteContent),
+    db.select({ value: count() }).from(communityInquiries),
+    db.select({ value: count() }).from(programSessions),
+    db.select({ value: count() }).from(opportunities),
+    db.select({ value: count() }).from(impactMetrics),
   ]);
   return {
     gallery: gallery[0]?.value ?? 0,
     programs: programCount[0]?.value ?? 0,
     updates: updateCount[0]?.value ?? 0,
     content: contentCount[0]?.value ?? 0,
+    inquiries: inquiryCount[0]?.value ?? 0,
+    sessions: sessionCount[0]?.value ?? 0,
+    opportunities: opportunityCount[0]?.value ?? 0,
+    impactMetrics: metricCount[0]?.value ?? 0,
   };
+}
+
+export async function createCommunityInquiry(input: {
+  name: string;
+  email: string;
+  interest: string;
+  message: string;
+}) {
+  const db = await requireDb();
+  const result = await db.insert(communityInquiries).values(input);
+  return Number(result[0].insertId);
+}
+
+export async function listCommunityInquiries() {
+  const db = await requireDb();
+  return db.select().from(communityInquiries).orderBy(desc(communityInquiries.createdAt));
+}
+
+export async function updateCommunityInquiry(input: {
+  id: number;
+  status: "new" | "in_progress" | "responded" | "closed";
+  adminNotes?: string | null;
+}) {
+  const db = await requireDb();
+  await db.update(communityInquiries).set({
+    status: input.status,
+    adminNotes: input.adminNotes ?? null,
+    updatedAt: new Date(),
+  }).where(eq(communityInquiries.id, input.id));
+}
+
+export async function removeCommunityInquiry(id: number) {
+  const db = await requireDb();
+  await db.delete(communityInquiries).where(eq(communityInquiries.id, id));
+}
+
+export async function listProgramSessions() {
+  const db = await requireDb();
+  return db.select().from(programSessions).orderBy(programSessions.scheduledFor, desc(programSessions.createdAt));
+}
+
+export async function saveProgramSession(input: {
+  id?: number;
+  title: string;
+  focusArea: string;
+  details: string;
+  scheduledFor: Date;
+  venue: string;
+  capacity?: number | null;
+  status: "draft" | "published" | "complete";
+}) {
+  const db = await requireDb();
+  const values = { ...input, id: undefined, updatedAt: new Date() };
+  if (input.id) {
+    const { id, ...updateValues } = values;
+    await db.update(programSessions).set(updateValues).where(eq(programSessions.id, input.id));
+    return input.id;
+  }
+  const { id, ...insertValues } = values;
+  const result = await db.insert(programSessions).values(insertValues);
+  return Number(result[0].insertId);
+}
+
+export async function removeProgramSession(id: number) {
+  const db = await requireDb();
+  await db.delete(programSessions).where(eq(programSessions.id, id));
+}
+
+export async function listOpportunities() {
+  const db = await requireDb();
+  return db.select().from(opportunities).orderBy(opportunities.sortOrder, desc(opportunities.createdAt));
+}
+
+export async function saveOpportunity(input: {
+  id?: number;
+  title: string;
+  category: string;
+  summary: string;
+  commitment: string;
+  status: "draft" | "published" | "closed";
+  sortOrder: number;
+}) {
+  const db = await requireDb();
+  const values = { ...input, id: undefined, updatedAt: new Date() };
+  if (input.id) {
+    const { id, ...updateValues } = values;
+    await db.update(opportunities).set(updateValues).where(eq(opportunities.id, input.id));
+    return input.id;
+  }
+  const { id, ...insertValues } = values;
+  const result = await db.insert(opportunities).values(insertValues);
+  return Number(result[0].insertId);
+}
+
+export async function removeOpportunity(id: number) {
+  const db = await requireDb();
+  await db.delete(opportunities).where(eq(opportunities.id, id));
+}
+
+export async function listImpactMetrics() {
+  const db = await requireDb();
+  return db.select().from(impactMetrics).orderBy(impactMetrics.status, impactMetrics.focusArea, impactMetrics.title);
+}
+
+export async function saveImpactMetric(input: {
+  id?: number;
+  title: string;
+  focusArea: string;
+  description: string;
+  currentValue: number;
+  targetValue?: number | null;
+  unit: string;
+  period: string;
+  status: "active" | "archived";
+}) {
+  const db = await requireDb();
+  const values = { ...input, id: undefined, updatedAt: new Date() };
+  if (input.id) {
+    const { id, ...updateValues } = values;
+    await db.update(impactMetrics).set(updateValues).where(eq(impactMetrics.id, input.id));
+    return input.id;
+  }
+  const { id, ...insertValues } = values;
+  const result = await db.insert(impactMetrics).values(insertValues);
+  return Number(result[0].insertId);
+}
+
+export async function removeImpactMetric(id: number) {
+  const db = await requireDb();
+  await db.delete(impactMetrics).where(eq(impactMetrics.id, id));
 }
 
 export async function listGalleryPhotos(includeUnpublished = true) {

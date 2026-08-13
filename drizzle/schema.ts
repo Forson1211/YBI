@@ -70,7 +70,62 @@ export const siteContent = mysqlTable("siteContent", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
+export const communityInquiries = mysqlTable("communityInquiries", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 140 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  interest: varchar("interest", { length: 100 }).notNull(),
+  message: text("message").notNull(),
+  status: mysqlEnum("status", ["new", "in_progress", "responded", "closed"]).default("new").notNull(),
+  adminNotes: text("adminNotes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const programSessions = mysqlTable("programSessions", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 180 }).notNull(),
+  focusArea: varchar("focusArea", { length: 100 }).notNull(),
+  details: text("details").notNull(),
+  scheduledFor: timestamp("scheduledFor").notNull(),
+  venue: varchar("venue", { length: 180 }).notNull(),
+  capacity: int("capacity"),
+  status: mysqlEnum("status", ["draft", "published", "complete"]).default("draft").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const opportunities = mysqlTable("opportunities", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 180 }).notNull(),
+  category: varchar("category", { length: 100 }).notNull(),
+  summary: text("summary").notNull(),
+  commitment: varchar("commitment", { length: 160 }).notNull(),
+  status: mysqlEnum("status", ["draft", "published", "closed"]).default("draft").notNull(),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const impactMetrics = mysqlTable("impactMetrics", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 160 }).notNull(),
+  focusArea: varchar("focusArea", { length: 100 }).notNull(),
+  description: text("description").notNull(),
+  currentValue: int("currentValue").default(0).notNull(),
+  targetValue: int("targetValue"),
+  unit: varchar("unit", { length: 60 }).notNull(),
+  period: varchar("period", { length: 100 }).notNull(),
+  status: mysqlEnum("status", ["active", "archived"]).default("active").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
 export type GalleryPhoto = typeof galleryPhotos.$inferSelect;
 export type Program = typeof programs.$inferSelect;
 export type Update = typeof updates.$inferSelect;
 export type SiteContent = typeof siteContent.$inferSelect;
+export type CommunityInquiry = typeof communityInquiries.$inferSelect;
+export type ProgramSession = typeof programSessions.$inferSelect;
+export type Opportunity = typeof opportunities.$inferSelect;
+export type ImpactMetric = typeof impactMetrics.$inferSelect;
