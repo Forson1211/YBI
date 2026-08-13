@@ -157,3 +157,6 @@
 - [x] Repair the YBI homepage mobile image wall so all marquee rows remain visible, cover the viewport width, and move continuously without blank gaps.
 - [x] Add regression coverage, validate the image wall at phone and desktop sizes, and save a checkpoint for the verified repair.
 - [x] Save a new checkpoint for the verified continuous mobile image-wall repair.
+- [x] Diagnose the blank mobile image-wall rendering path in the deployed YBI homepage preview, including asset loading and computed layout.
+- [x] Implement a mobile-safe image-wall fallback that guarantees visible photo rows in phone previews.
+- [x] Add regression coverage, validate the deployed mobile rendering path, and save a checkpoint for the verified fix.

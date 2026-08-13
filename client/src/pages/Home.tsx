@@ -200,20 +200,33 @@ export default function Home() {
             </div>
             <Link className="reference-text-link" href="/gallery">View gallery <ArrowRight size={18} /></Link>
           </div>
-          <div className="image-wall-viewport" aria-hidden="true">
-            {imageWallRows.map((row, rowIndex) => (
-              <div className={`image-wall-track image-wall-track-${rowIndex + 1}`} key={rowIndex}>
-                {[0, 1].map((copyIndex) => (
-                  <div className="image-wall-sequence" key={`${rowIndex}-sequence-${copyIndex}`}>
-                    {row.map((photo, photoIndex) => (
-                      <figure className="image-wall-card" key={`${rowIndex}-${copyIndex}-${photoIndex}-${photo.src}`}>
-                        <img src={photo.src} alt="" />
-                      </figure>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            ))}
+          <div className="image-wall-stage" aria-hidden="true">
+            <div className="image-wall-viewport">
+              {imageWallRows.map((row, rowIndex) => (
+                <div className={`image-wall-track image-wall-track-${rowIndex + 1}`} key={rowIndex}>
+                  {[0, 1].map((copyIndex) => (
+                    <div className="image-wall-sequence" key={`${rowIndex}-sequence-${copyIndex}`}>
+                      {row.map((photo, photoIndex) => (
+                        <figure className="image-wall-card" key={`${rowIndex}-${copyIndex}-${photoIndex}-${photo.src}`}>
+                          <img src={photo.src} alt="" />
+                        </figure>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+            <div className="image-wall-mobile-fallback">
+              {imageWallRows.map((row, rowIndex) => (
+                <div className={`image-wall-mobile-fallback-row${rowIndex === 1 ? " is-portrait" : ""}`} key={`fallback-${rowIndex}`}>
+                  {row.slice(0, 4).map((photo, photoIndex) => (
+                    <figure className="image-wall-mobile-fallback-card" key={`fallback-${rowIndex}-${photoIndex}-${photo.src}`}>
+                      <img src={photo.src} alt="" />
+                    </figure>
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 

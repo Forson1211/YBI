@@ -16,4 +16,12 @@ describe("homepage image-wall mobile marquee safeguards", () => {
     expect(styles).toContain("@keyframes image-wall-left { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }");
     expect(styles).toContain(".image-wall-viewport { --image-wall-gap: 10px;");
   });
+
+  it("keeps a mobile-only visible photo layer behind the animated tracks", () => {
+    expect(homeSource).toContain('className="image-wall-stage"');
+    expect(homeSource).toContain('className="image-wall-mobile-fallback"');
+    expect(homeSource).toContain('className="image-wall-mobile-fallback-card"');
+    expect(styles).toContain(".image-wall-mobile-fallback { position: absolute;");
+    expect(styles).toContain(".image-wall-mobile-fallback-card img { display: block;");
+  });
 });
