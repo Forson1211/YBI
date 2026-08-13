@@ -16,6 +16,7 @@ import {
   Pencil,
   Plus,
   Save,
+  ShieldCheck,
   Target,
   Trash2,
   UploadCloud,
@@ -76,7 +77,19 @@ function AdminPageHeader({ section }: { section: string }) {
     overview: "YBI dashboard", gallery: "Gallery manager", programs: "Program manager", updates: "Updates manager", content: "Site content",
     sessions: "Program calendar", inquiries: "Community inbox", opportunities: "Opportunity board", impact: "Impact tracker",
   };
-  return <div className="admin-page-header"><div><p className="admin-kicker">Young Beginners Inspiration</p><h1>{names[section] || "YBI dashboard"}</h1></div><Link className="admin-public-link" href="/" target="_blank" rel="noreferrer">View public site <ArrowUpRight size={16} /></Link></div>;
+  const descriptions: Record<string, string> = {
+    overview: "A clear view of YBI’s community work, content, and next actions.",
+    gallery: "Curate the moments that show YBI’s work in action.",
+    programs: "Shape learning pathways and keep programme information current.",
+    updates: "Publish clear, timely stories from across the organisation.",
+    content: "Keep essential public messages accurate and up to date.",
+    sessions: "Plan and publish the next YBI learning experience.",
+    inquiries: "Respond thoughtfully to messages from the YBI community.",
+    opportunities: "Invite contributors into meaningful YBI opportunities.",
+    impact: "Track progress with transparent, values-led indicators.",
+  };
+  const title = names[section] || "YBI dashboard";
+  return <header className="admin-page-header"><div className="admin-page-heading"><p className="admin-kicker"><span aria-hidden="true" />Young Beginners Inspiration</p><h1>{title}</h1><p>{descriptions[section] || descriptions.overview}</p></div><div className="admin-page-actions"><span className="admin-header-status"><ShieldCheck size={15} /> Secure workspace</span><Link className="admin-public-link" href="/" target="_blank" rel="noreferrer">View public site <ArrowUpRight size={16} /></Link></div></header>;
 }
 
 function Overview() {

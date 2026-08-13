@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { startLogin } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BookOpen, CalendarDays, HandHeart, Image, LayoutDashboard, LogOut, MessageSquareHeart, Newspaper, PanelLeft, PanelsTopLeft, Target } from "lucide-react";
+import { BookOpen, CalendarDays, HandHeart, Image, LayoutDashboard, LogOut, MessageSquareHeart, Newspaper, PanelLeft, PanelsTopLeft, Target, X } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -114,7 +114,7 @@ function DashboardLayoutContent({
 }: DashboardLayoutContentProps) {
   const { user, logout } = useAuth();
   const [location, setLocation] = useLocation();
-  const { state, toggleSidebar } = useSidebar();
+  const { state, toggleSidebar, setOpenMobile } = useSidebar();
   const isCollapsed = state === "collapsed";
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -157,6 +157,11 @@ function DashboardLayoutContent({
     };
   }, [isResizing, setSidebarWidth]);
 
+  const handleNavigation = (path: string) => {
+    setLocation(path);
+    if (isMobile) setOpenMobile(false);
+  };
+
   return (
     <>
       <div className="relative" ref={sidebarRef}>
@@ -165,23 +170,33 @@ function DashboardLayoutContent({
           className="border-r-0 admin-sidebar"
           disableTransition={isResizing}
         >
-          <SidebarHeader className="h-16 justify-center">
-            <div className="flex items-center gap-3 px-2 transition-all w-full">
-              <button
-                onClick={toggleSidebar}
-                className="h-8 w-8 flex items-center justify-center hover:bg-accent rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring shrink-0"
-                aria-label="Toggle navigation"
-              >
-                <PanelLeft className="h-4 w-4 text-muted-foreground" />
-              </button>
-              <div className="admin-sidebar-brand">
-                <img src={ybiMark} alt="Young Beginners Inspiration" />
-                {!isCollapsed ? <span>YBI Admin</span> : null}
+          <SidebarHeader className={isMobile ? "admin-drawer-header" : "h-16 justify-center"}>
+            {isMobile ? (
+              <div className="admin-drawer-header-inner">
+                <div className="admin-drawer-brand">
+                  <img src={ybiMark} alt="Young Beginners Inspiration" />
+                  <div><strong>YBI Admin</strong><span>Management workspace</span></div>
+                </div>
+                <button onClick={() => setOpenMobile(false)} className="admin-drawer-close" aria-label="Close management menu"><X size={18} /></button>
               </div>
-            </div>
+            ) : (
+              <div className="flex items-center gap-3 px-2 transition-all w-full">
+                <button
+                  onClick={toggleSidebar}
+                  className="h-8 w-8 flex items-center justify-center hover:bg-accent rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring shrink-0"
+                  aria-label="Toggle navigation"
+                >
+                  <PanelLeft className="h-4 w-4 text-muted-foreground" />
+                </button>
+                <div className="admin-sidebar-brand">
+                  <img src={ybiMark} alt="Young Beginners Inspiration" />
+                  {!isCollapsed ? <span>YBI Admin</span> : null}
+                </div>
+              </div>
+            )}
           </SidebarHeader>
 
-          <SidebarContent className="gap-0">
+          <SidebarContent className="admin-sidebar-content gap-0">
             <SidebarMenu className="px-2 py-1">
               {menuItems.map(item => {
                 const isActive = location === item.path;
@@ -189,7 +204,7 @@ function DashboardLayoutContent({
                   <SidebarMenuItem key={item.path}>
                     <SidebarMenuButton
                       isActive={isActive}
-                      onClick={() => setLocation(item.path)}
+                      onClick={() => handleNavigation(item.path)}
                       tooltip={item.label}
                       className={`h-10 transition-all font-normal`}
                     >
@@ -247,14 +262,15 @@ function DashboardLayoutContent({
 
       <SidebarInset className="admin-content-inset">
         {isMobile && (
-          <div className="flex border-b h-14 items-center justify-between bg-background/95 px-2 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
-            <div className="flex items-center gap-2">
-              <SidebarTrigger className="h-9 w-9 rounded-lg bg-background" />
-              <div className="flex items-center gap-3">
+          <div className="admin-mobile-topbar">
+            <div className="admin-mobile-topbar-inner">
+              <SidebarTrigger className="admin-mobile-menu-button" aria-label="Open management menu" />
+              <div className="admin-mobile-brand">
                 <img className="admin-mobile-mark" src={ybiMark} alt="Young Beginners Inspiration" />
-                <div className="flex flex-col gap-1"><span className="tracking-tight text-foreground">YBI Admin</span><span className="admin-mobile-section">{activeMenuItem?.label ?? "Menu"}</span></div>
+                <div><strong>YBI Admin</strong><span>{activeMenuItem?.label ?? "Overview"}</span></div>
               </div>
             </div>
+            <span className="admin-mobile-status"><span aria-hidden="true" />Secure</span>
           </div>
         )}
         <main className="admin-shell-main">{children}</main>
