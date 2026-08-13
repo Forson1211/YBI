@@ -226,6 +226,8 @@ h2 { margin-bottom: 21px; color: var(--blue-deep); font-size: clamp(42px, 5.3vw,
 
 @media (max-width: 900px) { .home-image-wall { min-height: max(100dvh, 820px); overflow-x: clip; } .image-wall-viewport { max-width: 100%; touch-action: pan-y; } }
 
+@media (max-width: 900px) { .image-wall-viewport { display: none; } .image-wall-mobile-fallback { position: relative; inset: auto; z-index: 1; display: grid; grid-template-rows: auto auto auto; gap: 10px; width: 100%; overflow: hidden; pointer-events: none; } .image-wall-mobile-fallback-row { display: flex; width: max-content; height: clamp(152px, 39vw, 238px); min-width: max-content; overflow: visible; will-change: transform; animation: image-wall-left 64s linear infinite; } .image-wall-mobile-fallback-row.is-portrait { height: clamp(210px, 60vw, 320px); animation-name: image-wall-right; animation-duration: 70s; } .image-wall-mobile-fallback-sequence { display: flex; flex: 0 0 auto; gap: 10px; padding-right: 10px; } .image-wall-mobile-fallback-card { flex: 0 0 clamp(205px, 58vw, 320px); height: 100%; margin: 0; overflow: hidden; background: var(--blue-deep); } .image-wall-mobile-fallback-row.is-portrait .image-wall-mobile-fallback-card { flex-basis: clamp(168px, 48vw, 256px); } }
+
 .managed-hero-title { white-space: pre-line; }
 
 /* Admin dashboard: a focused, secure YBI workspace that uses the public brand without imitating the marketing site. */

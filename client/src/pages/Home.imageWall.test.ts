@@ -17,11 +17,16 @@ describe("homepage image-wall mobile marquee safeguards", () => {
     expect(styles).toContain(".image-wall-viewport { --image-wall-gap: 10px;");
   });
 
-  it("keeps a mobile-only visible photo layer behind the animated tracks", () => {
+  it("keeps a mobile-only visible photo layer that is itself continuously animated", () => {
     expect(homeSource).toContain('className="image-wall-stage"');
     expect(homeSource).toContain('className="image-wall-mobile-fallback"');
+    expect(homeSource).toContain('[0, 1].map((copyIndex) =>');
+    expect(homeSource).toContain('className="image-wall-mobile-fallback-sequence"');
     expect(homeSource).toContain('className="image-wall-mobile-fallback-card"');
-    expect(styles).toContain(".image-wall-mobile-fallback { position: absolute;");
+    expect(styles).toContain(".image-wall-viewport { display: none; }");
+    expect(styles).toContain(".image-wall-mobile-fallback-row { display: flex; width: max-content;");
+    expect(styles).toContain("animation: image-wall-left 64s linear infinite;");
+    expect(styles).toContain(".image-wall-mobile-fallback-row.is-portrait { height: clamp(210px, 60vw, 320px); animation-name: image-wall-right;");
     expect(styles).toContain(".image-wall-mobile-fallback-card img { display: block;");
   });
 });

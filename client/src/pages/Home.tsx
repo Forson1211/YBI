@@ -219,10 +219,14 @@ export default function Home() {
             <div className="image-wall-mobile-fallback">
               {imageWallRows.map((row, rowIndex) => (
                 <div className={`image-wall-mobile-fallback-row${rowIndex === 1 ? " is-portrait" : ""}`} key={`fallback-${rowIndex}`}>
-                  {row.slice(0, 4).map((photo, photoIndex) => (
-                    <figure className="image-wall-mobile-fallback-card" key={`fallback-${rowIndex}-${photoIndex}-${photo.src}`}>
-                      <img src={photo.src} alt="" />
-                    </figure>
+                  {[0, 1].map((copyIndex) => (
+                    <div className="image-wall-mobile-fallback-sequence" key={`fallback-${rowIndex}-sequence-${copyIndex}`}>
+                      {row.map((photo, photoIndex) => (
+                        <figure className="image-wall-mobile-fallback-card" key={`fallback-${rowIndex}-${copyIndex}-${photoIndex}-${photo.src}`}>
+                          <img src={photo.src} alt="" />
+                        </figure>
+                      ))}
+                    </div>
                   ))}
                 </div>
               ))}
