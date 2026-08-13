@@ -16,12 +16,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
-  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { startLogin } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BookOpen, CalendarDays, HandHeart, Image, LayoutDashboard, LogOut, MessageSquareHeart, Newspaper, PanelLeft, PanelsTopLeft, Target, X } from "lucide-react";
+import { BookOpen, CalendarDays, HandHeart, Image, LayoutDashboard, LogOut, Menu, MessageSquareHeart, Newspaper, PanelLeft, PanelsTopLeft, Target, X } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -114,7 +113,7 @@ function DashboardLayoutContent({
 }: DashboardLayoutContentProps) {
   const { user, logout } = useAuth();
   const [location, setLocation] = useLocation();
-  const { state, toggleSidebar, setOpenMobile } = useSidebar();
+  const { state, toggleSidebar, setOpenMobile, openMobile } = useSidebar();
   const isCollapsed = state === "collapsed";
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -250,21 +249,30 @@ function DashboardLayoutContent({
             </DropdownMenu>
           </SidebarFooter>
         </Sidebar>
-        <div
+        {!isMobile && <div
           className={`absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-primary/20 transition-colors ${isCollapsed ? "hidden" : ""}`}
           onMouseDown={() => {
             if (isCollapsed) return;
             setIsResizing(true);
           }}
           style={{ zIndex: 50 }}
-        />
+        />}
       </div>
 
       <SidebarInset className="admin-content-inset">
         {isMobile && (
           <div className="admin-mobile-topbar">
             <div className="admin-mobile-topbar-inner">
-              <SidebarTrigger className="admin-mobile-menu-button" aria-label="Open management menu" />
+              <button
+                type="button"
+                className="admin-mobile-menu-button"
+                onClick={toggleSidebar}
+                aria-label="Open YBI Admin navigation"
+                aria-expanded={openMobile}
+              >
+                <Menu size={20} strokeWidth={2.2} />
+                <span className="sr-only">Open management menu</span>
+              </button>
               <div className="admin-mobile-brand">
                 <img className="admin-mobile-mark" src={ybiMark} alt="Young Beginners Inspiration" />
                 <div><strong>YBI Admin</strong><span>{activeMenuItem?.label ?? "Overview"}</span></div>

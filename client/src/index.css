@@ -483,3 +483,28 @@ h2 { margin-bottom: 21px; color: var(--blue-deep); font-size: clamp(42px, 5.3vw,
 @media (max-width:768px){.admin-sidebar{position:static!important;height:auto!important;inset:auto!important}.admin-page-header{align-items:flex-start;gap:1rem;padding:1.15rem 0 1.5rem}.admin-page-header h1{font-size:1.95rem}.admin-page-heading>p:last-child{font-size:.75rem}.admin-page-actions{align-items:flex-end;flex-direction:column}.admin-header-status{display:none}.admin-public-link{min-height:38px;padding:.58rem .68rem;font-size:.67rem}}
 
 .admin-sidebar[data-sidebar="sidebar"],.admin-sidebar [data-sidebar="sidebar"],.admin-sidebar [data-slot="sidebar-inner"]{background:var(--blue-deep)!important;color:#f7f3ea}.admin-sidebar [data-slot="sidebar-menu-button"]{height:42px!important;border:1px solid transparent;border-radius:2px!important;color:rgba(255,255,255,.84)!important;font-weight:700!important}.admin-sidebar [data-slot="sidebar-menu-button"]:hover{color:#fff!important;background:rgba(255,255,255,.1)!important}.admin-sidebar [data-slot="sidebar-menu-button"][data-active="true"]{color:var(--blue-deep)!important;background:var(--yellow)!important;font-weight:900!important}.admin-sidebar [data-slot="sidebar-menu-button"] svg{color:inherit!important}.admin-sidebar [data-slot="sidebar-menu"]{gap:.24rem}.admin-sidebar [data-slot="sidebar-footer"]{border-top:1px solid rgba(255,255,255,.15)}.admin-sidebar [data-slot="sidebar-footer"] button{color:rgba(255,255,255,.9)!important}.admin-sidebar [data-slot="sidebar-footer"] p{color:inherit!important}.admin-sidebar [data-slot="sidebar-footer"] .text-muted-foreground{color:rgba(255,255,255,.6)!important}
+
+/* Phone-first YBI Admin shell: centered identity and a deliberate hamburger drawer. */
+@media (max-width:768px){
+  .admin-mobile-topbar{height:70px;padding:0 .8rem}
+  .admin-mobile-topbar-inner{width:100%;gap:0}
+  .admin-mobile-menu-button{position:relative;z-index:1;display:grid;place-content:center}
+  .admin-mobile-menu-button:focus-visible{outline:3px solid rgba(226,181,44,.42);outline-offset:3px}
+  .admin-mobile-brand{position:absolute;left:50%;max-width:calc(100% - 112px);transform:translateX(-50%);justify-content:center;text-align:left}
+  .admin-mobile-brand>div{min-width:0}
+  .admin-mobile-brand strong{font-size:.9rem}
+  .admin-mobile-brand span{font-size:.56rem}
+  .admin-mobile-status{width:38px;height:38px;justify-content:center;margin-left:auto;border:1px solid #d7e3e2;border-radius:50%;background:#fff;font-size:0}
+  .admin-mobile-status>span{width:8px;height:8px}
+  .admin-sidebar[data-mobile="true"]{width:min(84vw,320px)!important;max-width:320px!important;border-right:0!important;box-shadow:16px 0 38px rgba(4,38,53,.3)}
+  .admin-sidebar[data-mobile="true"] .admin-drawer-header-inner{padding:1.05rem 1rem}
+  .admin-sidebar[data-mobile="true"] [data-slot="sidebar-menu"]{padding:.55rem .6rem 1rem}
+  .admin-sidebar[data-mobile="true"] [data-slot="sidebar-menu-button"]{height:48px!important;padding-inline:.8rem!important;border-radius:8px!important}
+  .admin-sidebar[data-mobile="true"] [data-slot="sidebar-footer"]{padding:1rem!important}
+  .admin-shell-main{padding:.8rem .7rem 2rem}
+  .admin-page{padding:0 0 2.25rem}
+  .admin-overview{padding-top:1rem}
+  .admin-welcome{gap:1rem;padding:1.45rem 1.25rem}
+  .admin-welcome h2{font-size:clamp(2rem,10vw,2.55rem);line-height:.97}
+  .admin-welcome>p{font-size:.82rem;line-height:1.65}
+}

@@ -16,6 +16,10 @@ describe("YBI admin shell responsive safeguards", () => {
     expect(dashboardSource).toContain('? "admin-drawer-header" : "h-16 justify-center"');
     expect(dashboardSource).toContain('aria-label="Close management menu"');
     expect(dashboardSource).toContain('className="admin-mobile-topbar"');
+    expect(dashboardSource).toContain('aria-label="Open YBI Admin navigation"');
+    expect(dashboardSource).toContain("aria-expanded={openMobile}");
+    expect(dashboardSource).toContain("<Menu size={20} strokeWidth={2.2} />");
+    expect(dashboardSource).toContain('className="admin-mobile-brand"');
     expect(dashboardSource).toContain("Secure</span>");
     expect(sidebarSource).toContain('"bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden",');
     expect(sidebarSource).toContain("className\n          )}");
@@ -26,5 +30,7 @@ describe("YBI admin shell responsive safeguards", () => {
     expect(styles).toContain(".admin-mobile-topbar");
     expect(styles).toContain('.admin-sidebar[data-sidebar="sidebar"]');
     expect(styles).toContain(".admin-page-actions{align-items:flex-end;flex-direction:column}");
+    expect(styles).toContain(".admin-mobile-brand{position:absolute;left:50%");
+    expect(styles).toContain('.admin-sidebar[data-mobile="true"]');
   });
 });

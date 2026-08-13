@@ -150,3 +150,7 @@
 - [x] Repair the mobile admin navigation so it remains contained, readable, and easy to open and close without covering dashboard content incorrectly.
 - [x] Modernize the YBI Admin header with a clear branded hierarchy, balanced logo treatment, and responsive controls.
 - [x] Add regression coverage and validate the refined admin shell on mobile and desktop before saving a checkpoint.
+- [x] Center the YBI Admin logo and identity in the mobile dashboard header while retaining an accessible hamburger trigger.
+- [x] Make the mobile admin side navigation operate as a contained hamburger drawer with reliable open, close, overlay, and section-selection behavior.
+- [x] Refine dashboard small-screen spacing and hero-card presentation, add regression coverage, validate, and save a checkpoint.
+- [x] Save a new checkpoint for the centered YBI Admin mobile header, hamburger drawer behavior, and refined small-screen dashboard layout.
