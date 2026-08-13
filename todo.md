@@ -154,3 +154,6 @@
 - [x] Make the mobile admin side navigation operate as a contained hamburger drawer with reliable open, close, overlay, and section-selection behavior.
 - [x] Refine dashboard small-screen spacing and hero-card presentation, add regression coverage, validate, and save a checkpoint.
 - [x] Save a new checkpoint for the centered YBI Admin mobile header, hamburger drawer behavior, and refined small-screen dashboard layout.
+- [x] Repair the YBI homepage mobile image wall so all marquee rows remain visible, cover the viewport width, and move continuously without blank gaps.
+- [x] Add regression coverage, validate the image wall at phone and desktop sizes, and save a checkpoint for the verified repair.
+- [x] Save a new checkpoint for the verified continuous mobile image-wall repair.

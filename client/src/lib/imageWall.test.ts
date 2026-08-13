@@ -8,12 +8,11 @@ const photos = [
 ];
 
 describe("createImageWallRows", () => {
-  it("creates three duplicated marquee rows from a short gallery collection", () => {
+  it("creates three varied marquee sequences from a short gallery collection", () => {
     const rows = createImageWallRows(photos);
 
     expect(rows).toHaveLength(3);
-    expect(rows.every((row) => row.length === 16)).toBe(true);
-    expect(rows[0].slice(0, 8)).toEqual(rows[0].slice(8));
+    expect(rows.every((row) => row.length === 8)).toBe(true);
     expect(rows[1][0]).toEqual(photos[2]);
   });
 
@@ -28,7 +27,7 @@ describe("createImageWallRows", () => {
     }));
     const rows = createImageWallRows([...variedPhotos, variedPhotos[0]]);
 
-    expect(rows.every((row) => new Set(row.slice(0, 8).map((photo) => photo.src)).size === 8)).toBe(true);
+    expect(rows.every((row) => new Set(row.map((photo) => photo.src)).size === 8)).toBe(true);
     expect(rows.every((row) => row.every((photo, index) => index === 0 || photo.src !== row[index - 1]?.src))).toBe(true);
   });
 });

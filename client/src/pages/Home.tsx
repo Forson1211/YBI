@@ -192,7 +192,7 @@ export default function Home() {
 
         <section id="updates" className="updates-reference section-white"><div className="page-width"><div className="updates-heading"><div><p className="reference-eyebrow"><span /> From the platform</p><h2>Ideas worth<br /><span>carrying forward.</span></h2></div><p>Short notes and practical prompts for people finding their voice, building capability, and making a difference.</p></div><div className="updates-grid">{homepageUpdates.map((update) => <article className="update-news-card" key={update.category}><Link href="/media" aria-label={`Read ${update.title}`}><div className="update-news-image"><img src={update.image} alt={update.imageAlt} /><span className="update-category">{update.category}</span></div><div className="update-news-copy"><h3>{update.title}</h3><p className="update-news-summary">{update.summary}</p></div><div className="update-news-meta"><span>{update.source}</span><span>{update.detail}</span></div></Link></article>)}</div></div></section>
 
-        <section className="home-image-wall" aria-labelledby="image-wall-title">
+        <section id="gallery-wall" className="home-image-wall" aria-labelledby="image-wall-title">
           <div className="page-width image-wall-heading">
             <div>
               <p className="reference-eyebrow"><span /> From the YBI community</p>
@@ -203,10 +203,14 @@ export default function Home() {
           <div className="image-wall-viewport" aria-hidden="true">
             {imageWallRows.map((row, rowIndex) => (
               <div className={`image-wall-track image-wall-track-${rowIndex + 1}`} key={rowIndex}>
-                {row.map((photo, photoIndex) => (
-                  <figure className="image-wall-card" key={`${rowIndex}-${photoIndex}-${photo.src}`}>
-                    <img src={photo.src} alt="" />
-                  </figure>
+                {[0, 1].map((copyIndex) => (
+                  <div className="image-wall-sequence" key={`${rowIndex}-sequence-${copyIndex}`}>
+                    {row.map((photo, photoIndex) => (
+                      <figure className="image-wall-card" key={`${rowIndex}-${copyIndex}-${photoIndex}-${photo.src}`}>
+                        <img src={photo.src} alt="" />
+                      </figure>
+                    ))}
+                  </div>
                 ))}
               </div>
             ))}

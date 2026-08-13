@@ -1,0 +1,19 @@
+import { readFileSync } from "node:fs";
+import { describe, expect, it } from "vitest";
+
+describe("homepage image-wall mobile marquee safeguards", () => {
+  const homeSource = readFileSync(new URL("./Home.tsx", import.meta.url), "utf8");
+  const styles = readFileSync(new URL("../index.css", import.meta.url), "utf8");
+
+  it("renders two explicit matching sequences for every marquee row", () => {
+    expect(homeSource).toContain('id="gallery-wall"');
+    expect(homeSource).toContain("[0, 1].map((copyIndex) =>");
+    expect(homeSource).toContain('className="image-wall-sequence"');
+  });
+
+  it("keeps the mobile marquee gap in each repeated sequence and animates by one sequence width", () => {
+    expect(styles).toContain(".image-wall-sequence { display: flex; flex: 0 0 auto; gap: var(--image-wall-gap); padding-right: var(--image-wall-gap); }");
+    expect(styles).toContain("@keyframes image-wall-left { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }");
+    expect(styles).toContain(".image-wall-viewport { --image-wall-gap: 10px;");
+  });
+});

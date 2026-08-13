@@ -20,7 +20,6 @@ export function createImageWallRows(photos: ImageWallPhoto[]) {
 
   return ROW_OFFSETS.map((offset) => {
     const startingPoint = offset % normalized.length;
-    const shifted = [...normalized.slice(startingPoint), ...normalized.slice(0, startingPoint)];
-    return [...shifted, ...shifted];
+    return [...normalized.slice(startingPoint), ...normalized.slice(0, startingPoint)];
   });
 }
