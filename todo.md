@@ -141,3 +141,9 @@
 - [x] Save a new checkpoint for the verified public-page motion and refined YBI admin-shell changes.
 - [x] Save a recoverable checkpoint for the completed expanded YBI admin workflows.
 - [x] Save a recoverable checkpoint for the verified public-page transitions and refined YBI admin shell.
+- [x] Expand the YBI admin workspace to use the available desktop width cleanly beside the fixed sidebar.
+- [x] Rebalance dashboard cards and content panels so the control center feels proportionate at wide desktop sizes.
+- [x] Verify the expanded workspace remains contained and usable on desktop and mobile, run checks, and save a checkpoint.
+- [x] Save a new checkpoint for the verified expanded YBI admin workspace and responsive grid rebalance.
+- [x] Save a checkpoint for the verified widened YBI admin workspace and responsive grid rebalance.
+- [x] Save a new checkpoint after the verified widened YBI admin workspace and responsive grid rebalance.

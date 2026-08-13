@@ -457,3 +457,15 @@ h2 { margin-bottom: 21px; color: var(--blue-deep); font-size: clamp(42px, 5.3vw,
 .admin-sidebar{position:fixed!important;inset-block:0!important;left:0!important;height:100svh!important;z-index:45}.admin-sidebar-brand{display:flex;min-width:0;align-items:center;gap:.55rem}.admin-sidebar-brand img{width:31px;height:31px;flex:0 0 auto;object-fit:contain}.admin-sidebar-brand span{overflow:hidden;color:var(--blue-deep);font-size:.88rem;font-weight:900;letter-spacing:-.03em;white-space:nowrap}.admin-content-inset{min-width:0;overflow-x:clip;background:#faf7ee}.admin-shell-main{box-sizing:border-box;min-width:0;max-width:100%;padding:1rem}.admin-page{box-sizing:border-box;width:100%;max-width:1280px;min-width:0}.admin-mobile-mark{width:25px;height:25px;object-fit:contain}.admin-mobile-section{color:#657e80;font-size:.62rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
 @media (max-width: 768px){.admin-sidebar{position:fixed!important}.admin-shell-main{padding:.7rem}.admin-content-inset{width:100%;min-width:0}.admin-page{padding-inline:.7rem}.admin-page-header{gap:.75rem}.admin-welcome{min-width:0}.admin-metric-grid{min-width:0}.admin-panel,.admin-action-strip{min-width:0}.admin-manager-grid,.admin-inbox-layout{min-width:0}.admin-record-row,.admin-session-row,.admin-impact-row{min-width:0}}
 @media (prefers-reduced-motion: reduce){.public-route-enter{animation:none!important;transform:none!important}}
+
+/* Give the protected workspace the full width already reserved by the fixed sidebar. */
+.admin-shell-main{padding:clamp(1.25rem,2vw,2.5rem)}
+.admin-page{max-width:none;margin:0;padding:0 0 4rem}
+.admin-overview{max-width:none}
+.admin-welcome{grid-template-columns:minmax(0,1.12fr) minmax(340px,.88fr);gap:clamp(2rem,4vw,5rem);padding:clamp(2.5rem,4vw,4rem)}
+.admin-metric-grid{gap:clamp(.85rem,1.25vw,1.35rem);margin-top:clamp(1.2rem,2vw,1.8rem)}
+.admin-metric-card{min-height:182px;padding:clamp(1.25rem,1.5vw,1.7rem)}
+.admin-action-strip{margin-top:clamp(1.2rem,2vw,1.8rem)}
+.admin-manager-grid,.admin-inbox-layout{gap:clamp(1.15rem,1.8vw,2rem);padding-top:clamp(1.8rem,2.5vw,2.75rem)}
+@media (min-width:1440px){.admin-manager-grid{grid-template-columns:minmax(340px,.76fr) minmax(0,1.24fr)}.admin-inbox-layout{grid-template-columns:minmax(320px,.63fr) minmax(0,1.37fr)}.admin-panel{padding:clamp(1.55rem,2vw,2.2rem)}.admin-list-panel{min-height:30rem}}
+@media (max-width:768px){.admin-shell-main{padding:.7rem}.admin-page{padding:0 0 2.5rem}.admin-welcome{grid-template-columns:1fr;gap:1.25rem;padding:1.65rem}.admin-welcome-copy{max-width:none}.admin-metric-card{min-height:154px;padding:1rem}}
