@@ -35,5 +35,7 @@ describe("YBI assistant compact chat presentation", () => {
     expect(styles).toContain("html.ybi-assistant-open, html.ybi-assistant-open body");
     expect(styles).toContain("max-height: calc(100dvh - var(--header-height) - 80px)");
     expect(styles).toContain(".ybi-assistant-panel { position: absolute");
+    expect(styles).toContain(".ybi-assistant-root { inset: 0; pointer-events: none; }");
+    expect(styles).not.toContain(".ybi-assistant-root { inset: 0; right: auto; bottom: auto;");
   });
 });

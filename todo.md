@@ -208,3 +208,5 @@
 - [x] Verify the restored logo treatment on desktop and mobile, then save a checkpoint.
 - [x] Keep the YBI visitor assistant stable when a mobile on-screen keyboard opens, without shifting the fixed public header or page.
 - [x] Add regression coverage and validate the keyboard-safe assistant layout on a representative phone viewport before saving a checkpoint.
+- [x] Restore the visible YBI chatbot launcher after the mobile keyboard-safe overlay refinement.
+- [x] Verify the launcher remains visible while the mobile chat preserves its keyboard-safe, fixed-header behavior before saving a checkpoint.
