@@ -176,3 +176,8 @@
 - [x] Add regression coverage, validate the maintenance toolkit, and save a checkpoint.
 - [x] Fix the Vite HMR WebSocket configuration so the proxied YBI development preview no longer attempts localhost:5173.
 - [x] Validate browser-console WebSocket health, run regression checks, and save a checkpoint for the HMR repair.
+- [x] Define the YBI visitor-assistant knowledge, safety boundaries, suggested prompts, and page-guidance routes.
+- [x] Add a responsive, accessible floating YBI chatbot launcher visually inspired by the supplied reference.
+- [x] Build a YBI visitor-assistant chat panel with welcome prompts, answer rendering, and guided page links.
+- [x] Implement a public server-side AI assistant procedure with grounded YBI context and safe fallbacks.
+- [x] Add regression tests and validate the assistant on desktop and mobile before saving a checkpoint.

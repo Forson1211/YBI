@@ -16,6 +16,7 @@ import JoinUs from "./pages/JoinUs";
 import Media from "./pages/Media";
 import Programs from "./pages/Programs";
 import Team from "./pages/Team";
+import { YbiVisitorAssistant } from "./components/YbiVisitorAssistant";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -50,10 +51,11 @@ function App() {
       <ThemeProvider
         defaultTheme="light"
       >
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+            <YbiVisitorAssistant />
+          </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

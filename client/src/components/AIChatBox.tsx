@@ -165,6 +165,13 @@ export function AIChatBox({
     }
   };
 
+  // Follow both optimistic visitor messages and the completed assistant reply.
+  // This keeps compact embedded chat experiences from leaving the answer below
+  // the visible scroll region after an asynchronous mutation completes.
+  useEffect(() => {
+    if (displayMessages.length > 0) scrollToBottom();
+  }, [messages.length, isLoading]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmedInput = input.trim();

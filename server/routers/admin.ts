@@ -30,6 +30,7 @@ import {
 } from "../db";
 import { storagePut } from "../storage";
 import { adminProcedure, publicProcedure, router } from "../_core/trpc";
+import { visitorAssistantRouter } from "./assistant";
 
 const contentStatus = z.enum(["draft", "published"]);
 const imageInput = z.object({
@@ -119,6 +120,7 @@ export const publicSiteRouter = router({
   programs: publicProcedure.query(() => listPrograms(false)),
   updates: publicProcedure.query(() => listUpdates(false)),
   content: publicProcedure.input(z.object({ contentKey: z.string().min(1).max(100) })).query(({ input }) => getSiteContent(input.contentKey)),
+  assistant: visitorAssistantRouter,
   contact: router({
     submit: publicProcedure.input(communityInquiryInput).mutation(({ input }) => createCommunityInquiry(input)),
   }),
