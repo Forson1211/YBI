@@ -174,3 +174,5 @@
 - [x] Add accessible alt-text metadata for every YBI local image to the asset manifest.
 - [x] Document the contributor workflow for optimizing, replacing, validating, and committing local images.
 - [x] Add regression coverage, validate the maintenance toolkit, and save a checkpoint.
+- [x] Fix the Vite HMR WebSocket configuration so the proxied YBI development preview no longer attempts localhost:5173.
+- [x] Validate browser-console WebSocket health, run regression checks, and save a checkpoint for the HMR repair.

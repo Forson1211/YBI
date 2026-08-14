@@ -170,6 +170,13 @@ export default defineConfig({
   },
   server: {
     host: true,
+    // The development preview is served through a secure public proxy. Tell the
+    // Vite client to reconnect through that same browser origin rather than
+    // falling back to its internal localhost development port.
+    hmr: {
+      protocol: "wss",
+      clientPort: 443,
+    },
     allowedHosts: [
       ".manuspre.computer",
       ".manus.computer",

@@ -7,9 +7,14 @@ import { createServer as createViteServer } from "vite";
 import viteConfig from "../../vite.config";
 
 export async function setupVite(app: Express, server: Server) {
+  const configuredHmr =
+    typeof viteConfig.server?.hmr === "object" ? viteConfig.server.hmr : {};
   const serverOptions = {
+    ...viteConfig.server,
     middlewareMode: true,
-    hmr: { server },
+    // Preserve the proxy-aware client configuration from vite.config.ts while
+    // attaching Vite's WebSocket server to the public Express HTTP server.
+    hmr: { ...configuredHmr, server },
     allowedHosts: true as const,
   };
 
