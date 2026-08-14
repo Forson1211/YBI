@@ -212,3 +212,6 @@
 - [x] Verify the launcher remains visible while the mobile chat preserves its keyboard-safe, fixed-header behavior before saving a checkpoint.
 - [x] Prevent iOS Safari from scrolling the public page and fixed header when a visitor focuses or types in the YBI assistant input.
 - [x] Validate the open mobile assistant on an iPhone-style viewport with regression coverage before saving a checkpoint.
+- [x] Remove the yellow backing shape behind the homepage rotating image slider.
+- [x] Display the homepage rotating image in a square frame on mobile devices while preserving its smooth rotation.
+- [x] Validate the revised rotating image frame on desktop and mobile before saving a checkpoint.

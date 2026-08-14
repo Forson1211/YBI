@@ -29,4 +29,12 @@ describe("homepage image-wall mobile marquee safeguards", () => {
     expect(styles).toContain(".image-wall-mobile-fallback-row.is-portrait { height: clamp(210px, 60vw, 320px); animation-name: image-wall-right;");
     expect(styles).toContain(".image-wall-mobile-fallback-card img { display: block;");
   });
+
+  it("keeps the rotating about image clean on desktop and square without a yellow backing on mobile", () => {
+    expect(styles).toContain(".about-reference-image { position: relative; width: 100%; height: auto; aspect-ratio: 16 / 10; margin: 0; overflow: hidden; background: var(--blue-deep); }");
+    expect(styles).not.toContain("box-shadow: 20px 20px 0 rgba(255,208,0,.58)");
+    expect(styles).not.toContain("box-shadow: 14px 14px 0 rgba(255,208,0,.58)");
+    expect(styles).not.toContain("box-shadow: 10px 10px 0 rgba(255,208,0,.58)");
+    expect(styles).toContain(".about-reference-image { height: auto; aspect-ratio: 1 / 1; box-shadow: none; }");
+  });
 });
