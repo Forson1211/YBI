@@ -37,6 +37,11 @@ describe("YBI assistant compact chat presentation", () => {
     expect(styles).toContain("ybi-live-bot-idle");
   });
 
+  it("keeps the live launcher character larger on desktop while preserving the compact mobile override", () => {
+    expect(styles).toContain(".ybi-assistant-launcher-orb .ybi-live-bot { width: 32px; height: 32px; font-size: 32px; }");
+    expect(styles).toContain("@media (max-width: 520px) { .ybi-assistant-launcher-orb .ybi-live-bot { width: 24px; height: 24px; }");
+  });
+
   it("keeps the mobile assistant within the keyboard-resized viewport without moving the public page", () => {
     const indexHtml = readFileSync(new URL("../../index.html", import.meta.url), "utf8");
 

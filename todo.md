@@ -217,3 +217,5 @@
 - [x] Validate the revised rotating image frame on desktop and mobile before saving a checkpoint.
 - [x] Add subtle blinking-eye and character-motion details to the shared YBI chatbot icon.
 - [x] Preserve accessible reduced-motion behavior and validate the animated chatbot icon in the launcher and chat interface before saving a checkpoint.
+- [x] Increase the live character size inside the desktop YBI chatbot launcher while retaining its compact mobile sizing.
+- [x] Validate the desktop and mobile chatbot launcher proportions before saving a checkpoint.
