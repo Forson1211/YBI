@@ -15,7 +15,7 @@ export const homepageUpdates: HomepageUpdateCard[] = [
     summary: "Leadership takes root when people listen, accept responsibility, and make space for the next person to contribute.",
     source: "YBI platform",
     detail: "Leadership note",
-    image: "/manus-storage/ybi-community_b2ad3c56.jpg",
+    image: "/ybi-assets/community/ybi-community.jpg",
     imageAlt: "People taking part in an intergenerational Young Beginners Inspiration conversation",
   },
   {
@@ -24,7 +24,7 @@ export const homepageUpdates: HomepageUpdateCard[] = [
     summary: "A practical idea becomes meaningful when it responds to a need, builds skills, and creates value for others.",
     source: "YBI platform",
     detail: "Enterprise note",
-    image: "/manus-storage/ybi-entrepreneurship_d7a3f3ed.jpg",
+    image: "/ybi-assets/programs/ybi-entrepreneurship.jpg",
     imageAlt: "Participants developing an entrepreneurial idea together",
   },
   {
@@ -33,7 +33,7 @@ export const homepageUpdates: HomepageUpdateCard[] = [
     summary: "Confidence grows through guided practice, constructive feedback, and the courage to speak in front of others.",
     source: "YBI platform",
     detail: "Voice note",
-    image: "/manus-storage/ybi-public-speaking_08161e85.jpg",
+    image: "/ybi-assets/programs/ybi-public-speaking.jpg",
     imageAlt: "A participant presenting to a Young Beginners Inspiration group",
   },
 ];

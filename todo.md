@@ -165,3 +165,8 @@
 - [x] Inventory the YBI logo and every image used by the live website.
 - [x] Create an organized downloadable YBI source-asset package plus a GitHub-friendly manifest without changing live asset URLs.
 - [x] Verify the package contents, preserve the repository update, and deliver the download.
+- [x] Add the actual YBI logo and all site images into an organized code-repository folder for direct GitHub access.
+- [x] Verify the repository image library and preserve the GitHub-ready update.
+- [x] Configure Git LFS and place the actual YBI logo and site images in ybi-source-assets/files for direct GitHub access.
+- [x] Make every YBI site image reference a clone-safe repository asset path so the design renders after a repository clone.
+- [x] Verify the clone-safe asset configuration, preserve publishing compatibility, and save a checkpoint.

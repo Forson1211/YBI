@@ -2,9 +2,9 @@ import { ArrowUpRight, BriefcaseBusiness, HandHeart, UsersRound } from "lucide-r
 import { PublicPageShell } from "@/components/PublicSiteChrome";
 import { Link } from "wouter";
 
-const publicSpeaking = "/manus-storage/ybi-public-speaking_08161e85.jpg";
-const entrepreneurship = "/manus-storage/ybi-entrepreneurship_d7a3f3ed.jpg";
-const community = "/manus-storage/ybi-community_b2ad3c56.jpg";
+const publicSpeaking = "/ybi-assets/programs/ybi-public-speaking.jpg";
+const entrepreneurship = "/ybi-assets/programs/ybi-entrepreneurship.jpg";
+const community = "/ybi-assets/community/ybi-community.jpg";
 
 const roles = [
   { image: community, label: "Community hosts", title: "Create a room where people belong.", text: "They make gatherings feel open, respectful, and ready for meaningful conversation.", icon: UsersRound },

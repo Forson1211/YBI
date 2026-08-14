@@ -2,8 +2,8 @@ import { ArrowRight, ArrowUpRight, HeartHandshake, Lightbulb, UsersRound } from 
 import { PublicPageShell } from "@/components/PublicSiteChrome";
 import { Link } from "wouter";
 
-const community = "/manus-storage/ybi-community_b2ad3c56.jpg";
-const publicSpeaking = "/manus-storage/ybi-public-speaking_08161e85.jpg";
+const community = "/ybi-assets/community/ybi-community.jpg";
+const publicSpeaking = "/ybi-assets/programs/ybi-public-speaking.jpg";
 
 const commitments = [
   { icon: UsersRound, title: "Make room", text: "We create welcoming spaces where people of different ages can speak, listen, learn, and contribute." },

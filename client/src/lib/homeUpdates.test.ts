@@ -11,7 +11,7 @@ describe("homepageUpdates", () => {
       expect(update.summary).toBeTruthy();
       expect(update.source).toBeTruthy();
       expect(update.detail).toBeTruthy();
-      expect(update.image).toMatch(/^\/manus-storage\//);
+      expect(update.image).toMatch(/^\/ybi-assets\//);
       expect(update.imageAlt).toBeTruthy();
     }
   });

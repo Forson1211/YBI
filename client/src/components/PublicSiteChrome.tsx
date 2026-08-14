@@ -5,7 +5,7 @@ import { Link, useLocation } from "wouter";
 import PublicNavigation from "@/components/PublicNavigation";
 import { footerImpactActions, footerNavigation } from "@/lib/footerNavigation";
 
-const mark = "/manus-storage/ybi-logo_a28c9057.png";
+const mark = "/ybi-assets/brand/ybi-logo.png";
 
 export function PublicHeader() {
   const [menuOpen, setMenuOpen] = useState(false);

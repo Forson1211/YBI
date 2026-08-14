@@ -2,9 +2,9 @@ import { ArrowRight, ArrowUpRight, Check, Mic2, Sparkles, UsersRound } from "luc
 import { PublicPageShell } from "@/components/PublicSiteChrome";
 import { Link } from "wouter";
 
-const publicSpeaking = "/manus-storage/ybi-public-speaking_08161e85.jpg";
-const entrepreneurship = "/manus-storage/ybi-entrepreneurship_d7a3f3ed.jpg";
-const community = "/manus-storage/ybi-community_b2ad3c56.jpg";
+const publicSpeaking = "/ybi-assets/programs/ybi-public-speaking.jpg";
+const entrepreneurship = "/ybi-assets/programs/ybi-entrepreneurship.jpg";
+const community = "/ybi-assets/community/ybi-community.jpg";
 
 const programs = [
   { id: "public-speaking", image: publicSpeaking, kicker: "Voice · Presence · Courage", title: "Public Speaking", text: "Practice clear communication, confident delivery, active listening, and the courage to bring an important idea into the room.", icon: Mic2 },

@@ -28,8 +28,8 @@ import {
   X,
 } from "lucide-react";
 
-const mark = "/manus-storage/ybi-logo_a28c9057.png";
-const hero = "/manus-storage/ybi-hero_42b78e95.jpg";
+const mark = "/ybi-assets/brand/ybi-logo.png";
+const hero = "/ybi-assets/homepage/ybi-hero.jpg";
 const publicSpeaking = aboutMediaSlides[0].src;
 const community = aboutMediaSlides[1].src;
 const entrepreneurship = aboutMediaSlides[2].src;
@@ -38,11 +38,11 @@ const imageWallFallback: ImageWallPhoto[] = [
   { src: publicSpeaking, alt: "Young people developing public-speaking confidence" },
   { src: entrepreneurship, alt: "Participants exploring entrepreneurship together" },
   { src: community, alt: "Intergenerational community conversation" },
-  { src: "/manus-storage/ybi-wall-youth-leadership_54de63d4.jpg", alt: "Young facilitator leading a community leadership workshop" },
-  { src: "/manus-storage/ybi-wall-intergenerational-mentoring_a05ff1a5.jpg", alt: "Intergenerational mentoring around a practical project" },
-  { src: "/manus-storage/ybi-wall-entrepreneurship_b46594df.jpg", alt: "Community members developing an entrepreneurship idea" },
-  { src: "/manus-storage/ybi-wall-public-speaking_ad917d32.jpg", alt: "Young participant practicing public speaking" },
-  { src: "/manus-storage/ybi-wall-community-circle_014bceb5.jpg", alt: "An outdoor intergenerational community circle" },
+  { src: "/ybi-assets/image-wall/ybi-wall-youth-leadership.jpg", alt: "Young facilitator leading a community leadership workshop" },
+  { src: "/ybi-assets/image-wall/ybi-wall-intergenerational-mentoring.jpg", alt: "Intergenerational mentoring around a practical project" },
+  { src: "/ybi-assets/image-wall/ybi-wall-entrepreneurship.jpg", alt: "Community members developing an entrepreneurship idea" },
+  { src: "/ybi-assets/image-wall/ybi-wall-public-speaking.jpg", alt: "Young participant practicing public speaking" },
+  { src: "/ybi-assets/image-wall/ybi-wall-community-circle.jpg", alt: "An outdoor intergenerational community circle" },
 ];
 
 const problemCards = [

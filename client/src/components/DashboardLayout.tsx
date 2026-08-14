@@ -42,7 +42,7 @@ const SIDEBAR_WIDTH_KEY = "sidebar-width";
 const DEFAULT_WIDTH = 280;
 const MIN_WIDTH = 200;
 const MAX_WIDTH = 480;
-const ybiMark = "/manus-storage/ybi-logo_a28c9057.png";
+const ybiMark = "/ybi-assets/brand/ybi-logo.png";
 
 export default function DashboardLayout({
   children,

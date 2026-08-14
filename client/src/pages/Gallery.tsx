@@ -7,11 +7,11 @@ import { trpc } from "@/lib/trpc";
 import PublicNavigation from "@/components/PublicNavigation";
 import { PublicFooter } from "@/components/PublicSiteChrome";
 
-const mark = "/manus-storage/ybi-logo_a28c9057.png";
-const hero = "/manus-storage/ybi-hero_42b78e95.jpg";
-const publicSpeaking = "/manus-storage/ybi-public-speaking_08161e85.jpg";
-const entrepreneurship = "/manus-storage/ybi-entrepreneurship_d7a3f3ed.jpg";
-const community = "/manus-storage/ybi-community_b2ad3c56.jpg";
+const mark = "/ybi-assets/brand/ybi-logo.png";
+const hero = "/ybi-assets/homepage/ybi-hero.jpg";
+const publicSpeaking = "/ybi-assets/programs/ybi-public-speaking.jpg";
+const entrepreneurship = "/ybi-assets/programs/ybi-entrepreneurship.jpg";
+const community = "/ybi-assets/community/ybi-community.jpg";
 type GalleryPhoto = { id: string | number; src: string; title: string; caption: string };
 
 const seededPhotos: GalleryPhoto[] = [
