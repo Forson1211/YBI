@@ -2,9 +2,9 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 describe("YBI admin shell responsive safeguards", () => {
-  const dashboardSource = readFileSync(new URL("./DashboardLayout.tsx", import.meta.url), "utf8");
-  const sidebarSource = readFileSync(new URL("./ui/sidebar.tsx", import.meta.url), "utf8");
-  const styles = readFileSync(new URL("../index.css", import.meta.url), "utf8");
+  const dashboardSource = readFileSync(new URL("./DashboardLayout.tsx", import.meta.url), "utf8").replace(/\r\n/g, "\n");
+  const sidebarSource = readFileSync(new URL("./ui/sidebar.tsx", import.meta.url), "utf8").replace(/\r\n/g, "\n");
+  const styles = readFileSync(new URL("../index.css", import.meta.url), "utf8").replace(/\r\n/g, "\n");
 
   it("closes the mobile drawer when an admin section is selected", () => {
     expect(dashboardSource).toContain("const handleNavigation = (path: string)");

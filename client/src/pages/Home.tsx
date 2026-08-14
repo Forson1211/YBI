@@ -208,7 +208,7 @@ export default function Home() {
                     <div className="image-wall-sequence" key={`${rowIndex}-sequence-${copyIndex}`}>
                       {row.map((photo, photoIndex) => (
                         <figure className="image-wall-card" key={`${rowIndex}-${copyIndex}-${photoIndex}-${photo.src}`}>
-                          <img src={photo.src} alt="" />
+                          <img src={photo.src} alt="" loading="eager" decoding="async" />
                         </figure>
                       ))}
                     </div>
@@ -223,7 +223,7 @@ export default function Home() {
                     <div className="image-wall-mobile-fallback-sequence" key={`fallback-${rowIndex}-sequence-${copyIndex}`}>
                       {row.map((photo, photoIndex) => (
                         <figure className="image-wall-mobile-fallback-card" key={`fallback-${rowIndex}-${copyIndex}-${photoIndex}-${photo.src}`}>
-                          <img src={photo.src} alt="" />
+                          <img src={photo.src} alt="" loading="eager" decoding="async" />
                         </figure>
                       ))}
                     </div>
