@@ -1,8 +1,4 @@
-/* Visitor guidance refinements: a direct assistant handoff and clear active public navigation. */
-.ybi-assistant-contact-action { display: flex; align-items: center; justify-content: flex-end; min-height: 34px; padding: 0 20px; }
-.ybi-assistant-contact-action button { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex: 0 0 30px; padding: 0; border: 1px solid var(--blue-deep); border-radius: 999px; color: var(--blue-deep); background: rgba(255,208,0,.24); cursor: pointer; transition: color 160ms var(--ease-out), background 160ms var(--ease-out), transform 160ms var(--ease-out); }
-.ybi-assistant-contact-action button:hover { color: white; background: var(--blue-deep); }
-.ybi-assistant-contact-action button:active { transform: scale(.97); }
+/* Visitor guidance refinements: clear active public navigation and a compact assistant layout. */
 .ybi-assistant-chatbox { margin-top: 24px; }
 .contact-assistant-handoff { margin: 0; padding: 10px 12px; border-left: 3px solid var(--yellow); color: var(--blue-deep); background: #fff8bf; font-size: 12px; font-weight: 700; line-height: 1.45; }
 .ybi-nav-trigger.is-active, .ybi-nav-link.is-active { box-shadow: inset 0 -3px 0 var(--red); background: rgba(255,208,0,.25) !important; color: var(--blue-deep) !important; }
@@ -16,7 +12,5 @@
 }
 
 @media (max-width: 520px) {
-  .ybi-assistant-contact-action { min-height: 30px; padding: 0 15px; }
-  .ybi-assistant-contact-action button { width: 27px; height: 27px; flex-basis: 27px; }
   .ybi-assistant-chatbox { margin-top: 18px; }
 }

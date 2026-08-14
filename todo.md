@@ -237,3 +237,6 @@
 - [x] Diagnose the proxied Vite WebSocket connection failure reported in the YBI development preview.
 - [x] Correct the HMR WebSocket configuration so the managed preview connects reliably without localhost fallback or premature closure.
 - [x] Validate the proxied preview connection, run regression checks, and publish the verified repair.
+- [x] Remove the small auxiliary action icon beneath the YBI assistant quick-question controls.
+- [x] Move the main assistant chat card slightly upward while preserving clear separation from quick questions.
+- [x] Add regression coverage, validate the compact assistant layout, and publish the verified refinement.

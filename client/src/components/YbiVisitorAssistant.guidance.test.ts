@@ -17,13 +17,16 @@ describe("YBI visitor assistant contact handoff", () => {
     expect(url.searchParams.get("message")).toContain("How can I volunteer with YBI?");
   });
 
-  it("keeps the contact handoff accessible without displaying Contact Us shortcut text", () => {
+  it("removes the auxiliary contact action while retaining a modest gap above the main chat card", () => {
     const source = readFileSync(new URL("./YbiVisitorAssistant.tsx", import.meta.url), "utf8");
     const styles = readFileSync(new URL("../ybi-visitor-enhancements.css", import.meta.url), "utf8");
 
-    expect(source).toContain('aria-label="Open a pre-filled Contact Us enquiry"');
+    expect(source).not.toContain("ybi-assistant-contact-action");
+    expect(source).not.toContain("ArrowUpRight");
+    expect(source).not.toContain("getAssistantContactHref");
     expect(source).not.toContain("Contact the YBI team");
     expect(source).not.toContain("Open a ready-to-edit enquiry for personal follow-up.");
+    expect(styles).not.toContain(".ybi-assistant-contact-action");
     expect(styles).toContain(".ybi-assistant-chatbox { margin-top: 24px; }");
     expect(styles).toContain(".ybi-assistant-chatbox { margin-top: 18px; }");
   });
