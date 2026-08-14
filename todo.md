@@ -243,3 +243,6 @@
 - [x] Diagnose why the managed preview again serves a Vite client that attempts a failing localhost WebSocket connection.
 - [x] Implement a proxy-safe HMR strategy that prevents development-preview WebSocket connection errors.
 - [x] Verify the repaired preview client and connection behavior, run regression checks, and publish the fix.
+- [x] Trace the renewed managed-preview Vite client WebSocket error reported at 12:22 and identify every route that can load the client.
+- [x] Prevent the proxied preview from serving an active Vite client that attempts an unavailable WebSocket connection.
+- [x] Validate a fresh managed-preview load, browser console, regression suite, TypeScript, and production build before publishing the follow-up repair.
