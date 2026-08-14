@@ -1,6 +1,6 @@
 import { AIChatBox, type Message } from "@/components/AIChatBox";
 import { trpc } from "@/lib/trpc";
-import { BotMessageSquare, Sparkles, X } from "lucide-react";
+import { BotMessageSquare, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 
@@ -82,7 +82,9 @@ export function YbiVisitorAssistant() {
           </header>
 
           <div className="ybi-assistant-intro">
-            <Sparkles size={15} aria-hidden="true" />
+            <span className="ybi-assistant-intro-icon" aria-hidden="true">
+              <BotMessageSquare size={14} />
+            </span>
             <span>Ask about YBI, or select a quick question to get started.</span>
           </div>
 

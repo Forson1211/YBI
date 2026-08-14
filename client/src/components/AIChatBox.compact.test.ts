@@ -19,4 +19,11 @@ describe("YBI assistant compact chat presentation", () => {
     expect(styles).toContain(".ybi-assistant-chatbox .ybi-chat-bubble--assistant");
     expect(styles).toContain(".ybi-assistant-chatbox .ybi-chat-composer");
   });
+
+  it("uses one chatbot symbol for assistant replies and the prompt accent", () => {
+    expect(chatSource).toContain("BotMessageSquare");
+    expect(assistantSource).toContain("ybi-assistant-intro-icon");
+    expect(assistantSource).toContain("<BotMessageSquare size={14}");
+    expect(styles).toContain(".ybi-assistant-intro-icon");
+  });
 });

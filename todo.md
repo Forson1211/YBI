@@ -195,3 +195,5 @@
 - [x] Validate the redesigned assistant interior on desktop and mobile, then save a checkpoint.
 - [x] Remove the Helpful Next Steps guidance cards from the YBI visitor assistant.
 - [x] Verify the streamlined assistant interior on desktop and mobile, then save a checkpoint.
+- [x] Replace the assistant reply indicator and prompt accent with a consistent chatbot icon.
+- [x] Verify the unified chatbot icon treatment on desktop and mobile, then save a checkpoint.
