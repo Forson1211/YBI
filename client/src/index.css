@@ -39,8 +39,8 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .ybi-dropdown-link { display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: flex-start !important; min-height: 54px; padding: 15px 20px !important; border-radius: 0 !important; border-bottom: 1px solid var(--line); background: var(--white); color: var(--blue-deep) !important; font-family: 'Lato', Arial, sans-serif; font-size: 16px; font-weight: 700; line-height: 1.2; text-align: left; transition: background .18s ease, color .18s ease; }
 .ybi-dropdown-link:last-child { border-bottom: 0; }
 .ybi-dropdown-link:hover, .ybi-dropdown-link:focus { background: var(--blue-deep) !important; color: var(--white) !important; }
-.header-support { display: inline-flex; flex: none; align-items: center; gap: 9px; padding: 13px 18px; background: var(--blue-deep); color: white; text-transform: uppercase; font-size: 11px; font-weight: 700; letter-spacing: .11em; transition: transform .2s var(--ease), background .2s ease; }
-.header-support:hover { background: var(--blue); transform: translateY(-2px); }
+.header-support { display: inline-flex; flex: none; align-items: center; gap: 9px; padding: 13px 18px; background: var(--yellow); color: var(--blue-deep); text-transform: uppercase; font-size: 11px; font-weight: 700; letter-spacing: .11em; transition: transform .2s var(--ease), background .2s ease; }
+.header-support:hover { background: var(--orange); transform: translateY(-2px); }
 .mobile-menu-button { display: none; border: 0; background: transparent; color: var(--blue-deep); }
 .reference-hero { position: relative; height: calc(100svh - 74px); min-height: 640px; display: flex; align-items: center; color: white; background: var(--blue-deep); overflow: hidden; }
 .reference-hero-image, .reference-hero-overlay { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
