@@ -19,6 +19,7 @@ export function YbiVisitorAssistant() {
   const [location] = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([welcomeMessage]);
+  const { data: savedQuickQuestions } = trpc.publicSite.assistant.quickQuestions.useQuery();
   const assistant = trpc.publicSite.assistant.chat.useMutation({
     onSuccess: (result) => {
       setMessages((current) => [...current, { role: "assistant", content: result.answer }]);
@@ -43,6 +44,8 @@ export function YbiVisitorAssistant() {
   }, []);
 
   if (location.startsWith("/admin")) return null;
+
+  const quickQuestions = savedQuickQuestions?.length ? savedQuickQuestions : suggestedPrompts;
 
   const sendMessage = (content: string) => {
     const trimmed = content.trim();
@@ -89,7 +92,7 @@ export function YbiVisitorAssistant() {
           </div>
 
           <div className="ybi-assistant-prompts" aria-label="Suggested questions">
-            {suggestedPrompts.map((prompt) => (
+            {quickQuestions.map((prompt) => (
               <button type="button" key={prompt} onClick={() => sendMessage(prompt)} disabled={assistant.isPending}>
                 {prompt}
               </button>
@@ -104,6 +107,11 @@ export function YbiVisitorAssistant() {
             height="255px"
             className="ybi-assistant-chatbox"
             compact
+            onClearChat={() => {
+              assistant.reset();
+              setMessages([welcomeMessage]);
+            }}
+            typingLabel="YBI is preparing a reply"
           />
         </section>
       )}

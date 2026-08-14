@@ -197,3 +197,8 @@
 - [x] Verify the streamlined assistant interior on desktop and mobile, then save a checkpoint.
 - [x] Replace the assistant reply indicator and prompt accent with a consistent chatbot icon.
 - [x] Verify the unified chatbot icon treatment on desktop and mobile, then save a checkpoint.
+- [x] Add an accessible animated typing indicator while the YBI assistant is processing a response.
+- [x] Add a visitor-facing clear-chat control that resets the local conversation history.
+- [x] Create persistent quick-question settings and protected admin procedures for managing them.
+- [x] Add a protected admin interface for editing, reordering, adding, and removing assistant quick questions.
+- [x] Validate visitor and admin assistant workflows on desktop and mobile, then save a checkpoint.

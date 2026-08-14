@@ -4,7 +4,10 @@ import { trpc } from "@/lib/trpc";
 import { calculateProgress, formatSessionDate, toLocalDateTimeInput } from "@/lib/adminWorkflow";
 import { startLogin } from "@/const";
 import {
+  ArrowDown,
+  ArrowUp,
   ArrowUpRight,
+  BotMessageSquare,
   CalendarDays,
   CheckCircle2,
   FileText,
@@ -21,7 +24,7 @@ import {
   Trash2,
   UploadCloud,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Link, useLocation } from "wouter";
 
@@ -64,6 +67,7 @@ function AdminWorkspace() {
     programs: <ProgramsManager />,
     updates: <UpdatesManager />,
     content: <ContentManager />,
+    "assistant-settings": <AssistantQuickQuestionsManager />,
     sessions: <SessionsManager />,
     inquiries: <InquiriesManager />,
     opportunities: <OpportunitiesManager />,
@@ -74,7 +78,7 @@ function AdminWorkspace() {
 
 function AdminPageHeader({ section }: { section: string }) {
   const names: Record<string, string> = {
-    overview: "YBI dashboard", gallery: "Gallery manager", programs: "Program manager", updates: "Updates manager", content: "Site content",
+    overview: "YBI dashboard", gallery: "Gallery manager", programs: "Program manager", updates: "Updates manager", content: "Site content", "assistant-settings": "Assistant quick questions",
     sessions: "Program calendar", inquiries: "Community inbox", opportunities: "Opportunity board", impact: "Impact tracker",
   };
   const descriptions: Record<string, string> = {
@@ -83,6 +87,7 @@ function AdminPageHeader({ section }: { section: string }) {
     programs: "Shape learning pathways and keep programme information current.",
     updates: "Publish clear, timely stories from across the organisation.",
     content: "Keep essential public messages accurate and up to date.",
+    "assistant-settings": "Manage the visitor assistant’s suggested questions without editing site code.",
     sessions: "Plan and publish the next YBI learning experience.",
     inquiries: "Respond thoughtfully to messages from the YBI community.",
     opportunities: "Invite contributors into meaningful YBI opportunities.",
@@ -121,6 +126,42 @@ function GalleryManager() {
   const [file, setFile] = useState<File | null>(null); const [title, setTitle] = useState(""); const [altText, setAltText] = useState(""); const [isPublished, setIsPublished] = useState(true);
   const uploadPhoto = async (event: React.FormEvent) => { event.preventDefault(); if (!file) return toast.error("Choose a JPG, PNG, or WEBP photo first."); if (!/[jpeg|png|webp]/.test(file.type)) return toast.error("Use a JPG, PNG, or WEBP photo."); try { const base64 = await fileToBase64(file); upload.mutate({ title: title || file.name.replace(/\.[^/.]+$/, ""), altText: altText || "Young Beginners Inspiration community moment", fileName: file.name, mimeType: file.type as "image/jpeg" | "image/png" | "image/webp", base64, isPublished, sortOrder: (photos?.length ?? 0) + 1 }); setFile(null); setTitle(""); setAltText(""); } catch { toast.error("The image could not be read. Please try again."); } };
   return <div className="admin-manager-grid"><section className="admin-panel"><PanelHeading eyebrow="Persistent storage" title="Upload a gallery moment" icon={<UploadCloud size={25} />} /><form className="admin-form" onSubmit={uploadPhoto}><label>Photo file<input type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => setFile(event.target.files?.[0] ?? null)} required /></label><label>Photo title<input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Community workshop" /></label><label>Accessible description<input value={altText} onChange={(event) => setAltText(event.target.value)} placeholder="Participants sharing ideas at a YBI workshop" /></label><label className="admin-check"><input type="checkbox" checked={isPublished} onChange={(event) => setIsPublished(event.target.checked)} /> Publish this photo immediately</label><button disabled={upload.isPending} className="admin-primary" type="submit">{upload.isPending ? "Uploading…" : "Upload to shared gallery"} <UploadCloud size={17} /></button></form><p className="admin-help">JPG, PNG, or WEBP only. Photos can be published or hidden later.</p></section><section className="admin-panel admin-list-panel"><PanelHeading eyebrow="Current collection" title="Manage photos" count={photos?.length ?? 0} />{isLoading ? <LoadingCopy text="Loading gallery…" /> : isError ? <ErrorCopy text="Gallery data could not be loaded. Refresh and try again." /> : !photos?.length ? <EmptyCopy text="No shared photos yet. Upload the first one from this screen." /> : <div className="admin-photo-list">{photos.map((photo) => <article className="admin-photo-row" key={photo.id}><img src={photo.imageUrl} alt={photo.altText} /><div><h3>{photo.title}</h3><p>{photo.altText}</p><span className={photo.isPublished ? "admin-status published" : "admin-status draft"}>{photo.isPublished ? "Published" : "Hidden"}</span></div><div className="admin-row-actions"><button onClick={() => save.mutate({ id: photo.id, title: photo.title, altText: photo.altText, isPublished: !photo.isPublished, sortOrder: photo.sortOrder })}>{photo.isPublished ? "Hide" : "Publish"}</button><button className="danger" onClick={() => { if (window.confirm(`Remove “${photo.title}” from the gallery?`)) remove.mutate({ id: photo.id }); }}><Trash2 size={15} /></button></div></article>)}</div>}</section></div>;
+}
+
+function AssistantQuickQuestionsManager() {
+  const utils = trpc.useUtils();
+  const { data: savedQuestions, isLoading, isError } = trpc.admin.assistantSettings.get.useQuery();
+  const [questions, setQuestions] = useState<string[]>([]);
+  const save = trpc.admin.assistantSettings.save.useMutation({
+    onSuccess: () => {
+      utils.admin.assistantSettings.get.invalidate();
+      utils.publicSite.assistant.quickQuestions.invalidate();
+      toast.success("Visitor assistant quick questions updated.");
+    },
+    onError: (error) => toast.error("Quick questions could not be saved.", { description: error.message }),
+  });
+
+  useEffect(() => {
+    if (savedQuestions) setQuestions(savedQuestions);
+  }, [savedQuestions]);
+
+  const updateQuestion = (index: number, value: string) => setQuestions((current) => current.map((question, questionIndex) => questionIndex === index ? value : question));
+  const moveQuestion = (index: number, direction: -1 | 1) => setQuestions((current) => {
+    const destination = index + direction;
+    if (destination < 0 || destination >= current.length) return current;
+    const next = [...current];
+    [next[index], next[destination]] = [next[destination], next[index]];
+    return next;
+  });
+  const submit = (event: React.FormEvent) => {
+    event.preventDefault();
+    const cleaned = questions.map((question) => question.trim()).filter(Boolean);
+    if (cleaned.length < 2 || cleaned.length > 6) return toast.error("Use between 2 and 6 clear quick questions.");
+    if (new Set(cleaned.map((question) => question.toLowerCase())).size !== cleaned.length) return toast.error("Each quick question should be unique.");
+    save.mutate({ questions: cleaned });
+  };
+
+  return <div className="admin-manager-grid"><section className="admin-panel"><PanelHeading eyebrow="Visitor assistant" title="Edit quick questions" icon={<BotMessageSquare size={25} />} /><form className="admin-form" onSubmit={submit}><p className="admin-help">Visitors see these questions when they open the YBI assistant. Keep each one practical, clear, and focused on a single need.</p>{isLoading ? <LoadingCopy text="Loading assistant questions…" /> : isError ? <ErrorCopy text="Assistant questions could not be loaded. Refresh and try again." /> : <div className="admin-assistant-question-fields">{questions.map((question, index) => <div className="admin-assistant-question" key={`${index}-${question}`}><span aria-hidden="true">{index + 1}</span><input aria-label={`Quick question ${index + 1}`} value={question} maxLength={160} onChange={(event) => updateQuestion(index, event.target.value)} placeholder="For example: Which program should I explore?" /><div className="admin-assistant-question-actions"><button type="button" aria-label={`Move question ${index + 1} up`} disabled={index === 0} onClick={() => moveQuestion(index, -1)}><ArrowUp size={15} /></button><button type="button" aria-label={`Move question ${index + 1} down`} disabled={index === questions.length - 1} onClick={() => moveQuestion(index, 1)}><ArrowDown size={15} /></button><button type="button" className="danger" aria-label={`Remove question ${index + 1}`} disabled={questions.length <= 2} onClick={() => setQuestions((current) => current.filter((_, questionIndex) => questionIndex !== index))}><Trash2 size={15} /></button></div></div>)}</div>}<button type="button" className="admin-secondary" disabled={questions.length >= 6} onClick={() => setQuestions((current) => [...current, ""])}><Plus size={16} /> Add question</button><SaveButton pending={save.isPending} label="Save quick questions" /></form></section><section className="admin-panel admin-list-panel"><PanelHeading eyebrow="Public experience" title="What visitors will see" count={questions.filter((question) => question.trim()).length} /><div className="admin-assistant-preview"><BotMessageSquare size={23} /><h3>Suggested questions</h3><p>The order below is the exact order used in the public YBI assistant.</p><ol>{questions.filter((question) => question.trim()).map((question) => <li key={question}>{question}</li>)}</ol></div></section></div>;
 }
 
 function ProgramsManager() {

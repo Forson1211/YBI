@@ -52,4 +52,19 @@ describe("expanded admin workflows", () => {
     await expect(caller.admin.impact.list()).resolves.toEqual([]); await caller.admin.impact.save({ title: "Leaders equipped", focusArea: "Leadership", description: "Participants completing a leadership learning journey.", currentValue: 24, targetValue: 40, unit: "people", period: "2026", status: "active" }); await caller.admin.impact.remove({ id: 9 });
     expect(dbMocks.saveOpportunity).toHaveBeenCalledWith(expect.objectContaining({ title: "Mentor leaders" })); expect(dbMocks.removeOpportunity).toHaveBeenCalledWith(3); expect(dbMocks.saveImpactMetric).toHaveBeenCalledWith(expect.objectContaining({ title: "Leaders equipped", currentValue: 24 })); expect(dbMocks.removeImpactMetric).toHaveBeenCalledWith(9);
   });
+
+  it("lets administrators manage visitor quick questions and exposes the saved prompts publicly", async () => {
+    const questions = ["How can I mentor?", "Which YBI program fits my goals?"];
+    dbMocks.getSiteContent.mockResolvedValue({ body: JSON.stringify(questions) });
+    const caller = appRouter.createCaller(createAdminContext());
+
+    await expect(caller.admin.assistantSettings.get()).resolves.toEqual(questions);
+    await caller.admin.assistantSettings.save({ questions });
+    await expect(caller.publicSite.assistant.quickQuestions()).resolves.toEqual(questions);
+
+    expect(dbMocks.upsertSiteContent).toHaveBeenCalledWith(expect.objectContaining({
+      contentKey: "assistant-quick-questions",
+      body: JSON.stringify(questions),
+    }));
+  });
 });

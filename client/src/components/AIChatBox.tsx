@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { BotMessageSquare, Loader2, Send, User, Sparkles } from "lucide-react";
+import { BotMessageSquare, Loader2, RotateCcw, Send, User, Sparkles } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { Streamdown } from "streamdown";
 
@@ -60,6 +60,12 @@ export type AIChatBoxProps = {
 
   /** Keeps embedded assistant experiences compact instead of adding a large message spacer. */
   compact?: boolean;
+
+  /** Optional action that returns the visible conversation to its initial state. */
+  onClearChat?: () => void;
+
+  /** Accessible copy shown beside the animated processing dots. */
+  typingLabel?: string;
 };
 
 /**
@@ -123,6 +129,8 @@ export function AIChatBox({
   emptyStateMessage = "Start a conversation with AI",
   suggestedPrompts,
   compact = false,
+  onClearChat,
+  typingLabel,
 }: AIChatBoxProps) {
   const [input, setInput] = useState("");
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -305,8 +313,9 @@ export function AIChatBox({
                   <div className="size-8 shrink-0 mt-1 rounded-full bg-primary/10 flex items-center justify-center ybi-chat-avatar ybi-chat-avatar--assistant">
                     <BotMessageSquare className="size-4 text-primary" />
                   </div>
-                  <div className="rounded-lg bg-muted px-4 py-2.5 ybi-chat-bubble ybi-chat-bubble--loading">
-                    <Loader2 className="size-4 animate-spin text-muted-foreground" />
+                  <div className="rounded-lg bg-muted px-4 py-2.5 ybi-chat-bubble ybi-chat-bubble--loading ybi-chat-typing" role="status" aria-live="polite">
+                    <span className="ybi-chat-typing-dots" aria-hidden="true"><i /><i /><i /></span>
+                    <span className="ybi-chat-typing-label">{typingLabel ?? "Assistant is typing"}</span>
                   </div>
                 </div>
               )}
@@ -321,6 +330,20 @@ export function AIChatBox({
         onSubmit={handleSubmit}
         className="flex gap-2 p-4 border-t bg-background/50 items-end ybi-chat-composer"
       >
+        {onClearChat ? (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="ybi-chat-clear"
+            disabled={isLoading || displayMessages.length <= 1}
+            onClick={onClearChat}
+            aria-label="Clear conversation"
+          >
+            <RotateCcw className="size-3.5" />
+            <span>Clear</span>
+          </Button>
+        ) : null}
         <Textarea
           ref={textareaRef}
           value={input}

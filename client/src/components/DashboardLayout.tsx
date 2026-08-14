@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/sidebar";
 import { startLogin } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BookOpen, CalendarDays, HandHeart, Image, LayoutDashboard, LogOut, Menu, MessageSquareHeart, Newspaper, PanelLeft, PanelsTopLeft, Target, X } from "lucide-react";
+import { BookOpen, BotMessageSquare, CalendarDays, HandHeart, Image, LayoutDashboard, LogOut, Menu, MessageSquareHeart, Newspaper, PanelLeft, PanelsTopLeft, Target, X } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -32,6 +32,7 @@ const menuItems = [
   { icon: BookOpen, label: "Programs", path: "/admin/programs" },
   { icon: Newspaper, label: "Updates", path: "/admin/updates" },
   { icon: PanelsTopLeft, label: "Site content", path: "/admin/content" },
+  { icon: BotMessageSquare, label: "Assistant questions", path: "/admin/assistant-settings" },
   { icon: CalendarDays, label: "Program calendar", path: "/admin/sessions" },
   { icon: MessageSquareHeart, label: "Community inbox", path: "/admin/inquiries" },
   { icon: HandHeart, label: "Opportunities", path: "/admin/opportunities" },

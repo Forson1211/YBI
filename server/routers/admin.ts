@@ -30,7 +30,7 @@ import {
 } from "../db";
 import { storagePut } from "../storage";
 import { adminProcedure, publicProcedure, router } from "../_core/trpc";
-import { visitorAssistantRouter } from "./assistant";
+import { QUICK_QUESTIONS_CONTENT_KEY, quickQuestionsInput, readQuickQuestions, visitorAssistantRouter } from "./assistant";
 
 const contentStatus = z.enum(["draft", "published"]);
 const imageInput = z.object({
@@ -160,6 +160,17 @@ export const adminRouter = router({
   content: router({
     list: adminProcedure.query(() => listSiteContent()),
     save: adminProcedure.input(siteContentInput).mutation(({ input }) => upsertSiteContent(input)),
+  }),
+  assistantSettings: router({
+    get: adminProcedure.query(() => readQuickQuestions()),
+    save: adminProcedure.input(z.object({ questions: quickQuestionsInput })).mutation(({ input }) => upsertSiteContent({
+      contentKey: QUICK_QUESTIONS_CONTENT_KEY,
+      label: "YBI visitor assistant quick questions",
+      title: "Quick questions",
+      body: JSON.stringify(input.questions),
+      actionLabel: null,
+      actionHref: null,
+    })),
   }),
   inquiries: router({
     list: adminProcedure.query(() => listCommunityInquiries()),
