@@ -46,4 +46,26 @@ describe("repository-local YBI site assets", () => {
       expect(source).toMatch(/\/ybi-assets\//);
     }
   });
+
+  it("documents accessible alt text and the optimization workflow for every required asset", () => {
+    const assetGuide = readFileSync(
+      join(repositoryRoot, "ybi-source-assets", "README.md"),
+      "utf8",
+    );
+    const optimizer = readFileSync(
+      join(repositoryRoot, "scripts", "optimize-ybi-image.py"),
+      "utf8",
+    );
+
+    expect(assetGuide).toContain("## Accessible Asset Inventory");
+    expect(assetGuide).toContain("## Replacing or Adding an Image");
+    expect(assetGuide).toContain("Approved accessible alt text");
+    expect(assetGuide).toContain("python3 scripts/optimize-ybi-image.py");
+    expect(optimizer).toContain("--alt");
+    expect(optimizer).toContain("PUBLIC_ASSET_ROOT");
+
+    for (const assetPath of requiredAssetPaths) {
+      expect(assetGuide).toContain(`\`${assetPath}\``);
+    }
+  });
 });

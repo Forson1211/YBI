@@ -170,3 +170,7 @@
 - [x] Configure Git LFS and place the actual YBI logo and site images in ybi-source-assets/files for direct GitHub access.
 - [x] Make every YBI site image reference a clone-safe repository asset path so the design renders after a repository clone.
 - [x] Verify the clone-safe asset configuration, preserve publishing compatibility, and save a checkpoint.
+- [x] Create a lightweight repeatable image-compression script for future YBI repository-local images.
+- [x] Add accessible alt-text metadata for every YBI local image to the asset manifest.
+- [x] Document the contributor workflow for optimizing, replacing, validating, and committing local images.
+- [x] Add regression coverage, validate the maintenance toolkit, and save a checkpoint.
