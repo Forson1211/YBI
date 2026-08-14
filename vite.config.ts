@@ -170,13 +170,10 @@ export default defineConfig({
   },
   server: {
     host: true,
-    // The development preview is served through a secure public proxy. Tell the
-    // Vite client to reconnect through that same browser origin rather than
-    // falling back to its internal localhost development port.
-    hmr: {
-      protocol: "wss",
-      clientPort: 443,
-    },
+    // Let Vite derive the WebSocket protocol, hostname, and port from the page
+    // origin. Hardcoding wss:443 works for the public proxy but breaks the
+    // local managed preview, which is served over http://127.0.0.1:3000.
+    // server/_core/vite.ts attaches the HMR socket server to Express.
     allowedHosts: [
       ".manuspre.computer",
       ".manus.computer",

@@ -234,3 +234,6 @@
 - [x] Increase the visible vertical gap between the YBI assistant quick-question area and the main chat card.
 - [x] Preserve mobile keyboard-safe chat sizing while applying the larger contained gap.
 - [x] Add regression coverage, validate the spacing at responsive breakpoints, and publish the verified refinement.
+- [x] Diagnose the proxied Vite WebSocket connection failure reported in the YBI development preview.
+- [x] Correct the HMR WebSocket configuration so the managed preview connects reliably without localhost fallback or premature closure.
+- [x] Validate the proxied preview connection, run regression checks, and publish the verified repair.
