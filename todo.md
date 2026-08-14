@@ -221,3 +221,6 @@
 - [x] Validate the desktop and mobile chatbot launcher proportions before saving a checkpoint.
 - [x] Restore a lighter compact YBI chatbot character treatment on mobile while retaining the enlarged desktop character.
 - [x] Validate separate mobile and desktop chatbot character proportions before saving a checkpoint.
+- [x] Keep the public site header and YBI visitor-assistant header visible when the assistant opens on mobile.
+- [x] Constrain mobile assistant conversation content to scroll independently within the chat panel, including during keyboard use.
+- [x] Add regression coverage and validate the contained mobile scrolling behavior before publishing.

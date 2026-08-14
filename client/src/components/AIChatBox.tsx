@@ -243,7 +243,7 @@ export function AIChatBox({
             </div>
           </div>
         ) : (
-          <ScrollArea className="h-full">
+          <ScrollArea className="h-full min-h-0 ybi-chat-scroll-area">
             <div className="flex flex-col space-y-4 p-4 ybi-chat-message-list">
               {displayMessages.map((message, index) => {
                 // Apply min-height to last message only if NOT loading (when loading, the loading indicator gets it)

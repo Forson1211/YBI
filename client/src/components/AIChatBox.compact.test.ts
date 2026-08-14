@@ -5,6 +5,7 @@ const chatSource = readFileSync(new URL("./AIChatBox.tsx", import.meta.url), "ut
 const assistantSource = readFileSync(new URL("./YbiVisitorAssistant.tsx", import.meta.url), "utf8");
 const liveBotSource = readFileSync(new URL("./YbiLiveBotIcon.tsx", import.meta.url), "utf8");
 const styles = readFileSync(new URL("../index.css", import.meta.url), "utf8");
+const mobileAssistantStyles = readFileSync(new URL("../ybi-assistant-mobile.css", import.meta.url), "utf8");
 
 describe("YBI assistant compact chat presentation", () => {
   it("uses compact message rendering inside the floating YBI assistant", () => {
@@ -57,5 +58,14 @@ describe("YBI assistant compact chat presentation", () => {
     expect(styles).toContain(".ybi-assistant-panel { position: absolute");
     expect(styles).toContain(".ybi-assistant-root { inset: 0; pointer-events: none; }");
     expect(styles).not.toContain(".ybi-assistant-root { inset: 0; right: auto; bottom: auto;");
+  });
+
+  it("keeps both mobile headers visible while only the conversation viewport scrolls", () => {
+    expect(chatSource).toContain("ybi-chat-scroll-area");
+    expect(mobileAssistantStyles).toContain(".ybi-assistant-root { z-index: 40; }");
+    expect(mobileAssistantStyles).toContain("top: calc(var(--header-height) + 8px)");
+    expect(mobileAssistantStyles).toContain(".ybi-assistant-heading, .ybi-assistant-intro, .ybi-assistant-prompts { flex: 0 0 auto; }");
+    expect(mobileAssistantStyles).toContain(".ybi-chat-scroll-area { flex: 1 1 0; min-height: 0; height: auto !important; }");
+    expect(mobileAssistantStyles).toContain("overscroll-behavior: contain");
   });
 });

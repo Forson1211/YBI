@@ -2,6 +2,7 @@
    concise nonprofit storytelling sections, bold support actions. Recolored for YBI. */
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
 @import "tailwindcss";
+@import "./ybi-assistant-mobile.css";
 
 :root { --cream: #fffaf0; --white: #ffffff; --blue: #0b5d7b; --blue-deep: #073c52; --red: #ef2b1f; --yellow: #ffd000; --orange: #ff9f0a; --ink: #183541; --muted: #687780; --line: rgba(7,60,82,.14); --ease: cubic-bezier(.23,1,.32,1); --ease-out: cubic-bezier(.23,1,.32,1); --ease-in-out: cubic-bezier(.77,0,.175,1); --site-max: 1320px; --site-gutter: 50px; --header-height: 75px; }
 * { box-sizing: border-box; }

@@ -1,0 +1,38 @@
+/* Mobile visitor assistant: retain the public and chat headers while the message history scrolls independently. */
+@media (max-width: 520px) {
+  .ybi-assistant-root { z-index: 40; }
+
+  .ybi-assistant-panel {
+    top: calc(var(--header-height) + 8px);
+    right: 10px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    left: 10px;
+    max-height: none;
+  }
+
+  .ybi-assistant-heading, .ybi-assistant-intro, .ybi-assistant-prompts { flex: 0 0 auto; }
+
+  .ybi-assistant-chatbox {
+    display: flex;
+    min-height: 0;
+    flex: 1 1 0;
+    margin: 0 10px 10px;
+  }
+
+  .ybi-assistant-chatbox .ybi-chat-message-viewport {
+    display: flex;
+    min-height: 0;
+    flex: 1 1 0;
+    overflow: hidden;
+  }
+
+  .ybi-assistant-chatbox .ybi-chat-scroll-area { flex: 1 1 0; min-height: 0; height: auto !important; }
+
+  .ybi-assistant-chatbox [data-slot="scroll-area-viewport"] {
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+
+  .ybi-assistant-chatbox .ybi-chat-composer { flex: 0 0 auto; }
+}
