@@ -183,3 +183,10 @@
 - [x] Add regression tests and validate the assistant on desktop and mobile before saving a checkpoint.
 - [x] Change the YBI visitor assistant launcher and panel accents to YBI yellow while preserving readable contrast.
 - [x] Verify the yellow visitor assistant treatment on desktop and mobile, then save a checkpoint.
+- [x] Replace the visitor assistant header mark with the official YBI logo while retaining the yellow assistant treatment.
+- [x] Verify the official assistant-logo treatment on desktop and mobile, then save a checkpoint.
+- [x] Reduce the mobile YBI assistant launcher so it stays visually secondary to the site header.
+- [x] Position the mobile assistant panel beneath the fixed public header with safe viewport clearance.
+- [x] Validate the corrected mobile assistant layout and save a checkpoint.
+- [x] Remove the YBI text label beneath the floating visitor-assistant icon and preserve icon-only spacing.
+- [x] Validate the icon-only launcher on mobile and desktop, then save a checkpoint.

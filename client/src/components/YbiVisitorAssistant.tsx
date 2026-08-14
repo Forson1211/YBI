@@ -79,7 +79,11 @@ export function YbiVisitorAssistant() {
         <section className="ybi-assistant-panel" aria-label="YBI visitor assistant">
           <header className="ybi-assistant-heading">
             <div className="ybi-assistant-identity">
-              <span className="ybi-assistant-mark" aria-hidden="true"><BotMessageSquare size={24} /></span>
+              <img
+                className="ybi-assistant-logo"
+                src="/ybi-assets/brand/ybi-logo.png"
+                alt="Young Beginners Inspiration"
+              />
               <div>
                 <p>YBI Visitor Assistant</p>
                 <h2>How can I guide you?</h2>
@@ -136,7 +140,6 @@ export function YbiVisitorAssistant() {
         onClick={() => setIsOpen((open) => !open)}
       >
         <span className="ybi-assistant-launcher-orb" aria-hidden="true"><BotMessageSquare size={30} /></span>
-        <span>YBI</span>
       </button>
     </div>
   );
