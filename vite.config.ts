@@ -175,9 +175,9 @@ function vitePluginDisableManagedPreviewHmrClient(): Plugin {
 const plugins = [
   react(),
   tailwindcss(),
-  jsxLocPlugin(),
-  vitePluginManusRuntime(),
-  vitePluginManusDebugCollector(),
+  { ...jsxLocPlugin(), apply: "serve" as const },
+  { ...vitePluginManusRuntime(), apply: "serve" as const },
+  { ...vitePluginManusDebugCollector(), apply: "serve" as const },
   vitePluginDisableManagedPreviewHmrClient(),
 ];
 
