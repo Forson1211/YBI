@@ -249,3 +249,6 @@
 - [x] Define context-matching program and focus-area links for YBI assistant responses.
 - [x] Render concise, accessible program suggestions within relevant assistant replies without adding unrelated links.
 - [x] Add regression coverage, validate the assistant guidance flow, and publish the verified enhancement.
+- [x] Match the desktop Support Us button to the yellow mobile color treatment shown in the supplied reference.
+- [x] Verify the Support Us button remains readable and balanced across desktop and mobile before publishing.
+- [x] Recover the Vite transform service after it stopped while re-optimizing dependencies, then confirm the managed preview renders again.
