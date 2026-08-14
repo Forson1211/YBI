@@ -202,7 +202,7 @@
 - [x] Create persistent quick-question settings and protected admin procedures for managing them.
 - [x] Add a protected admin interface for editing, reordering, adding, and removing assistant quick questions.
 - [x] Validate visitor and admin assistant workflows on desktop and mobile, then save a checkpoint.
-- [ ] Center the “Young Beginners Inspiration” text within the shared YBI logo lockup.
-- [ ] Verify the aligned YBI logo treatment on desktop and mobile, then save a checkpoint.
+- [x] Do not apply the requested centered-text logo lockup treatment; it was superseded by the subsequent request to restore the original alignment.
+- [x] Record that the centered-logo verification is no longer applicable after the user-requested restoration.
 - [x] Restore the previous shared YBI logo alignment and remove the recent centered-text styling change.
 - [x] Verify the restored logo treatment on desktop and mobile, then save a checkpoint.
