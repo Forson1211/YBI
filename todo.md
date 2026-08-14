@@ -240,3 +240,6 @@
 - [x] Remove the small auxiliary action icon beneath the YBI assistant quick-question controls.
 - [x] Move the main assistant chat card slightly upward while preserving clear separation from quick questions.
 - [x] Add regression coverage, validate the compact assistant layout, and publish the verified refinement.
+- [x] Diagnose why the managed preview again serves a Vite client that attempts a failing localhost WebSocket connection.
+- [x] Implement a proxy-safe HMR strategy that prevents development-preview WebSocket connection errors.
+- [x] Verify the repaired preview client and connection behavior, run regression checks, and publish the fix.

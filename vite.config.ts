@@ -150,7 +150,36 @@ function vitePluginManusDebugCollector(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector()];
+/**
+ * Vite still injects /@vite/client for dev pages when `server.hmr` is false.
+ * In this managed preview that client attempts a WebSocket fallback to
+ * localhost, so remove only that development injection after Vite has built
+ * the HTML. Source modules continue to load normally on page refresh.
+ */
+function vitePluginDisableManagedPreviewHmrClient(): Plugin {
+  return {
+    name: "disable-managed-preview-hmr-client",
+    apply: "serve",
+    transformIndexHtml: {
+      order: "post",
+      handler(html) {
+        return html.replace(
+          /<script\b[^>]*\bsrc=(["'])\/@vite\/client\1[^>]*><\/script>\s*/g,
+          ""
+        );
+      },
+    },
+  };
+}
+
+const plugins = [
+  react(),
+  tailwindcss(),
+  jsxLocPlugin(),
+  vitePluginManusRuntime(),
+  vitePluginManusDebugCollector(),
+  vitePluginDisableManagedPreviewHmrClient(),
+];
 
 export default defineConfig({
   plugins,
@@ -170,10 +199,11 @@ export default defineConfig({
   },
   server: {
     host: true,
-    // Let Vite derive the WebSocket protocol, hostname, and port from the page
-    // origin. Hardcoding wss:443 works for the public proxy but breaks the
-    // local managed preview, which is served over http://127.0.0.1:3000.
-    // server/_core/vite.ts attaches the HMR socket server to Express.
+    // The managed preview tunnels HTTP reliably but can intermittently reject
+    // Vite's HMR WebSocket upgrade, producing a noisy localhost fallback in
+    // visitors' browsers. Disable the development-only HMR client so normal
+    // reloads remain reliable without surfacing a false application error.
+    hmr: false,
     allowedHosts: [
       ".manuspre.computer",
       ".manus.computer",
