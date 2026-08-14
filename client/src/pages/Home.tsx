@@ -146,7 +146,7 @@ export default function Home() {
           <div className="reference-hero-overlay" />
           <div className="reference-hero-content page-width">
             <p className="reference-eyebrow light"><span /> A platform for possibility</p>
-            <h1 id="hero-title" className="managed-hero-title">{managedHero?.title ?? "Inspiring voices,\nbuilding leaders,\nshaping futures."}</h1>
+            <h1 id="hero-title" className="managed-hero-title">{managedHero?.title ?? "Inspiring Voices,\nBuilding Leaders,\nShaping Futures."}</h1>
             <p className="reference-hero-copy">{managedHero?.body ?? "We create a platform where the young and the aged inspire one another, build practical capability, and use their gifts to make a positive difference in the world."}</p>
             <a className="reference-button white-button" href={managedHero?.actionHref || "#connect"}>{managedHero?.actionLabel || "Support us"} <ArrowUpRight size={18} /></a>
           </div>
