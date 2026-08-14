@@ -162,3 +162,6 @@
 - [x] Add regression coverage, validate the deployed mobile rendering path, and save a checkpoint for the verified fix.
 - [x] Ensure the visible YBI mobile image-wall rows animate continuously in alternating directions without blank gaps.
 - [x] Add regression coverage, validate mobile motion behavior, and save a checkpoint for the verified animation correction.
+- [x] Inventory the YBI logo and every image used by the live website.
+- [x] Create an organized downloadable YBI source-asset package plus a GitHub-friendly manifest without changing live asset URLs.
+- [x] Verify the package contents, preserve the repository update, and deliver the download.
