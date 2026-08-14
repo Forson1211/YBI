@@ -45,8 +45,25 @@ export function YbiVisitorAssistant() {
 
   useEffect(() => {
     const documentElement = document.documentElement;
-    documentElement.classList.toggle("ybi-assistant-open", isOpen);
-    return () => documentElement.classList.remove("ybi-assistant-open");
+    if (!isOpen) {
+      documentElement.classList.remove("ybi-assistant-open");
+      documentElement.style.removeProperty("--ybi-assistant-scroll-y");
+      return;
+    }
+
+    documentElement.classList.add("ybi-assistant-open");
+    const isMobileAssistant = window.matchMedia("(max-width: 520px)").matches;
+    const scrollPosition = window.scrollY;
+
+    if (isMobileAssistant) {
+      documentElement.style.setProperty("--ybi-assistant-scroll-y", `-${scrollPosition}px`);
+    }
+
+    return () => {
+      documentElement.classList.remove("ybi-assistant-open");
+      documentElement.style.removeProperty("--ybi-assistant-scroll-y");
+      if (isMobileAssistant) window.scrollTo(0, scrollPosition);
+    };
   }, [isOpen]);
 
   if (location.startsWith("/admin")) return null;

@@ -31,8 +31,13 @@ describe("YBI assistant compact chat presentation", () => {
     const indexHtml = readFileSync(new URL("../../index.html", import.meta.url), "utf8");
 
     expect(indexHtml).toContain("interactive-widget=resizes-content");
-    expect(assistantSource).toContain('classList.toggle("ybi-assistant-open", isOpen)');
+    expect(assistantSource).toContain('classList.add("ybi-assistant-open")');
+    expect(assistantSource).toContain('style.setProperty("--ybi-assistant-scroll-y"');
+    expect(assistantSource).toContain("window.scrollTo(0, scrollPosition)");
     expect(styles).toContain("html.ybi-assistant-open, html.ybi-assistant-open body");
+    expect(styles).toContain("html.ybi-assistant-open body { position: fixed");
+    expect(styles).toContain("top: var(--ybi-assistant-scroll-y, 0px)");
+    expect(styles).toContain(".ybi-assistant-chatbox .ybi-chat-input { font-size: 16px; }");
     expect(styles).toContain("max-height: calc(100dvh - var(--header-height) - 80px)");
     expect(styles).toContain(".ybi-assistant-panel { position: absolute");
     expect(styles).toContain(".ybi-assistant-root { inset: 0; pointer-events: none; }");

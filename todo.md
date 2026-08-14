@@ -210,3 +210,5 @@
 - [x] Add regression coverage and validate the keyboard-safe assistant layout on a representative phone viewport before saving a checkpoint.
 - [x] Restore the visible YBI chatbot launcher after the mobile keyboard-safe overlay refinement.
 - [x] Verify the launcher remains visible while the mobile chat preserves its keyboard-safe, fixed-header behavior before saving a checkpoint.
+- [x] Prevent iOS Safari from scrolling the public page and fixed header when a visitor focuses or types in the YBI assistant input.
+- [x] Validate the open mobile assistant on an iPhone-style viewport with regression coverage before saving a checkpoint.
