@@ -30,4 +30,16 @@ describe("YBI visitor assistant contact handoff", () => {
     expect(styles).toContain(".ybi-assistant-chatbox { margin-top: 24px; }");
     expect(styles).toContain(".ybi-assistant-chatbox { margin-top: 18px; }");
   });
+
+  it("passes contextual server guidance into assistant replies and closes the panel when a link is followed", () => {
+    const source = readFileSync(new URL("./YbiVisitorAssistant.tsx", import.meta.url), "utf8");
+    const chatSource = readFileSync(new URL("./AIChatBox.tsx", import.meta.url), "utf8");
+    const styles = readFileSync(new URL("../ybi-visitor-enhancements.css", import.meta.url), "utf8");
+
+    expect(source).toContain("guidance: result.guidance");
+    expect(source).toContain("onGuidanceNavigate={() => setIsOpen(false)}");
+    expect(chatSource).toContain('aria-label="Related YBI pages"');
+    expect(chatSource).toContain("ybi-chat-guidance-link");
+    expect(styles).toContain(".ybi-chat-guidance-link");
+  });
 });

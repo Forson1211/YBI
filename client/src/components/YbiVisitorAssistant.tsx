@@ -23,7 +23,7 @@ export function YbiVisitorAssistant() {
   const { data: savedQuickQuestions } = trpc.publicSite.assistant.quickQuestions.useQuery();
   const assistant = trpc.publicSite.assistant.chat.useMutation({
     onSuccess: (result) => {
-      setMessages((current) => [...current, { role: "assistant", content: result.answer }]);
+      setMessages((current) => [...current, { role: "assistant", content: result.answer, guidance: result.guidance }]);
     },
     onError: () => {
       setMessages((current) => [
@@ -136,6 +136,7 @@ export function YbiVisitorAssistant() {
               setMessages([welcomeMessage]);
             }}
             typingLabel="YBI is preparing a reply"
+            onGuidanceNavigate={() => setIsOpen(false)}
           />
         </section>
       )}

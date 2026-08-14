@@ -3,9 +3,11 @@ import { YbiLiveBotIcon } from "@/components/YbiLiveBotIcon";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { Loader2, RotateCcw, Send, User, Sparkles } from "lucide-react";
+import { ArrowUpRight, Loader2, RotateCcw, Send, User, Sparkles } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { Streamdown } from "streamdown";
+import { Link } from "wouter";
+import type { AssistantGuidanceLink } from "@shared/assistantProgramLinks";
 
 /**
  * Message type matching server-side LLM Message interface
@@ -13,6 +15,7 @@ import { Streamdown } from "streamdown";
 export type Message = {
   role: "system" | "user" | "assistant";
   content: string;
+  guidance?: AssistantGuidanceLink[];
 };
 
 export type AIChatBoxProps = {
@@ -67,6 +70,9 @@ export type AIChatBoxProps = {
 
   /** Accessible copy shown beside the animated processing dots. */
   typingLabel?: string;
+
+  /** Invoked after a visitor follows one of the assistant's contextual links. */
+  onGuidanceNavigate?: () => void;
 };
 
 /**
@@ -132,6 +138,7 @@ export function AIChatBox({
   compact = false,
   onClearChat,
   typingLabel,
+  onGuidanceNavigate,
 }: AIChatBoxProps) {
   const [input, setInput] = useState("");
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -283,9 +290,29 @@ export function AIChatBox({
                       )}
                     >
                       {message.role === "assistant" ? (
-                        <div className="prose prose-sm dark:prose-invert max-w-none">
-                          <Streamdown>{message.content}</Streamdown>
-                        </div>
+                        <>
+                          <div className="prose prose-sm dark:prose-invert max-w-none">
+                            <Streamdown>{message.content}</Streamdown>
+                          </div>
+                          {message.guidance?.length ? (
+                            <nav className="ybi-chat-guidance" aria-label="Related YBI pages">
+                              {message.guidance.map((link) => (
+                                <Link
+                                  className="ybi-chat-guidance-link"
+                                  href={link.href}
+                                  key={link.href}
+                                  onClick={onGuidanceNavigate}
+                                >
+                                  <span>
+                                    <strong>{link.label}</strong>
+                                    <small>{link.description}</small>
+                                  </span>
+                                  <ArrowUpRight aria-hidden="true" size={15} />
+                                </Link>
+                              ))}
+                            </nav>
+                          ) : null}
+                        </>
                       ) : (
                         <p className="whitespace-pre-wrap text-sm">
                           {message.content}

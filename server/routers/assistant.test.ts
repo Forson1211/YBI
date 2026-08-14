@@ -20,7 +20,9 @@ describe("YBI visitor assistant", () => {
       messages: [{ role: "user", content: "Which entrepreneurship programme should I explore?" }],
     })).resolves.toEqual(expect.objectContaining({
       answer: expect.stringContaining("YBI offers practical pathways"),
-      guidance: expect.arrayContaining([expect.objectContaining({ href: "/programs" })]),
+      guidance: expect.arrayContaining([
+        expect.objectContaining({ label: "Entrepreneurship", href: "/programs#entrepreneurship" }),
+      ]),
     }));
 
     expect(llmMocks.invokeLLM).toHaveBeenCalledWith(expect.objectContaining({

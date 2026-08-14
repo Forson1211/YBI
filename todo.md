@@ -246,3 +246,6 @@
 - [x] Trace the renewed managed-preview Vite client WebSocket error reported at 12:22 and identify every route that can load the client.
 - [x] Prevent the proxied preview from serving an active Vite client that attempts an unavailable WebSocket connection.
 - [x] Validate a fresh managed-preview load, browser console, regression suite, TypeScript, and production build before publishing the follow-up repair.
+- [x] Define context-matching program and focus-area links for YBI assistant responses.
+- [x] Render concise, accessible program suggestions within relevant assistant replies without adding unrelated links.
+- [x] Add regression coverage, validate the assistant guidance flow, and publish the verified enhancement.

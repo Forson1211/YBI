@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getSiteContent } from "../db";
 import { invokeLLM } from "../_core/llm";
 import { publicProcedure, router } from "../_core/trpc";
+import { getAssistantProgramLinks } from "../../shared/assistantProgramLinks";
 
 const visitorMessage = z.object({
   role: z.enum(["user", "assistant"]),
@@ -40,52 +41,6 @@ export async function readQuickQuestions() {
     return defaultQuickQuestions;
   }
 }
-
-export type GuidanceLink = { label: string; href: string; description: string };
-
-const defaultGuidance: GuidanceLink[] = [
-  { label: "About YBI", href: "/about", description: "Our purpose and approach" },
-  { label: "Explore programs", href: "/programs", description: "Practical ways to learn and lead" },
-  { label: "Join YBI", href: "/join-us", description: "Take part, volunteer, or partner" },
-];
-
-const guidanceFor = (question: string): GuidanceLink[] => {
-  const query = question.toLowerCase();
-
-  if (/(volunteer|mentor|partner|donat|support|join)/.test(query)) {
-    return [
-      { label: "Join YBI", href: "/join-us", description: "Ways to participate, volunteer, and partner" },
-      { label: "Contact YBI", href: "/contact", description: "Send the team a direct message" },
-      { label: "Explore programs", href: "/programs", description: "See the learning opportunities" },
-    ];
-  }
-
-  if (/(program|public speaking|entrepreneur|business|education|leadership)/.test(query)) {
-    return [
-      { label: "Explore programs", href: "/programs", description: "Find a practical learning pathway" },
-      { label: "Focus areas", href: "/focus-areas", description: "Leadership, education, business, and more" },
-      { label: "Contact YBI", href: "/contact", description: "Ask about a programme directly" },
-    ];
-  }
-
-  if (/(gallery|photo|media|story|news)/.test(query)) {
-    return [
-      { label: "YBI stories", href: "/media#stories", description: "Read community stories and updates" },
-      { label: "Photo gallery", href: "/gallery", description: "See YBI moments in pictures" },
-      { label: "About YBI", href: "/about", description: "Learn about the work behind the stories" },
-    ];
-  }
-
-  if (/(contact|message|email|talk)/.test(query)) {
-    return [
-      { label: "Contact YBI", href: "/contact", description: "Send a message to the YBI team" },
-      { label: "Join YBI", href: "/join-us", description: "Find a path to participate" },
-      { label: "About YBI", href: "/about", description: "Understand YBI before reaching out" },
-    ];
-  }
-
-  return defaultGuidance;
-};
 
 const requestWindows = new Map<string, { count: number; expiresAt: number }>();
 const MAX_REQUESTS_PER_WINDOW = 12;
@@ -141,6 +96,6 @@ export const visitorAssistantRouter = router({
       ? content.trim()
       : "I can help you explore Young Beginners Inspiration. For specific details, please send the YBI team a message through Contact Us.";
 
-    return { answer, guidance: guidanceFor(latestVisitorQuestion) };
+    return { answer, guidance: getAssistantProgramLinks(latestVisitorQuestion) };
   }),
 });
