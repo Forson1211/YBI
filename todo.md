@@ -181,3 +181,5 @@
 - [x] Build a YBI visitor-assistant chat panel with welcome prompts, answer rendering, and guided page links.
 - [x] Implement a public server-side AI assistant procedure with grounded YBI context and safe fallbacks.
 - [x] Add regression tests and validate the assistant on desktop and mobile before saving a checkpoint.
+- [x] Change the YBI visitor assistant launcher and panel accents to YBI yellow while preserving readable contrast.
+- [x] Verify the yellow visitor assistant treatment on desktop and mobile, then save a checkpoint.
