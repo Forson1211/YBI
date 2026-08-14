@@ -95,7 +95,7 @@ export function YbiVisitorAssistant() {
       const isMobile = window.matchMedia("(max-width: 520px)").matches;
       if (!isMobile) return;
 
-      const keyboardHeight = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      const keyboardHeight = Math.max(0, window.innerHeight - vv.height);
       document.documentElement.style.setProperty("--ybi-keyboard-inset", `${Math.round(keyboardHeight)}px`);
     };
 
