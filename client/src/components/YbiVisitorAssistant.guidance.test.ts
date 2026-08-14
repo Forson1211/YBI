@@ -24,7 +24,7 @@ describe("YBI visitor assistant contact handoff", () => {
     expect(source).toContain('aria-label="Open a pre-filled Contact Us enquiry"');
     expect(source).not.toContain("Contact the YBI team");
     expect(source).not.toContain("Open a ready-to-edit enquiry for personal follow-up.");
-    expect(styles).toContain(".ybi-assistant-chatbox { margin-top: 14px; }");
-    expect(styles).toContain(".ybi-assistant-chatbox { margin-top: 10px; }");
+    expect(styles).toContain(".ybi-assistant-chatbox { margin-top: 24px; }");
+    expect(styles).toContain(".ybi-assistant-chatbox { margin-top: 18px; }");
   });
 });

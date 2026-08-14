@@ -231,3 +231,6 @@
 - [x] Remove visible Contact Us shortcut wording from the assistant while preserving the direct enquiry handoff.
 - [x] Add clear space between the assistant’s auxiliary action area and the main chat board across mobile and desktop.
 - [x] Add regression coverage, validate the assistant refinement, and publish the verified update.
+- [x] Increase the visible vertical gap between the YBI assistant quick-question area and the main chat card.
+- [x] Preserve mobile keyboard-safe chat sizing while applying the larger contained gap.
+- [x] Add regression coverage, validate the spacing at responsive breakpoints, and publish the verified refinement.
