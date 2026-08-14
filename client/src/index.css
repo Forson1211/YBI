@@ -55,7 +55,7 @@ h1, h2, h3, p { margin-top: 0; }
 h1, h2, h3 { font-family: 'Lato', Arial, sans-serif; font-weight: 900; letter-spacing: -.03em; }
 h1 { max-width: 720px; margin-bottom: 25px; font-size: clamp(55px, 7vw, 92px); line-height: 1.04; }
 h1 span, h2 span, h3 span { color: var(--red); font-weight: 700; }
-.reference-hero h1, .reference-hero h1 span { color: #ffffff; }
+.reference-hero h1, .reference-hero h1 span, .hero-title-line { color: #ffffff; font-weight: 900 !important; }
 .reference-hero-copy { max-width: 650px; margin-bottom: 29px; color: rgba(255,255,255,.91); font-size: 17px; line-height: 1.55; }
 .reference-button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 49px; padding: 13px 24px; border: 1px solid transparent; text-transform: uppercase; font-size: 11px; font-weight: 700; letter-spacing: .11em; transition: transform .2s var(--ease), background .2s ease, color .2s ease; }
 .reference-button:hover { transform: translateY(-3px); }
@@ -261,10 +261,11 @@ h2 { margin-bottom: 21px; color: var(--blue-deep); font-size: clamp(42px, 5.3vw,
 @keyframes mobile-menu-item-in { from { opacity: 0; transform: translate3d(0, -7px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
 
 
-.managed-hero-title { display: flex; flex-direction: column; align-items: flex-start; white-space: pre-line; line-height: 1.04; color: #ffffff; }
-.hero-title-line { display: block; white-space: nowrap; color: #ffffff; }
+.managed-hero-title { display: flex; flex-direction: column; align-items: flex-start; white-space: pre-line; line-height: 1.04; color: #ffffff; font-weight: 900 !important; }
+.hero-title-line { display: block; white-space: nowrap; color: #ffffff; font-weight: 900 !important; }
 @media (max-width: 900px) {
-  .managed-hero-title { align-items: center; text-align: center; }
+  .managed-hero-title { align-items: center; text-align: center; font-weight: 900 !important; }
+  .reference-hero h1, .reference-hero h1 span, .hero-title-line { font-weight: 900 !important; }
 }
 
 /* Admin dashboard: a focused, secure YBI workspace that uses the public brand without imitating the marketing site. */
