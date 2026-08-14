@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const chatSource = readFileSync(new URL("./AIChatBox.tsx", import.meta.url), "utf8");
 const assistantSource = readFileSync(new URL("./YbiVisitorAssistant.tsx", import.meta.url), "utf8");
+const liveBotSource = readFileSync(new URL("./YbiLiveBotIcon.tsx", import.meta.url), "utf8");
 const styles = readFileSync(new URL("../index.css", import.meta.url), "utf8");
 
 describe("YBI assistant compact chat presentation", () => {
@@ -20,11 +21,20 @@ describe("YBI assistant compact chat presentation", () => {
     expect(styles).toContain(".ybi-assistant-chatbox .ybi-chat-composer");
   });
 
-  it("uses one chatbot symbol for assistant replies and the prompt accent", () => {
-    expect(chatSource).toContain("BotMessageSquare");
+  it("uses one live chatbot character for assistant replies, the prompt accent, and launcher", () => {
+    expect(chatSource).toContain("YbiLiveBotIcon");
+    expect(assistantSource).toContain("YbiLiveBotIcon");
     expect(assistantSource).toContain("ybi-assistant-intro-icon");
-    expect(assistantSource).toContain("<BotMessageSquare size={14}");
+    expect(assistantSource).toContain("ybi-assistant-launcher-orb");
+    expect(liveBotSource).toContain("ybi-live-bot-eye");
+    expect(liveBotSource).toContain("ybi-live-bot-mouth");
     expect(styles).toContain(".ybi-assistant-intro-icon");
+  });
+
+  it("adds gentle blink and idle motion while respecting reduced-motion preferences", () => {
+    expect(styles).toContain("@media (prefers-reduced-motion: no-preference)");
+    expect(styles).toContain("ybi-live-bot-blink");
+    expect(styles).toContain("ybi-live-bot-idle");
   });
 
   it("keeps the mobile assistant within the keyboard-resized viewport without moving the public page", () => {

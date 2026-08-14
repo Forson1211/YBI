@@ -215,3 +215,5 @@
 - [x] Remove the yellow backing shape behind the homepage rotating image slider.
 - [x] Display the homepage rotating image in a square frame on mobile devices while preserving its smooth rotation.
 - [x] Validate the revised rotating image frame on desktop and mobile before saving a checkpoint.
+- [x] Add subtle blinking-eye and character-motion details to the shared YBI chatbot icon.
+- [x] Preserve accessible reduced-motion behavior and validate the animated chatbot icon in the launcher and chat interface before saving a checkpoint.

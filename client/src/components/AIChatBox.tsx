@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
+import { YbiLiveBotIcon } from "@/components/YbiLiveBotIcon";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { BotMessageSquare, Loader2, RotateCcw, Send, User, Sparkles } from "lucide-react";
+import { Loader2, RotateCcw, Send, User, Sparkles } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { Streamdown } from "streamdown";
 
@@ -268,7 +269,7 @@ export function AIChatBox({
                   >
                     {message.role === "assistant" && (
                       <div className="size-8 shrink-0 mt-1 rounded-full bg-primary/10 flex items-center justify-center ybi-chat-avatar ybi-chat-avatar--assistant">
-                        <BotMessageSquare className="size-4 text-primary" />
+                        <YbiLiveBotIcon className="size-4" />
                       </div>
                     )}
 
@@ -311,7 +312,7 @@ export function AIChatBox({
                   }
                 >
                   <div className="size-8 shrink-0 mt-1 rounded-full bg-primary/10 flex items-center justify-center ybi-chat-avatar ybi-chat-avatar--assistant">
-                    <BotMessageSquare className="size-4 text-primary" />
+                    <YbiLiveBotIcon className="size-4" />
                   </div>
                   <div className="rounded-lg bg-muted px-4 py-2.5 ybi-chat-bubble ybi-chat-bubble--loading ybi-chat-typing" role="status" aria-live="polite">
                     <span className="ybi-chat-typing-dots" aria-hidden="true"><i /><i /><i /></span>

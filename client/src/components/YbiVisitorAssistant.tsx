@@ -1,6 +1,7 @@
 import { AIChatBox, type Message } from "@/components/AIChatBox";
+import { YbiLiveBotIcon } from "@/components/YbiLiveBotIcon";
 import { trpc } from "@/lib/trpc";
-import { BotMessageSquare, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 
@@ -109,7 +110,7 @@ export function YbiVisitorAssistant() {
 
           <div className="ybi-assistant-intro">
             <span className="ybi-assistant-intro-icon" aria-hidden="true">
-              <BotMessageSquare size={14} />
+              <YbiLiveBotIcon className="size-3.5" />
             </span>
             <span>Ask about YBI, or select a quick question to get started.</span>
           </div>
@@ -147,7 +148,7 @@ export function YbiVisitorAssistant() {
         aria-controls="ybi-visitor-assistant"
         onClick={() => setIsOpen((open) => !open)}
       >
-        <span className="ybi-assistant-launcher-orb" aria-hidden="true"><BotMessageSquare size={30} /></span>
+        <span className="ybi-assistant-launcher-orb" aria-hidden="true"><YbiLiveBotIcon className="size-[30px]" /></span>
       </button>
     </div>
   );
