@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { getNextMobileSubmenu, publicNavItems } from "./PublicNavigation";
+import { getNextMobileSubmenu, getPublicPathname, isPublicNavItemActive, isPublicRouteActive, publicNavItems } from "./PublicNavigation";
 
 describe("public navigation structure", () => {
   it("keeps all primary header destinations and dropdown sections available", () => {
@@ -40,8 +40,19 @@ describe("public navigation structure", () => {
 
   it("uses client-side links for fast primary navigation", () => {
     const source = readFileSync(new URL("./PublicNavigation.tsx", import.meta.url), "utf8");
-    expect(source).toContain('import { Link } from "wouter";');
-    expect(source).toContain('<Link className="ybi-nav-link" href={item.href}>');
-    expect(source).toContain('<Link className="ybi-dropdown-link" href={link.href}>');
+    expect(source).toContain('import { Link, useLocation } from "wouter";');
+    expect(source).toContain("ybi-nav-link${isItemActive ? \" is-active\" : \"\"}");
+    expect(source).toContain("ybi-dropdown-link${isLinkActive ? \" is-active\" : \"\"}");
+  });
+
+  it("identifies the current route and its parent navigation section without treating hash links as separate pages", () => {
+    const about = publicNavItems.find((item) => item.label === "About")!;
+    const media = publicNavItems.find((item) => item.label === "Media")!;
+
+    expect(getPublicPathname("/about#approach")).toBe("/about");
+    expect(isPublicRouteActive("/programs#public-speaking", "/programs")).toBe(true);
+    expect(isPublicNavItemActive(about, "/team")).toBe(true);
+    expect(isPublicNavItemActive(media, "/gallery")).toBe(true);
+    expect(isPublicNavItemActive(about, "/programs")).toBe(false);
   });
 });

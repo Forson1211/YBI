@@ -1,5 +1,6 @@
 import { AIChatBox, type Message } from "@/components/AIChatBox";
 import { YbiLiveBotIcon } from "@/components/YbiLiveBotIcon";
+import { getAssistantContactHref } from "@/lib/assistantGuidance";
 import { trpc } from "@/lib/trpc";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -17,7 +18,7 @@ const welcomeMessage: Message = {
 };
 
 export function YbiVisitorAssistant() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([welcomeMessage]);
   const { data: savedQuickQuestions } = trpc.publicSite.assistant.quickQuestions.useQuery();
@@ -86,6 +87,12 @@ export function YbiVisitorAssistant() {
     });
   };
 
+  const openContactEnquiry = () => {
+    assistant.reset();
+    setIsOpen(false);
+    setLocation(getAssistantContactHref(messages));
+  };
+
   return (
     <div className="ybi-assistant-root">
       {isOpen && (
@@ -121,6 +128,11 @@ export function YbiVisitorAssistant() {
                 {prompt}
               </button>
             ))}
+          </div>
+
+          <div className="ybi-assistant-contact-action">
+            <button type="button" onClick={openContactEnquiry}>Contact the YBI team</button>
+            <p>Open a ready-to-edit enquiry for personal follow-up.</p>
           </div>
 
           <AIChatBox

@@ -224,3 +224,7 @@
 - [x] Keep the public site header and YBI visitor-assistant header visible when the assistant opens on mobile.
 - [x] Constrain mobile assistant conversation content to scroll independently within the chat panel, including during keyboard use.
 - [x] Add regression coverage and validate the contained mobile scrolling behavior before publishing.
+- [x] Add a visitor-assistant shortcut that opens Contact Us with a pre-filled enquiry prompt.
+- [x] Preserve the assistant handoff context in the Contact Us form with accessible editing and submission.
+- [x] Highlight the current public page and its parent dropdown in desktop and mobile navigation.
+- [x] Add regression coverage, validate visitor guidance flows, and publish the verified update.
