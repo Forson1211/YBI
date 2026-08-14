@@ -26,7 +26,7 @@ describe("YBI visitor assistant", () => {
     }));
 
     expect(llmMocks.invokeLLM).toHaveBeenCalledWith(expect.objectContaining({
-      model: "gpt-5-mini",
+      model: "gpt-4o-mini",
       messages: expect.arrayContaining([expect.objectContaining({ role: "system", content: expect.stringContaining("Young Beginners Inspiration") })]),
     }));
   });
@@ -34,5 +34,18 @@ describe("YBI visitor assistant", () => {
   it("rejects malformed visitor messages before calling the model", async () => {
     const caller = appRouter.createCaller(createVisitorContext());
     await expect(caller.publicSite.assistant.chat({ page: "/", messages: [{ role: "user", content: "" }] })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+  });
+
+  it("gracefully falls back to verified knowledge base when LLM service is unavailable", async () => {
+    llmMocks.invokeLLM.mockRejectedValueOnce(new Error("API rate limit or unconfigured key"));
+    const caller = appRouter.createCaller(createVisitorContext());
+
+    const result = await caller.publicSite.assistant.chat({
+      page: "/",
+      messages: [{ role: "user", content: "What does YBI do?" }],
+    });
+
+    expect(result.answer).toContain("Young Beginners Inspiration (YBI)");
+    expect(result.guidance.length).toBeGreaterThan(0);
   });
 });

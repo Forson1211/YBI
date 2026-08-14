@@ -1,8 +1,9 @@
 import { AIChatBox, type Message } from "@/components/AIChatBox";
 import { YbiLiveBotIcon } from "@/components/YbiLiveBotIcon";
 import { trpc } from "@/lib/trpc";
+import { getYbiKnowledgeResponse } from "@shared/assistantKnowledge";
 import { X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 
 const suggestedPrompts = [
@@ -20,19 +21,37 @@ export function YbiVisitorAssistant() {
   const [location] = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([welcomeMessage]);
+  const [isThinking, setIsThinking] = useState(false);
+  const pendingQuestionRef = useRef<string>("");
+  const pendingTimestampRef = useRef<number>(0);
   const { data: savedQuickQuestions } = trpc.publicSite.assistant.quickQuestions.useQuery();
+
   const assistant = trpc.publicSite.assistant.chat.useMutation({
     onSuccess: (result) => {
-      setMessages((current) => [...current, { role: "assistant", content: result.answer, guidance: result.guidance }]);
+      const elapsed = Date.now() - pendingTimestampRef.current;
+      const remainingDelay = Math.max(0, 1100 - elapsed);
+
+      setTimeout(() => {
+        setMessages((current) => [...current, { role: "assistant", content: result.answer, guidance: result.guidance }]);
+        setIsThinking(false);
+      }, remainingDelay);
     },
     onError: () => {
-      setMessages((current) => [
-        ...current,
-        {
-          role: "assistant",
-          content: "I am unable to answer that right now. Please try again shortly, or send a message to the YBI team through Contact Us.",
-        },
-      ]);
+      const elapsed = Date.now() - pendingTimestampRef.current;
+      const remainingDelay = Math.max(0, 1100 - elapsed);
+      const fallback = getYbiKnowledgeResponse(pendingQuestionRef.current || "What does YBI do?", location);
+
+      setTimeout(() => {
+        setMessages((current) => [
+          ...current,
+          {
+            role: "assistant",
+            content: fallback.answer,
+            guidance: fallback.guidance,
+          },
+        ]);
+        setIsThinking(false);
+      }, remainingDelay);
     },
   });
 
@@ -67,13 +86,43 @@ export function YbiVisitorAssistant() {
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen || typeof window === "undefined" || !window.visualViewport) return;
+
+    const handleViewportChange = () => {
+      const vv = window.visualViewport;
+      if (!vv) return;
+      const isMobile = window.matchMedia("(max-width: 520px)").matches;
+      if (!isMobile) return;
+
+      const keyboardHeight = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      document.documentElement.style.setProperty("--ybi-keyboard-inset", `${Math.round(keyboardHeight)}px`);
+    };
+
+    window.visualViewport.addEventListener("resize", handleViewportChange);
+    window.visualViewport.addEventListener("scroll", handleViewportChange);
+    handleViewportChange();
+
+    return () => {
+      window.visualViewport?.removeEventListener("resize", handleViewportChange);
+      window.visualViewport?.removeEventListener("scroll", handleViewportChange);
+      document.documentElement.style.removeProperty("--ybi-keyboard-inset");
+    };
+  }, [isOpen]);
+
   if (location.startsWith("/admin")) return null;
 
   const quickQuestions = savedQuickQuestions?.length ? savedQuickQuestions : suggestedPrompts;
 
+  const isBusy = assistant.isPending || isThinking;
+
   const sendMessage = (content: string) => {
     const trimmed = content.trim();
-    if (!trimmed || assistant.isPending) return;
+    if (!trimmed || isBusy) return;
+
+    pendingQuestionRef.current = trimmed;
+    pendingTimestampRef.current = Date.now();
+    setIsThinking(true);
 
     const nextMessages = [...messages, { role: "user" as const, content: trimmed }];
     setMessages(nextMessages);
@@ -117,7 +166,7 @@ export function YbiVisitorAssistant() {
 
           <div className="ybi-assistant-prompts" aria-label="Suggested questions">
             {quickQuestions.map((prompt) => (
-              <button type="button" key={prompt} onClick={() => sendMessage(prompt)} disabled={assistant.isPending}>
+              <button type="button" key={prompt} onClick={() => sendMessage(prompt)} disabled={isBusy}>
                 {prompt}
               </button>
             ))}
@@ -126,13 +175,14 @@ export function YbiVisitorAssistant() {
           <AIChatBox
             messages={messages}
             onSendMessage={sendMessage}
-            isLoading={assistant.isPending}
+            isLoading={isBusy}
             placeholder="Ask YBI a question..."
-            height="255px"
+            height="430px"
             className="ybi-assistant-chatbox"
             compact
             onClearChat={() => {
               assistant.reset();
+              setIsThinking(false);
               setMessages([welcomeMessage]);
             }}
             typingLabel="YBI is preparing a reply"
@@ -142,7 +192,7 @@ export function YbiVisitorAssistant() {
       )}
 
       <button
-        className="ybi-assistant-launcher"
+        className={`ybi-assistant-launcher ${isOpen ? "ybi-assistant-launcher--open" : ""}`}
         type="button"
         aria-label={isOpen ? "Close YBI visitor assistant" : "Open YBI visitor assistant"}
         aria-expanded={isOpen}

@@ -3,11 +3,17 @@
   .ybi-assistant-root { z-index: 40; }
 
   .ybi-assistant-panel {
-    top: calc(var(--header-height) + 8px);
-    right: 10px;
-    bottom: calc(12px + env(safe-area-inset-bottom));
-    left: 10px;
-    max-height: none;
+    position: fixed !important;
+    top: calc(var(--header-height) + 8px) !important;
+    right: 10px !important;
+    bottom: calc(86px + env(safe-area-inset-bottom) + var(--ybi-keyboard-inset, 0px)) !important;
+    left: 10px !important;
+    max-height: none !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    pointer-events: auto;
+    transition: bottom 120ms ease-out;
   }
 
   .ybi-assistant-heading, .ybi-assistant-intro, .ybi-assistant-prompts { flex: 0 0 auto; }
@@ -16,7 +22,8 @@
     display: flex;
     min-height: 0;
     flex: 1 1 0;
-    margin: 0 10px 10px;
+    margin: 0 14px 16px !important;
+    border-radius: 14px !important;
   }
 
   .ybi-assistant-chatbox .ybi-chat-message-viewport {

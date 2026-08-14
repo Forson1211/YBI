@@ -377,6 +377,11 @@ export function AIChatBox({
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
+          onFocus={() => {
+            if (typeof window !== "undefined" && window.visualViewport) {
+              window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+            }
+          }}
           placeholder={placeholder}
           className="flex-1 max-h-32 resize-none min-h-9 ybi-chat-input"
           rows={1}
