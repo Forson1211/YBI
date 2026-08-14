@@ -2,7 +2,7 @@ import { AIChatBox, type Message } from "@/components/AIChatBox";
 import { YbiLiveBotIcon } from "@/components/YbiLiveBotIcon";
 import { getAssistantContactHref } from "@/lib/assistantGuidance";
 import { trpc } from "@/lib/trpc";
-import { X } from "lucide-react";
+import { ArrowUpRight, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 
@@ -131,8 +131,9 @@ export function YbiVisitorAssistant() {
           </div>
 
           <div className="ybi-assistant-contact-action">
-            <button type="button" onClick={openContactEnquiry}>Contact the YBI team</button>
-            <p>Open a ready-to-edit enquiry for personal follow-up.</p>
+            <button type="button" onClick={openContactEnquiry} aria-label="Open a pre-filled Contact Us enquiry" title="Open Contact Us enquiry">
+              <ArrowUpRight size={16} aria-hidden="true" />
+            </button>
           </div>
 
           <AIChatBox

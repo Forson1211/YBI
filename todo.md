@@ -228,3 +228,6 @@
 - [x] Preserve the assistant handoff context in the Contact Us form with accessible editing and submission.
 - [x] Highlight the current public page and its parent dropdown in desktop and mobile navigation.
 - [x] Add regression coverage, validate visitor guidance flows, and publish the verified update.
+- [x] Remove visible Contact Us shortcut wording from the assistant while preserving the direct enquiry handoff.
+- [x] Add clear space between the assistant’s auxiliary action area and the main chat board across mobile and desktop.
+- [x] Add regression coverage, validate the assistant refinement, and publish the verified update.
