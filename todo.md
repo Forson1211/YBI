@@ -219,3 +219,5 @@
 - [x] Preserve accessible reduced-motion behavior and validate the animated chatbot icon in the launcher and chat interface before saving a checkpoint.
 - [x] Increase the live character size inside the desktop YBI chatbot launcher while retaining its compact mobile sizing.
 - [x] Validate the desktop and mobile chatbot launcher proportions before saving a checkpoint.
+- [x] Restore a lighter compact YBI chatbot character treatment on mobile while retaining the enlarged desktop character.
+- [x] Validate separate mobile and desktop chatbot character proportions before saving a checkpoint.

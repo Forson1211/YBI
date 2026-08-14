@@ -5,3 +5,4 @@
 - TypeScript validation and the Vitest suite completed successfully after the page and link implementation.
 - The homepage image wall was rechecked at desktop and 390px mobile widths. All three rows remained visible with landscape outer rows and a portrait middle row, and the broader image sequence showed varied community scenes rather than immediate repeats.
 - The homepage rotating image frame was reviewed at desktop and phone widths after removing its yellow backing shape. The desktop frame is clean, and the responsive stylesheet is active on phone; the lower rotating image frame still requires direct full-page phone review.
+- The live YBI chatbot character was reviewed at 390px and desktop widths. The mobile launcher now uses a lighter, compact 20px character treatment, while the desktop launcher retains the more legible enlarged character without crowding the yellow orb.
