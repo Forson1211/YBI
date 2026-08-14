@@ -1,21 +1,13 @@
 import { AIChatBox, type Message } from "@/components/AIChatBox";
 import { trpc } from "@/lib/trpc";
-import { BotMessageSquare, ChevronRight, Sparkles, X } from "lucide-react";
+import { BotMessageSquare, Sparkles, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "wouter";
-
-type GuidanceLink = { label: string; href: string; description: string };
+import { useLocation } from "wouter";
 
 const suggestedPrompts = [
   "What does YBI do?",
   "Which program should I explore?",
   "How can I volunteer or partner?",
-];
-
-const defaultGuidance: GuidanceLink[] = [
-  { label: "About YBI", href: "/about", description: "Our purpose and approach" },
-  { label: "Explore programs", href: "/programs", description: "Practical ways to learn and lead" },
-  { label: "Join YBI", href: "/join-us", description: "Take part, volunteer, or partner" },
 ];
 
 const welcomeMessage: Message = {
@@ -27,23 +19,17 @@ export function YbiVisitorAssistant() {
   const [location] = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([welcomeMessage]);
-  const [guidance, setGuidance] = useState<GuidanceLink[]>(defaultGuidance);
   const assistant = trpc.publicSite.assistant.chat.useMutation({
     onSuccess: (result) => {
       setMessages((current) => [...current, { role: "assistant", content: result.answer }]);
-      setGuidance(result.guidance);
     },
     onError: () => {
       setMessages((current) => [
         ...current,
         {
           role: "assistant",
-          content: "I am unable to answer that right now. You can still explore YBI through these helpful pages, or send a message through Contact Us.",
+          content: "I am unable to answer that right now. Please try again shortly, or send a message to the YBI team through Contact Us.",
         },
-      ]);
-      setGuidance([
-        ...defaultGuidance.slice(0, 2),
-        { label: "Contact YBI", href: "/contact", description: "Send a message to the YBI team" },
       ]);
     },
   });
@@ -115,19 +101,8 @@ export function YbiVisitorAssistant() {
             placeholder="Ask YBI a question..."
             height="255px"
             className="ybi-assistant-chatbox"
+            compact
           />
-
-          <nav className="ybi-assistant-guidance" aria-label="YBI guided pages">
-            <p>Helpful next steps</p>
-            <div>
-              {guidance.map((item) => (
-                <Link href={item.href} key={`${item.href}-${item.label}`} onClick={() => setIsOpen(false)}>
-                  <span><strong>{item.label}</strong><small>{item.description}</small></span>
-                  <ChevronRight size={16} aria-hidden="true" />
-                </Link>
-              ))}
-            </div>
-          </nav>
         </section>
       )}
 

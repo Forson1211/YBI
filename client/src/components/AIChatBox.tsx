@@ -57,6 +57,9 @@ export type AIChatBoxProps = {
    * Click to send directly
    */
   suggestedPrompts?: string[];
+
+  /** Keeps embedded assistant experiences compact instead of adding a large message spacer. */
+  compact?: boolean;
 };
 
 /**
@@ -119,6 +122,7 @@ export function AIChatBox({
   height = "600px",
   emptyStateMessage = "Start a conversation with AI",
   suggestedPrompts,
+  compact = false,
 }: AIChatBoxProps) {
   const [input, setInput] = useState("");
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -204,7 +208,7 @@ export function AIChatBox({
       style={{ height }}
     >
       {/* Messages Area */}
-      <div ref={scrollAreaRef} className="flex-1 overflow-hidden">
+      <div ref={scrollAreaRef} className="flex-1 overflow-hidden ybi-chat-message-viewport">
         {displayMessages.length === 0 ? (
           <div className="flex h-full flex-col p-4">
             <div className="flex flex-1 flex-col items-center justify-center gap-6 text-muted-foreground">
@@ -231,18 +235,19 @@ export function AIChatBox({
           </div>
         ) : (
           <ScrollArea className="h-full">
-            <div className="flex flex-col space-y-4 p-4">
+            <div className="flex flex-col space-y-4 p-4 ybi-chat-message-list">
               {displayMessages.map((message, index) => {
                 // Apply min-height to last message only if NOT loading (when loading, the loading indicator gets it)
                 const isLastMessage = index === displayMessages.length - 1;
                 const shouldApplyMinHeight =
-                  isLastMessage && !isLoading && minHeightForLastMessage > 0;
+                  isLastMessage && !isLoading && minHeightForLastMessage > 0 && !compact;
 
                 return (
                   <div
                     key={index}
                     className={cn(
-                      "flex gap-3",
+                      "flex gap-3 ybi-chat-message",
+                      `ybi-chat-message--${message.role}`,
                       message.role === "user"
                         ? "justify-end items-start"
                         : "justify-start items-start"
@@ -254,14 +259,15 @@ export function AIChatBox({
                     }
                   >
                     {message.role === "assistant" && (
-                      <div className="size-8 shrink-0 mt-1 rounded-full bg-primary/10 flex items-center justify-center">
+                      <div className="size-8 shrink-0 mt-1 rounded-full bg-primary/10 flex items-center justify-center ybi-chat-avatar ybi-chat-avatar--assistant">
                         <Sparkles className="size-4 text-primary" />
                       </div>
                     )}
 
                     <div
                       className={cn(
-                        "max-w-[80%] rounded-lg px-4 py-2.5",
+                        "max-w-[80%] rounded-lg px-4 py-2.5 ybi-chat-bubble",
+                        `ybi-chat-bubble--${message.role}`,
                         message.role === "user"
                           ? "bg-primary text-primary-foreground"
                           : "bg-muted text-foreground"
@@ -279,7 +285,7 @@ export function AIChatBox({
                     </div>
 
                     {message.role === "user" && (
-                      <div className="size-8 shrink-0 mt-1 rounded-full bg-secondary flex items-center justify-center">
+                      <div className="size-8 shrink-0 mt-1 rounded-full bg-secondary flex items-center justify-center ybi-chat-avatar ybi-chat-avatar--user">
                         <User className="size-4 text-secondary-foreground" />
                       </div>
                     )}
@@ -296,10 +302,10 @@ export function AIChatBox({
                       : undefined
                   }
                 >
-                  <div className="size-8 shrink-0 mt-1 rounded-full bg-primary/10 flex items-center justify-center">
+                  <div className="size-8 shrink-0 mt-1 rounded-full bg-primary/10 flex items-center justify-center ybi-chat-avatar ybi-chat-avatar--assistant">
                     <Sparkles className="size-4 text-primary" />
                   </div>
-                  <div className="rounded-lg bg-muted px-4 py-2.5">
+                  <div className="rounded-lg bg-muted px-4 py-2.5 ybi-chat-bubble ybi-chat-bubble--loading">
                     <Loader2 className="size-4 animate-spin text-muted-foreground" />
                   </div>
                 </div>
@@ -313,7 +319,7 @@ export function AIChatBox({
       <form
         ref={inputAreaRef}
         onSubmit={handleSubmit}
-        className="flex gap-2 p-4 border-t bg-background/50 items-end"
+        className="flex gap-2 p-4 border-t bg-background/50 items-end ybi-chat-composer"
       >
         <Textarea
           ref={textareaRef}
@@ -321,14 +327,14 @@ export function AIChatBox({
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="flex-1 max-h-32 resize-none min-h-9"
+          className="flex-1 max-h-32 resize-none min-h-9 ybi-chat-input"
           rows={1}
         />
         <Button
           type="submit"
           size="icon"
           disabled={!input.trim() || isLoading}
-          className="shrink-0 h-[38px] w-[38px]"
+          className="shrink-0 h-[38px] w-[38px] ybi-chat-send"
         >
           {isLoading ? (
             <Loader2 className="size-4 animate-spin" />
