@@ -26,4 +26,14 @@ describe("YBI assistant compact chat presentation", () => {
     expect(assistantSource).toContain("<BotMessageSquare size={14}");
     expect(styles).toContain(".ybi-assistant-intro-icon");
   });
+
+  it("keeps the mobile assistant within the keyboard-resized viewport without moving the public page", () => {
+    const indexHtml = readFileSync(new URL("../../index.html", import.meta.url), "utf8");
+
+    expect(indexHtml).toContain("interactive-widget=resizes-content");
+    expect(assistantSource).toContain('classList.toggle("ybi-assistant-open", isOpen)');
+    expect(styles).toContain("html.ybi-assistant-open, html.ybi-assistant-open body");
+    expect(styles).toContain("max-height: calc(100dvh - var(--header-height) - 80px)");
+    expect(styles).toContain(".ybi-assistant-panel { position: absolute");
+  });
 });

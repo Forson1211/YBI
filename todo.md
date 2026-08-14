@@ -206,3 +206,5 @@
 - [x] Record that the centered-logo verification is no longer applicable after the user-requested restoration.
 - [x] Restore the previous shared YBI logo alignment and remove the recent centered-text styling change.
 - [x] Verify the restored logo treatment on desktop and mobile, then save a checkpoint.
+- [x] Keep the YBI visitor assistant stable when a mobile on-screen keyboard opens, without shifting the fixed public header or page.
+- [x] Add regression coverage and validate the keyboard-safe assistant layout on a representative phone viewport before saving a checkpoint.

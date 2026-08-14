@@ -43,6 +43,12 @@ export function YbiVisitorAssistant() {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, []);
 
+  useEffect(() => {
+    const documentElement = document.documentElement;
+    documentElement.classList.toggle("ybi-assistant-open", isOpen);
+    return () => documentElement.classList.remove("ybi-assistant-open");
+  }, [isOpen]);
+
   if (location.startsWith("/admin")) return null;
 
   const quickQuestions = savedQuickQuestions?.length ? savedQuickQuestions : suggestedPrompts;
@@ -65,7 +71,7 @@ export function YbiVisitorAssistant() {
   return (
     <div className="ybi-assistant-root">
       {isOpen && (
-        <section className="ybi-assistant-panel" aria-label="YBI visitor assistant">
+        <section id="ybi-visitor-assistant" className="ybi-assistant-panel" aria-label="YBI visitor assistant">
           <header className="ybi-assistant-heading">
             <div className="ybi-assistant-identity">
               <img
