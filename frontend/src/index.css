@@ -674,7 +674,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 /* Dedicated public pages: varied editorial layouts within one shared YBI visual language. */
 .public-page { background: var(--white); }
 .page-hero { position: relative; display: flex; align-items: flex-end; min-height: 455px; padding: 94px 0 76px; overflow: hidden; color: white; isolation: isolate; }
-.page-hero::before, .page-hero::after { position: absolute; z-index: -1; content: ""; }
+.page-hero::before, .page-hero::after { position: absolute; z-index: -1; display: none; content: ""; }
 .page-hero::before { width: min(53vw, 690px); height: min(53vw, 690px); border: 1px solid rgba(255,255,255,.25); border-radius: 50%; right: -9%; top: -44%; }
 .page-hero::after { width: 180px; height: 180px; right: 12%; bottom: -90px; background: var(--yellow); clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); opacity: .95; }
 .page-hero-about { background: linear-gradient(128deg, #073c52 0%, #0b5d7b 58%, #0f7593 100%); }
@@ -684,12 +684,6 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 .page-hero-join { background: linear-gradient(128deg, #ef2b1f 0%, #f14526 56%, #ff9f0a 100%); }
 .page-hero-media { background: linear-gradient(128deg, #073c52 0%, #144f67 46%, #ef2b1f 100%); }
 .page-hero-contact { background: linear-gradient(128deg, #073c52 0%, #0b5d7b 48%, #ff9f0a 100%); }
-.page-hero-about::before,
-.page-hero-about::after,
-.page-hero-contact::before,
-.page-hero-contact::after {
-  display: none;
-}
 .page-hero .reference-eyebrow { margin-bottom: 23px; }
 .page-hero-layout { display: flex; align-items: flex-end; justify-content: space-between; gap: 70px; }
 .page-hero h1 { max-width: 780px; margin-bottom: 21px; color: white; font-size: clamp(54px, 6.8vw, 88px); }
@@ -7223,7 +7217,6 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
     font-size: 0.68rem;
   }
 }
-
 
 
 

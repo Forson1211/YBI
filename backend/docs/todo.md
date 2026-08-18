@@ -1,5 +1,9 @@
 # Revision Tasks
 
+- [x] Audit all remaining public-page heroes for yellow-corner shapes or divider-line overlays that differ from the clean donation header.
+- [x] Apply the clean header treatment to every matching public page while retaining page content, shared footer-blue backgrounds, and responsive hierarchy.
+- [x] Add regression coverage, validate the consistent public-header treatment across desktop and mobile, and publish the verified update.
+- [x] Save a checkpoint and publish the verified all-public-page clean-header refinement after the passing shared-header regression suite, TypeScript/build checks, and desktop/mobile visual review.
 - [x] Audit the About and Contact hero decorations that differ from the clean donation header.
 - [x] Remove the yellow corner shape and divider lines from About and Contact heroes while preserving their shared footer-blue background and hierarchy.
 - [x] Add regression coverage, validate the simplified headers at desktop and mobile breakpoints, and publish the verified refinement.
