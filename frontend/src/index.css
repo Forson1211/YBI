@@ -7108,6 +7108,111 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
   }
 }
 
+/* Donation flow: compact, touch-friendly mobile layout */
+@media (max-width: 640px) {
+  .get-involved-hero {
+    padding: 2.5rem 0 1.75rem;
+  }
+
+  .pathway-tabs-bar {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+    gap: 6px;
+    padding: 6px;
+  }
+
+  .pathway-tab-btn {
+    width: 100%;
+    min-height: 48px;
+    justify-content: flex-start;
+    padding: 12px 14px;
+    font-size: 0.88rem;
+  }
+
+  .get-involved-section {
+    width: min(100%, calc(100% - 24px));
+    padding: 2.25rem 0 3.5rem;
+  }
+
+  .donation-layout-grid {
+    gap: 1.5rem;
+  }
+
+  .donation-form-card,
+  .donation-why-card {
+    padding: 1.25rem;
+    gap: 1.25rem;
+  }
+
+  .card-header-band {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .card-header-band h3 {
+    font-size: 1.1rem;
+    line-height: 1.25;
+  }
+
+  .secure-badge {
+    flex: none;
+    padding: 5px 8px;
+    font-size: 0.66rem;
+    line-height: 1.15;
+  }
+
+  .donation-presets-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .preset-btn {
+    min-height: 48px;
+    padding: 11px 8px;
+    font-size: 0.88rem;
+  }
+
+  .custom-input-wrap input,
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    min-height: 48px;
+    font-size: 16px !important;
+  }
+
+  .form-row-2 {
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+  }
+
+  .donation-impact-box {
+    padding: 1rem;
+  }
+
+  .donation-impact-box p {
+    font-size: 0.86rem;
+  }
+
+  .donate-btn {
+    width: 100%;
+    min-height: 54px;
+    padding: 13px 12px !important;
+    font-size: 0.86rem !important;
+    line-height: 1.25;
+    text-align: center;
+  }
+
+  .payment-methods-strip {
+    gap: 6px;
+    font-size: 0.7rem;
+  }
+
+  .method-pill {
+    padding: 4px 7px;
+    font-size: 0.68rem;
+  }
+}
 
 
 

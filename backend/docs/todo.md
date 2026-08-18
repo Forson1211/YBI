@@ -1,5 +1,9 @@
 # Revision Tasks
 
+- [x] Inspect the donation page at a phone viewport and identify responsiveness issues in its form, payment options, and supporting content.
+- [x] Refine the donation page for touch-friendly mobile layout, readable hierarchy, and accessible controls without regressing desktop.
+- [x] Add regression coverage, validate the donation flow at mobile and desktop breakpoints, and publish the verified update.
+- [x] Save a checkpoint and publish the verified donation-page mobile responsiveness update.
 - [x] Inspect the GitHub-synchronized project structure and restore the missing client entry file without discarding remote changes.
 - [x] Validate the recovered development preview, automated checks, and production build before publishing the completed synchronization.
 
