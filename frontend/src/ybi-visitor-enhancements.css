@@ -5,7 +5,7 @@
 .ybi-nav-trigger.is-active::after { border-top-color: var(--red); }
 .ybi-dropdown-link.is-active { box-shadow: inset 4px 0 0 var(--red); color: var(--blue-deep) !important; background: #fff8bf; }
 .ybi-chat-guidance { display: grid; gap: 7px; margin-top: 11px; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--blue-deep) 14%, transparent); }
-.ybi-chat-guidance-link { display: flex; align-items: center; justify-content: space-between; gap: 9px; min-width: 0; padding: 8px 9px; border: 1px solid color-mix(in srgb, var(--blue-deep) 18%, transparent); border-radius: 8px; background: #fff; color: var(--blue-deep); text-decoration: none; transition: transform 160ms var(--ease-out), border-color 160ms var(--ease-out), background 160ms var(--ease-out); }
+.ybi-chat-guidance-link { display: flex; align-items: center; justify-content: space-between; gap: 9px; min-width: 0; padding: 8px 9px; border: 1px solid color-mix(in srgb, var(--blue-deep) 18%, transparent); border-radius: 0; background: #fff; color: var(--blue-deep); text-decoration: none; transition: transform 160ms var(--ease-out), border-color 160ms var(--ease-out), background 160ms var(--ease-out); }
 .ybi-chat-guidance-link:hover { border-color: var(--yellow); background: #fff8bf; transform: translateY(-1px); }
 .ybi-chat-guidance-link:focus-visible { outline: 3px solid color-mix(in srgb, var(--yellow) 72%, transparent); outline-offset: 2px; }
 .ybi-chat-guidance-link span { display: grid; gap: 1px; min-width: 0; }

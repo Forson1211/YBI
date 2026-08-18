@@ -43,11 +43,18 @@ import {
 import { storagePut } from "../storage";
 import { adminProcedure, publicProcedure, router } from "../_core/trpc";
 import { QUICK_QUESTIONS_CONTENT_KEY, quickQuestionsInput, readQuickQuestions, visitorAssistantRouter } from "./assistant";
+import { eventsAdminRouter, eventsPublicRouter } from "./events";
+import { blogAdminRouter, blogPublicRouter } from "./blog";
+import { donationsAdminRouter, donationsPublicRouter } from "./donations";
+import { faqAdminRouter, faqPublicRouter } from "./faq";
+import { smsAdminRouter } from "./sms";
+import { paymentsRouter } from "./payments";
 
 const contentStatus = z.enum(["draft", "published"]);
 const imageInput = z.object({
   title: z.string().trim().min(2).max(160),
   altText: z.string().trim().min(3).max(240),
+
   fileName: z.string().trim().min(1).max(220),
   mimeType: z.enum(["image/jpeg", "image/png", "image/webp"]),
   base64: z.string().min(10),
@@ -168,6 +175,11 @@ export const publicSiteRouter = router({
   programs: publicProcedure.query(() => listPrograms(false)),
   updates: publicProcedure.query(() => listUpdates(false)),
   content: publicProcedure.input(z.object({ contentKey: z.string().min(1).max(100) })).query(({ input }) => getSiteContent(input.contentKey)),
+  events: eventsPublicRouter,
+  blog: blogPublicRouter,
+  donations: donationsPublicRouter,
+  faq: faqPublicRouter,
+  payments: paymentsRouter,
   siteImages: router({
     getAll: publicProcedure.query(async () => {
       const contentList = await listSiteContent();
@@ -207,7 +219,13 @@ export const publicSiteRouter = router({
 
 export const adminRouter = router({
   overview: adminProcedure.query(() => getDashboardOverview()),
+  events: eventsAdminRouter,
+  blog: blogAdminRouter,
+  donations: donationsAdminRouter,
+  faq: faqAdminRouter,
+  sms: smsAdminRouter,
   siteImages: router({
+
     list: adminProcedure.query(async () => {
       const contentList = await listSiteContent();
       const contentMap = new Map(contentList.map(c => [c.contentKey, c]));

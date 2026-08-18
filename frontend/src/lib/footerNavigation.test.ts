@@ -3,7 +3,13 @@ import { footerImpactActions, footerNavigation } from "./footerNavigation";
 
 describe("footer navigation", () => {
   it("offers distinct navigation groups with usable destinations", () => {
-    expect(footerNavigation.map((group) => group.title)).toEqual(["Explore", "Get involved", "Discover"]);
+    expect(footerNavigation.map((group) => group.title)).toEqual([
+      "Organization",
+      "Participation",
+      "Support & Legal",
+      "Connect",
+      "Make an Impact",
+    ]);
 
     for (const group of footerNavigation) {
       expect(group.links.length).toBeGreaterThan(0);
@@ -13,23 +19,35 @@ describe("footer navigation", () => {
       }
     }
 
-    expect(footerImpactActions).toHaveLength(2);
-    expect(footerNavigation[1].links.find((link) => link.label === "Contact us")?.href).toBe("/contact");
+    expect(footerImpactActions).toHaveLength(3);
+    expect(footerNavigation[2].links.find((link) => link.label === "Contact YBI")?.href).toBe("/contact");
 
     const exactDestinations = [...footerNavigation.flatMap((group) => group.links), ...footerImpactActions].map((link) => link.href);
     expect(exactDestinations).toEqual([
       "/about",
+      "/team",
       "/focus-areas",
       "/programs",
-      "/join-us#volunteer",
-      "/join-us#partner",
+      "/events",
+      "/blog",
+      "/get-involved#donate",
+      "/get-involved#volunteer",
+      "/faq",
       "/contact",
-      "/team",
+      "/privacy-policy",
+      "/terms-of-use",
+      "/contact",
+      "/blog",
+      "/events",
       "/gallery",
-      "/media#stories",
-      "/media#newsletter",
-      "/join-us#volunteer",
-      "/programs",
+      "/get-involved#donate",
+      "/get-involved#volunteer",
+      "/events",
+      "/get-involved#donate",
+      "/get-involved#volunteer",
+      "/events",
     ]);
   });
 });
+
+

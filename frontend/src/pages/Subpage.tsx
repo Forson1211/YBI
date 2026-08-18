@@ -21,11 +21,11 @@ const pageContent: Record<SubpageKey, { eyebrow: string; title: string; accent: 
     accent: "begin together.",
     intro: "Young Beginners Inspiration creates space for the young and the aged to inspire, learn, and be impacted.",
     statement: "Every generation carries something worth sharing.",
-    aside: "Our work connects lived experience with fresh possibility so people can grow into responsible leaders who make a positive difference.",
+    aside: "Our work connects lived experience with fresh possibility so people of all ages grow into responsible leaders who make a lasting positive difference.",
     items: [
-      { eyebrow: "Our vision", title: "Inspire potential", text: "To inspire, motivate, and impact the young, aged, and developing potential of individuals in leadership, education, and business.", icon: Sparkles },
-      { eyebrow: "Our mission", title: "Equip for impact", text: "To provide a platform where the young and aged become responsible leaders who use their capabilities to make a positive difference in the world.", icon: HandHeart },
-      { eyebrow: "Our approach", title: "Learn both ways", text: "We design practical spaces where mentorship is mutual, participation is active, and every person can contribute to the room.", icon: UsersRound },
+      { eyebrow: "Our vision", title: "Inspire & Impact", text: "To inspire, motivate, and impact developing potential in leadership, education, and business—building a world where every generation thrives.", icon: Sparkles },
+      { eyebrow: "Our mission", title: "Equip for Leadership", text: "To provide an empowering intergenerational platform equipping youth and older adults with practical skills, mentorship, and opportunities to create positive change.", icon: HandHeart },
+      { eyebrow: "Our approach", title: "Intergenerational Exchange", text: "We design practical spaces where mentorship is mutual, dialogue is open, and every person can contribute their unique wisdom and energy.", icon: UsersRound },
     ],
     ctaTitle: "Bring your experience.", ctaText: "There is room here for the person beginning and the person ready to share what they have learned.", ctaLabel: "Join us", ctaHref: "/join-us",
   },
@@ -33,13 +33,13 @@ const pageContent: Record<SubpageKey, { eyebrow: string; title: string; accent: 
     eyebrow: "Our team",
     title: "People who make",
     accent: "space for possibility.",
-    intro: "Young Beginners Inspiration is carried forward by people who believe every generation has something valuable to offer.",
+    intro: "Young Beginners Inspiration is carried forward by educators, mentors, and community builders who believe every generation has something valuable to offer.",
     statement: "A shared purpose grows through people who show up for one another.",
     aside: "Our team brings participants, mentors, partners, and practical opportunities together so each person has room to learn, contribute, and lead responsibly.",
     items: [
-      { eyebrow: "Community", title: "Create welcoming spaces", text: "We help make the platform a place where young and aged people can meet, speak, listen, and learn with respect.", icon: UsersRound },
-      { eyebrow: "Programs", title: "Turn learning into action", text: "We shape practical experiences that build confidence in leadership, education, business, public speaking, and entrepreneurship.", icon: Lightbulb },
-      { eyebrow: "Partnerships", title: "Connect people and possibility", text: "We work to grow relationships and resources that open doors for participants, mentors, and the wider community.", icon: HandHeart },
+      { eyebrow: "Leadership & Strategy", title: "Executive Leadership", text: "Guiding the strategic vision, institutional partnerships, and intergenerational empowerment mission of YBI.", icon: UsersRound },
+      { eyebrow: "Learning Design", title: "Programs & Curriculum", text: "Shaping practical, experiential cohorts across public speaking, youth entrepreneurship, and values-led leadership.", icon: Lightbulb },
+      { eyebrow: "Mentorship", title: "Intergenerational Circles", text: "Facilitating structured mentor-mentee relationships and inclusive dialogue spaces where wisdom meets ambition.", icon: HandHeart },
     ],
     ctaTitle: "Could your experience strengthen the team?", ctaText: "If you have time, ideas, or lived experience to share, we would be glad to start a conversation.", ctaLabel: "Connect with YBI", ctaHref: "/join-us",
   },
@@ -47,7 +47,7 @@ const pageContent: Record<SubpageKey, { eyebrow: string; title: string; accent: 
     eyebrow: "What we focus on",
     title: "Capability becomes",
     accent: "impact through practice.",
-    intro: "We concentrate on three connected areas that help people find their voice, strengthen their thinking, and create responsible opportunities.",
+    intro: "We concentrate on connected pillars that help people find their voice, strengthen their thinking, and create responsible opportunities.",
     statement: "Skills are more powerful when they serve people.",
     aside: "Our focus areas are designed to move beyond inspiration alone. Each one gives participants language, confidence, and practical next steps.",
     items: [
@@ -61,15 +61,15 @@ const pageContent: Record<SubpageKey, { eyebrow: string; title: string; accent: 
     eyebrow: "Programs",
     title: "Learn something.",
     accent: "Lead somewhere.",
-    intro: "Our programs turn curiosity into confidence through practice, conversation, and meaningful action.",
+    intro: "Our programs turn curiosity into practical confidence and community leadership through hands-on practice, conversation, and mentorship.",
     statement: "A good program leaves you with a next step you can use.",
-    aside: "Public speaking and entrepreneurship are our starting points. We create welcoming spaces where skills grow through repetition and shared encouragement.",
+    aside: "Public speaking, youth enterprise, and intergenerational mentorship form our foundation. We create welcoming spaces where skills grow through repetition and shared encouragement.",
     items: [
-      { eyebrow: "Voice · presence · courage", title: "Public Speaking", text: "Practice clear communication, confident delivery, active listening, and the courage to bring an important idea into the room.", image: publicSpeaking, icon: Mic2 },
-      { eyebrow: "Ideas · enterprise · responsibility", title: "Entrepreneurship", text: "Move from a meaningful idea to a practical beginning through problem-solving, testing, and shared learning.", image: entrepreneurship, icon: Lightbulb },
-      { eyebrow: "Mentorship · exchange · belonging", title: "Generations in Conversation", text: "Create connection between lived experience and fresh perspective so each generation can strengthen the other.", image: community, icon: UsersRound },
+      { eyebrow: "Voice · presence · courage", title: "Public Speaking & Communication", text: "Master vocal presence, speech crafting, debate, and the confidence to bring your voice and ideas into any room.", image: publicSpeaking, icon: Mic2 },
+      { eyebrow: "Ideas · enterprise · responsibility", title: "Youth Entrepreneurship & Enterprise", text: "Turn meaningful ideas into viable ventures through problem validation, business fundamentals, and pitch coaching.", image: entrepreneurship, icon: Lightbulb },
+      { eyebrow: "Mentorship · intergenerational · purpose", title: "Generations in Conversation", text: "Structured intergenerational dialogue circles and 1-on-1 mentorship pairings connecting young ambition with elder wisdom.", image: community, icon: UsersRound },
     ],
-    ctaTitle: "Your next session can start here.", ctaText: "Tell us what you want to learn and we will help you find the right way into the work.", ctaLabel: "Ask about a program", ctaHref: "/join-us",
+    ctaTitle: "Your next cohort can start here.", ctaText: "Tell us what you want to learn and we will help you find the right way into the work.", ctaLabel: "Ask about a program", ctaHref: "/join-us",
   },
   "join-us": {
     eyebrow: "Join the platform",
@@ -115,12 +115,11 @@ function PageHeader({ menuOpen, setMenuOpen }: { menuOpen: boolean; setMenuOpen:
   return <header className="reference-header"><div className="reference-header-inner"><button className="mobile-menu-button" type="button" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X size={27} /> : <Menu size={29} />}</button><a className="reference-brand" href="/" aria-label="Young Beginners Inspiration home"><img src={mark} alt="Young Beginners Inspiration logo" /><span>Young Beginners<br />Inspiration</span></a><PublicNavigation menuOpen={menuOpen} onNavigate={() => setMenuOpen(false)} /><a className="header-support" href="/join-us" onClick={() => setMenuOpen(false)}><HandHeart size={22} /><span>Support Us</span></a></div></header>;
 }
 
-function PageFooter() {
-  return <footer className="reference-footer"><div className="page-width footer-reference-grid"><div className="footer-reference-brand"><a className="reference-brand footer-brand" href="/"><img src={mark} alt="Young Beginners Inspiration logo" /><span>Young Beginners<br />Inspiration</span></a><p>Equipping the young and the aged to inspire, learn, and become responsible leaders.</p><a className="reference-button yellow-button" href="/join-us">Support us <ArrowUpRight size={17} /></a></div><div className="footer-reference-links"><div><h4>Explore</h4>{navItems.slice(0, 4).map(([label, href]) => <a href={href} key={href}>{label}</a>)}<a href="/media">Media</a><a href="/gallery">Gallery</a></div><div><h4>Join us</h4><a href="/join-us">Volunteer</a><a href="/join-us">Partner with us</a><a href="mailto:hello@youngbeginnersinspiration.org">Contact us</a></div></div><div className="footer-reference-note"><h4>Our belief</h4><p>“Every generation has something valuable to share.”</p><div className="footer-socials"><a href="/join-us" aria-label="Facebook">f</a><a href="/join-us" aria-label="Instagram">◎</a><a href="/join-us" aria-label="LinkedIn">in</a></div></div></div><div className="page-width footer-reference-bottom"><span>© 2026 Young Beginners Inspiration</span><span>Leadership · Education · Business</span><a href="/">Back home <ArrowUpRight size={14} /></a></div></footer>;
-}
+import { PublicFooter } from "@/components/PublicSiteChrome";
 
 export default function Subpage({ page }: { page: SubpageKey }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const content = pageContent[page];
-  return <div className="reference-site-shell"><PageHeader menuOpen={menuOpen} setMenuOpen={setMenuOpen} /><main className="subpage-main"><section className="subpage-hero section-blue"><div className="page-width subpage-hero-inner"><p className="reference-eyebrow light"><span /> {content.eyebrow}</p><h1>{content.title}<br /><span>{content.accent}</span></h1><p>{content.intro}</p></div></section><section className="subpage-content section-white"><div className="page-width"><div className="subpage-lead-grid"><div><p className="reference-eyebrow"><span /> The YBI approach</p><h2>{content.statement}</h2></div><p className="subpage-aside">{content.aside}</p></div><div className={`subpage-feature-grid ${page === "programs" ? "with-images" : ""}`}>{content.items.map((item) => <article className="subpage-feature-card" key={item.title}>{item.image ? <img src={item.image} alt="" /> : null}<div className="subpage-feature-card-inner">{item.icon ? <div className="solution-icon"><item.icon size={28} strokeWidth={1.6} /></div> : null}<p className="subpage-card-eyebrow">{item.eyebrow}</p><h3>{item.title}</h3><p>{item.text}</p><a className="reference-text-link" href={page === "media" ? "/join-us" : "/programs"}>Learn more <ArrowRight size={18} /></a></div></article>)}</div></div></section><section className="subpage-cta section-red"><div className="page-width subpage-cta-inner"><div><p className="reference-eyebrow light"><span /> Keep moving forward</p><h2>{content.ctaTitle}</h2></div><div><p>{content.ctaText}</p><a className="reference-button white-button" href={content.ctaHref}>{content.ctaLabel} <ArrowUpRight size={18} /></a></div></div></section></main><PageFooter /></div>;
+  return <div className="reference-site-shell"><PageHeader menuOpen={menuOpen} setMenuOpen={setMenuOpen} /><main className="subpage-main"><section className="subpage-hero section-blue"><div className="page-width subpage-hero-inner"><p className="reference-eyebrow light"><span /> {content.eyebrow}</p><h1>{content.title}<br /><span>{content.accent}</span></h1><p>{content.intro}</p></div></section><section className="subpage-content section-white"><div className="page-width"><div className="subpage-lead-grid"><div><p className="reference-eyebrow"><span /> The YBI approach</p><h2>{content.statement}</h2></div><p className="subpage-aside">{content.aside}</p></div><div className={`subpage-feature-grid ${page === "programs" ? "with-images" : ""}`}>{content.items.map((item) => <article className="subpage-feature-card" key={item.title}>{item.image ? <img src={item.image} alt="" /> : null}<div className="subpage-feature-card-inner">{item.icon ? <div className="solution-icon"><item.icon size={28} strokeWidth={1.6} /></div> : null}<p className="subpage-card-eyebrow">{item.eyebrow}</p><h3>{item.title}</h3><p>{item.text}</p><a className="reference-text-link" href={page === "media" ? "/join-us" : "/programs"}>Learn more <ArrowRight size={18} /></a></div></article>)}</div></div></section><section className="subpage-cta section-red"><div className="page-width subpage-cta-inner"><div><p className="reference-eyebrow light"><span /> Keep moving forward</p><h2>{content.ctaTitle}</h2></div><div><p>{content.ctaText}</p><a className="reference-button white-button" href={content.ctaHref}>{content.ctaLabel} <ArrowUpRight size={18} /></a></div></div></section></main><PublicFooter /></div>;
 }
+

@@ -9,13 +9,16 @@ import {
   ArrowUp,
   ArrowUpRight,
   BotMessageSquare,
+  Calendar,
   CalendarDays,
   CheckCircle2,
+  Coins,
   Download,
   ExternalLink,
   Facebook,
   FileText,
   HandHeart,
+  HelpCircle,
   ImagePlus,
   Instagram,
   Key,
@@ -23,13 +26,18 @@ import {
   Linkedin,
   Loader2,
   Mail,
+  MessageSquare,
   MessageSquareHeart,
+  Newspaper,
   Pencil,
   Plus,
   Save,
+  Scale,
+  Send,
   Settings,
   ShieldCheck,
   Target,
+  Ticket,
   Trash2,
   TrendingUp,
   UploadCloud,
@@ -52,6 +60,48 @@ type AnnouncementForm = { message: string; type: "info" | "warning" | "success";
 type DonationForm = { campaign: string; goal: string; raised: string; currency: string; description: string; isActive: boolean };
 type PasswordForm = { currentPassword: string; newPassword: string; confirmPassword: string };
 
+type EventAdminForm = {
+  id?: number;
+  slug: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  scheduledFor: string;
+  location: string;
+  capacity: string;
+  isFree: boolean;
+  priceGhs: string; // in GHS for the input
+  status: "draft" | "published" | "cancelled";
+};
+
+type BlogPostAdminForm = {
+  id?: number;
+  slug: string;
+  title: string;
+  excerpt: string;
+  body: string;
+  authorName: string;
+  coverImageUrl: string;
+  category: string;
+  status: "draft" | "published";
+  publishedAt: string;
+};
+
+type FaqAdminForm = {
+  id?: number;
+  question: string;
+  answer: string;
+  category: string;
+  sortOrder: number;
+  isPublished: boolean;
+};
+
+type SmsBroadcastForm = {
+  message: string;
+  target: "newsletter" | "events" | "all" | "custom";
+  customPhones: string;
+};
+
 const blankProgram: ProgramForm = { title: "", category: "", summary: "", status: "draft", sortOrder: 0 };
 const blankUpdate: UpdateForm = { title: "", excerpt: "", body: "", status: "draft" };
 const blankContent: ContentForm = { contentKey: "", label: "", title: "", body: "", actionLabel: "", actionHref: "" };
@@ -63,6 +113,46 @@ const blankSocialLinks: SocialLinksForm = { facebook: "", instagram: "", twitter
 const blankAnnouncement: AnnouncementForm = { message: "", type: "info", isActive: false, link: "", linkLabel: "" };
 const blankDonation: DonationForm = { campaign: "", goal: "0", raised: "0", currency: "GHS", description: "", isActive: true };
 const blankPassword: PasswordForm = { currentPassword: "", newPassword: "", confirmPassword: "" };
+
+const blankEventAdmin: EventAdminForm = {
+  slug: "",
+  title: "",
+  description: "",
+  imageUrl: "",
+  scheduledFor: "",
+  location: "",
+  capacity: "50",
+  isFree: true,
+  priceGhs: "0",
+  status: "draft",
+};
+
+const blankBlogPostAdmin: BlogPostAdminForm = {
+  slug: "",
+  title: "",
+  excerpt: "",
+  body: "",
+  authorName: "YBI Editorial Team",
+  coverImageUrl: "",
+  category: "Mentorship",
+  status: "draft",
+  publishedAt: new Date().toISOString().slice(0, 10),
+};
+
+const blankFaqAdmin: FaqAdminForm = {
+  question: "",
+  answer: "",
+  category: "General",
+  sortOrder: 0,
+  isPublished: true,
+};
+
+const blankSmsBroadcast: SmsBroadcastForm = {
+  message: "",
+  target: "all",
+  customPhones: "",
+};
+
 
 function downloadCsv(filename: string, rows: Record<string, any>[]) {
   if (!rows.length) return toast.error("No data to export.");
@@ -200,6 +290,14 @@ function AdminWorkspace() {
   const [location] = useLocation();
   const section = location.split("/")[2] || "overview";
   const views: Record<string, React.ReactNode> = {
+    overview: <Overview />,
+    events: <EventsManager />,
+    registrations: <RegistrationsManager />,
+    blog: <BlogManager />,
+    donations: <DonationsManager />,
+    sms: <SmsBroadcastManager />,
+    faq: <FaqManager />,
+    legal: <LegalPagesManager />,
     images: <SiteImagesManager />,
     gallery: <GalleryManager />,
     programs: <ProgramsManager />,
@@ -220,12 +318,38 @@ function AdminWorkspace() {
 
 function AdminPageHeader({ section }: { section: string }) {
   const names: Record<string, string> = {
-    overview: "YBI dashboard", images: "Site image customizer", gallery: "Gallery manager", programs: "Program manager", updates: "Updates manager", content: "Site content", "assistant-settings": "Assistant quick questions",
-    sessions: "Program calendar", inquiries: "Community inbox", opportunities: "Opportunity board", impact: "Impact tracker",
-    team: "Team members", newsletter: "Newsletter subscribers", export: "Export data", settings: "Settings",
+    overview: "YBI dashboard",
+    events: "Events & Gatherings",
+    registrations: "Event Registrations & RSVPs",
+    blog: "Blog & News Editorial",
+    donations: "Donations & Financial Pledges",
+    sms: "SMS Broadcast & Messaging",
+    faq: "FAQ & Help Center",
+    legal: "Legal Pages (Privacy & Terms)",
+    images: "Site image customizer",
+    gallery: "Gallery manager",
+    programs: "Program manager",
+    updates: "Updates manager",
+    content: "Site content",
+    "assistant-settings": "Assistant quick questions",
+    sessions: "Program calendar",
+    inquiries: "Community inbox",
+    opportunities: "Opportunity board",
+    impact: "Impact tracker",
+    team: "Team members",
+    newsletter: "Newsletter subscribers",
+    export: "Export data",
+    settings: "Settings",
   };
   const descriptions: Record<string, string> = {
     overview: "A clear view of YBI's community work, content, and next actions.",
+    events: "Create, schedule, edit, and publish community workshops, speech labs, and masterclasses.",
+    registrations: "Track attendee registrations, payments, waitlists, and export CSV attendee lists.",
+    blog: "Draft, edit, category-tag, and publish essays, field perspectives, and articles.",
+    donations: "Track voluntary donations, Paystack payments, and export contribution records.",
+    sms: "Broadcast SMS reminders and community announcements via Africa's Talking gateway.",
+    faq: "Manage questions and answers across General, Programs, Mentorship, and Donations.",
+    legal: "Update the Privacy Policy and Terms of Use documents displayed on the site.",
     images: "Edit, upload, and update pictures across every page and component of the website.",
     gallery: "Curate the moments that show YBI's work in action.",
     programs: "Shape learning pathways and keep programme information current.",
@@ -244,6 +368,7 @@ function AdminPageHeader({ section }: { section: string }) {
   const title = names[section] || "YBI dashboard";
   return <header className="admin-page-header"><div className="admin-page-heading"><p className="admin-kicker"><span aria-hidden="true" />Young Beginners Inspiration</p><h1>{title}</h1><p>{descriptions[section] || descriptions.overview}</p></div><div className="admin-page-actions"><span className="admin-header-status"><ShieldCheck size={15} /> Secure workspace</span><Link className="admin-public-link" href="/" target="_blank" rel="noreferrer">View public site <ArrowUpRight size={16} /></Link></div></header>;
 }
+
 
 function Overview() {
   const { data, isLoading, isError } = trpc.admin.overview.useQuery();
@@ -642,7 +767,7 @@ function TeamMembersManager() {
             {members.map(m => (
               <article className="admin-record-row" key={m.id}>
                 <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
-                  {m.imageUrl && <img src={m.imageUrl} alt={m.name} style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />}
+                  {m.imageUrl && <img src={m.imageUrl} alt={m.name} style={{ width: 48, height: 48, borderRadius: "0px", objectFit: "cover", flexShrink: 0 }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />}
                   <div>
                     <span className={`admin-status ${m.isPublished ? "published" : "draft"}`}>{m.isPublished ? "Published" : "Hidden"}</span>
                     <h3>{m.name}</h3>
@@ -855,7 +980,7 @@ function AnnouncementSettings() {
             <label>Link label<input value={form.linkLabel} onChange={(e) => upd("linkLabel", e.target.value)} placeholder="Learn more" /></label>
           </div>
           {form.message && (
-            <div className="admin-announcement-preview" style={{ borderLeft: `4px solid ${typeColors[form.type]}`, background: `${typeColors[form.type]}15`, padding: "12px 16px", borderRadius: "8px", fontSize: "14px" }}>
+            <div className="admin-announcement-preview" style={{ borderLeft: `4px solid ${typeColors[form.type]}`, background: `${typeColors[form.type]}15`, padding: "12px 16px", borderRadius: "0px", fontSize: "14px" }}>
               <strong style={{ color: typeColors[form.type] }}>Preview: </strong>{form.message}{form.link && form.linkLabel && <> — <a href={form.link} style={{ color: typeColors[form.type] }}>{form.linkLabel}</a></>}
             </div>
           )}
@@ -912,7 +1037,1147 @@ function DonationSettings() {
   );
 }
 
+function EventsManager() {
+  const utils = trpc.useUtils();
+  const { data: events, isLoading, isError } = trpc.admin.events.list.useQuery();
+  const save = trpc.admin.events.save.useMutation({
+    onSuccess: () => {
+      utils.admin.events.list.invalidate();
+      utils.publicSite.events.list.invalidate();
+      utils.admin.overview.invalidate();
+      toast.success("Event saved successfully.");
+      setForm(blankEventAdmin);
+    },
+    onError: (err) => toast.error("Could not save event.", { description: err.message }),
+  });
+  const remove = trpc.admin.events.remove.useMutation({
+    onSuccess: () => {
+      utils.admin.events.list.invalidate();
+      utils.publicSite.events.list.invalidate();
+      utils.admin.overview.invalidate();
+      toast.success("Event removed.");
+    },
+    onError: (err) => toast.error("Could not remove event.", { description: err.message }),
+  });
+
+  const [form, setForm] = useState<EventAdminForm>(blankEventAdmin);
+  const update = <K extends keyof EventAdminForm>(k: K, v: EventAdminForm[K]) =>
+    setForm((curr) => ({ ...curr, [k]: v }));
+
+  const generateSlug = (title: string) =>
+    title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+  const handleTitleChange = (val: string) => {
+    update("title", val);
+    if (!form.id && !form.slug) {
+      update("slug", generateSlug(val));
+    }
+  };
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const priceGhsNum = parseFloat(form.priceGhs) || 0;
+    save.mutate({
+      id: form.id,
+      title: form.title,
+      slug: form.slug || generateSlug(form.title),
+      description: form.description,
+      imageUrl: form.imageUrl || "/ybi-assets/programs/ybi-public-speaking.jpg",
+      scheduledFor: new Date(form.scheduledFor).toISOString(),
+      location: form.location,
+      capacity: parseInt(form.capacity) || 50,
+      isFree: form.isFree,
+      priceGhs: form.isFree ? 0 : Math.round(priceGhsNum * 100),
+      status: form.status,
+    });
+  };
+
+  return (
+    <div className="admin-manager-grid">
+      <section className="admin-panel">
+        <PanelHeading
+          eyebrow="Gatherings"
+          title={form.id ? "Edit event" : "Create an event"}
+          icon={<Calendar size={24} />}
+        />
+        <form className="admin-form" onSubmit={submit}>
+          <label>
+            Event title
+            <input
+              required
+              value={form.title}
+              onChange={(e) => handleTitleChange(e.target.value)}
+              placeholder="e.g. Masterclass: The Art of Youth Advocacy"
+            />
+          </label>
+          <div className="admin-form-split">
+            <label>
+              URL Slug
+              <input
+                required
+                value={form.slug}
+                onChange={(e) => update("slug", e.target.value)}
+                placeholder="art-of-youth-advocacy"
+              />
+            </label>
+            <label>
+              Location / Venue
+              <input
+                required
+                value={form.location}
+                onChange={(e) => update("location", e.target.value)}
+                placeholder="e.g. British Council Hall, Accra / Zoom"
+              />
+            </label>
+          </div>
+          <label>
+            Description
+            <textarea
+              required
+              className="admin-tall-textarea"
+              value={form.description}
+              onChange={(e) => update("description", e.target.value)}
+              placeholder="Provide a compelling overview of what attendees will experience..."
+            />
+          </label>
+          <div className="admin-form-split">
+            <label>
+              Date & Time
+              <input
+                required
+                type="datetime-local"
+                value={form.scheduledFor}
+                onChange={(e) => update("scheduledFor", e.target.value)}
+              />
+            </label>
+            <label>
+              Seat Capacity
+              <input
+                required
+                type="number"
+                min="1"
+                value={form.capacity}
+                onChange={(e) => update("capacity", e.target.value)}
+              />
+            </label>
+          </div>
+          <div className="admin-form-split">
+            <label className="admin-check" style={{ alignItems: "center", marginTop: 22 }}>
+              <input
+                type="checkbox"
+                checked={form.isFree}
+                onChange={(e) => update("isFree", e.target.checked)}
+              />{" "}
+              Free Event (No payment required)
+            </label>
+            {!form.isFree && (
+              <label>
+                Ticket Price (GHS)
+                <input
+                  type="number"
+                  step="0.01"
+                  min="1"
+                  required
+                  value={form.priceGhs}
+                  onChange={(e) => update("priceGhs", e.target.value)}
+                  placeholder="50.00"
+                />
+              </label>
+            )}
+          </div>
+          <label>
+            Cover Image URL
+            <input
+              value={form.imageUrl}
+              onChange={(e) => update("imageUrl", e.target.value)}
+              placeholder="https://... or /ybi-assets/programs/..."
+            />
+          </label>
+          <label>
+            Publishing Status
+            <select
+              value={form.status}
+              onChange={(e) =>
+                update("status", e.target.value as EventAdminForm["status"])
+              }
+            >
+              <option value="draft">Draft (Hidden from public)</option>
+              <option value="published">Published (Live on website)</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </label>
+          <SaveButton
+            pending={save.isPending}
+            label={form.id ? "Save event changes" : "Publish event"}
+          />
+          {form.id ? <CancelEdit onClick={() => setForm(blankEventAdmin)} /> : null}
+        </form>
+      </section>
+
+      <section className="admin-panel admin-list-panel">
+        <PanelHeading
+          eyebrow="Calendar"
+          title="All events & masterclasses"
+          count={events?.length ?? 0}
+        />
+        {isLoading ? (
+          <LoadingCopy text="Loading events…" />
+        ) : isError ? (
+          <ErrorCopy text="Events could not be loaded." />
+        ) : !events?.length ? (
+          <EmptyCopy text="No events created yet. Use the form on the left to schedule your first gathering." />
+        ) : (
+          <div className="admin-record-list">
+            {events.map((event) => (
+              <article className="admin-record-row" key={event.id}>
+                <div>
+                  <span className={`admin-status ${event.status}`}>{event.status}</span>
+                  <span className="admin-event-price-tag">
+                    {event.isFree ? "Free" : `GHS ${(event.priceGhs / 100).toFixed(2)}`}
+                  </span>
+                  <h3>{event.title}</h3>
+                  <p>
+                    {new Date(event.scheduledFor).toLocaleDateString("en-US", {
+                      weekday: "short",
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                      hour: "numeric",
+                      minute: "2-digit",
+                    })}{" "}
+                    · {event.location} (Capacity: {event.capacity})
+                  </p>
+                </div>
+                <div className="admin-row-actions">
+                  <button
+                    onClick={() =>
+                      setForm({
+                        id: event.id,
+                        title: event.title,
+                        slug: event.slug,
+                        description: event.description,
+                        imageUrl: event.imageUrl,
+                        scheduledFor: toLocalDateTimeInput(event.scheduledFor),
+                        location: event.location,
+                        capacity: String(event.capacity),
+                        isFree: event.isFree,
+                        priceGhs: (event.priceGhs / 100).toString(),
+                        status: event.status as any,
+                      })
+                    }
+                  >
+                    <Pencil size={15} /> Edit
+                  </button>
+                  <button
+                    className="danger"
+                    onClick={() => {
+                      if (window.confirm(`Remove event "${event.title}"?`)) {
+                        remove.mutate({ id: event.id });
+                      }
+                    }}
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}
+
+function RegistrationsManager() {
+  const [selectedEventId, setSelectedEventId] = useState<number | undefined>(undefined);
+  const { data: events } = trpc.admin.events.list.useQuery();
+  const { data: registrations, isLoading, isError } = trpc.admin.events.registrations.useQuery({
+    eventId: selectedEventId,
+  });
+
+  const handleExport = () => {
+    if (!registrations || !registrations.length) {
+      toast.error("No registrations to export.");
+      return;
+    }
+    const rows = registrations.map((r) => ({
+      ID: r.id,
+      "Attendee Name": r.fullName,
+      Email: r.email,
+      Phone: r.phone,
+      "Event ID": r.eventId,
+      "Event Title": events?.find((e) => e.id === r.eventId)?.title || "Unknown",
+      "SMS Opt-in": r.smsOptIn ? "Yes" : "No",
+      "Payment Status": r.paymentStatus,
+      "Waitlist?": r.isWaitlist ? "Waitlisted" : "Confirmed",
+      "Paystack Ref": r.paystackRef || "N/A",
+      "Registered At": new Date(r.createdAt).toLocaleString(),
+    }));
+    downloadCsv(`ybi_event_registrations_${new Date().toISOString().slice(0, 10)}.csv`, rows);
+  };
+
+  return (
+    <section className="admin-panel admin-full-panel">
+      <div className="admin-toolbar-row">
+        <div>
+          <PanelHeading
+            eyebrow="Attendance & RSVPs"
+            title="Event Registrations"
+            count={registrations?.length ?? 0}
+          />
+        </div>
+        <div className="admin-toolbar-actions">
+          <select
+            value={selectedEventId || ""}
+            onChange={(e) =>
+              setSelectedEventId(e.target.value ? Number(e.target.value) : undefined)
+            }
+            className="admin-select-filter"
+          >
+            <option value="">All Events</option>
+            {(events ?? []).map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.title}
+              </option>
+            ))}
+          </select>
+          <button type="button" onClick={handleExport} className="admin-secondary">
+            <Download size={15} /> Export CSV
+          </button>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <LoadingCopy text="Loading attendee records…" />
+      ) : isError ? (
+        <ErrorCopy text="Registrations could not be loaded." />
+      ) : !registrations?.length ? (
+        <EmptyCopy text="No registrations recorded for this selection." />
+      ) : (
+        <div className="admin-table-wrapper">
+          <table className="admin-data-table">
+            <thead>
+              <tr>
+                <th>Attendee</th>
+                <th>Contact</th>
+                <th>Event</th>
+                <th>SMS Opt-In</th>
+                <th>Status</th>
+                <th>Registration Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {registrations.map((reg) => {
+                const event = events?.find((e) => e.id === reg.eventId);
+                return (
+                  <tr key={reg.id}>
+                    <td>
+                      <strong>{reg.fullName}</strong>
+                      {reg.isWaitlist && <span className="admin-tag waitlist">Waitlist</span>}
+                    </td>
+                    <td>
+                      <div>{reg.email}</div>
+                      <small>{reg.phone}</small>
+                    </td>
+                    <td>{event?.title || `Event #${reg.eventId}`}</td>
+                    <td>
+                      <span className={reg.smsOptIn ? "admin-tag yes" : "admin-tag no"}>
+                        {reg.smsOptIn ? "Opted In" : "No"}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={`admin-status ${reg.paymentStatus}`}>
+                        {reg.paymentStatus}
+                      </span>
+                    </td>
+                    <td>{new Date(reg.createdAt).toLocaleDateString()}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function BlogManager() {
+  const utils = trpc.useUtils();
+  const { data: posts, isLoading, isError } = trpc.admin.blog.list.useQuery();
+  const save = trpc.admin.blog.save.useMutation({
+    onSuccess: () => {
+      utils.admin.blog.list.invalidate();
+      utils.publicSite.blog.list.invalidate();
+      toast.success("Blog article saved.");
+      setForm(blankBlogPostAdmin);
+    },
+    onError: (err) => toast.error("Could not save article.", { description: err.message }),
+  });
+  const remove = trpc.admin.blog.remove.useMutation({
+    onSuccess: () => {
+      utils.admin.blog.list.invalidate();
+      utils.publicSite.blog.list.invalidate();
+      toast.success("Article removed.");
+    },
+    onError: (err) => toast.error("Could not remove article.", { description: err.message }),
+  });
+
+  const [form, setForm] = useState<BlogPostAdminForm>(blankBlogPostAdmin);
+  const update = <K extends keyof BlogPostAdminForm>(k: K, v: BlogPostAdminForm[K]) =>
+    setForm((curr) => ({ ...curr, [k]: v }));
+
+  const generateSlug = (title: string) =>
+    title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+  const handleTitleChange = (val: string) => {
+    update("title", val);
+    if (!form.id && !form.slug) {
+      update("slug", generateSlug(val));
+    }
+  };
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    save.mutate({
+      id: form.id,
+      slug: form.slug || generateSlug(form.title),
+      title: form.title,
+      excerpt: form.excerpt,
+      body: form.body,
+      authorName: form.authorName,
+      coverImageUrl: form.coverImageUrl || "/ybi-assets/programs/ybi-public-speaking.jpg",
+      category: form.category,
+      status: form.status,
+      publishedAt: new Date(form.publishedAt).toISOString(),
+    });
+  };
+
+  return (
+    <div className="admin-manager-grid">
+      <section className="admin-panel">
+        <PanelHeading
+          eyebrow="Editorial CMS"
+          title={form.id ? "Edit article" : "Write a blog post"}
+          icon={<Newspaper size={24} />}
+        />
+        <form className="admin-form" onSubmit={submit}>
+          <label>
+            Article Title
+            <input
+              required
+              value={form.title}
+              onChange={(e) => handleTitleChange(e.target.value)}
+              placeholder="e.g. Why Youth Voice Belongs in Every Governance Room"
+            />
+          </label>
+          <div className="admin-form-split">
+            <label>
+              URL Slug
+              <input
+                required
+                value={form.slug}
+                onChange={(e) => update("slug", e.target.value)}
+                placeholder="youth-voice-in-governance"
+              />
+            </label>
+            <label>
+              Category
+              <select
+                value={form.category}
+                onChange={(e) => update("category", e.target.value)}
+              >
+                <option value="Mentorship">Mentorship</option>
+                <option value="Public Speaking">Public Speaking</option>
+                <option value="Entrepreneurship">Entrepreneurship</option>
+                <option value="Leadership">Leadership</option>
+                <option value="Community">Community</option>
+                <option value="Reflections">Reflections</option>
+              </select>
+            </label>
+          </div>
+          <div className="admin-form-split">
+            <label>
+              Author Name
+              <input
+                required
+                value={form.authorName}
+                onChange={(e) => update("authorName", e.target.value)}
+                placeholder="YBI Editorial Lead"
+              />
+            </label>
+            <label>
+              Publish Date
+              <input
+                type="date"
+                required
+                value={form.publishedAt}
+                onChange={(e) => update("publishedAt", e.target.value)}
+              />
+            </label>
+          </div>
+          <label>
+            Cover Image URL
+            <input
+              value={form.coverImageUrl}
+              onChange={(e) => update("coverImageUrl", e.target.value)}
+              placeholder="/ybi-assets/programs/ybi-public-speaking.jpg"
+            />
+          </label>
+          <label>
+            Short Excerpt (Summary for listings & SEO)
+            <textarea
+              required
+              value={form.excerpt}
+              onChange={(e) => update("excerpt", e.target.value)}
+              placeholder="A brief 1-2 sentence preview of this article..."
+            />
+          </label>
+          <label>
+            Article Body (Markdown supported: ## Headings, - Lists, **Bold**)
+            <textarea
+              required
+              className="admin-tall-textarea"
+              style={{ minHeight: "240px" }}
+              value={form.body}
+              onChange={(e) => update("body", e.target.value)}
+              placeholder="Write the full narrative story here..."
+            />
+          </label>
+          <label>
+            Status
+            <select
+              value={form.status}
+              onChange={(e) =>
+                update("status", e.target.value as BlogPostAdminForm["status"])
+              }
+            >
+              <option value="draft">Draft (Private)</option>
+              <option value="published">Published (Live on Journal)</option>
+            </select>
+          </label>
+          <SaveButton
+            pending={save.isPending}
+            label={form.id ? "Save article changes" : "Publish article"}
+          />
+          {form.id ? <CancelEdit onClick={() => setForm(blankBlogPostAdmin)} /> : null}
+        </form>
+      </section>
+
+      <section className="admin-panel admin-list-panel">
+        <PanelHeading
+          eyebrow="Journal Archive"
+          title="All articles & stories"
+          count={posts?.length ?? 0}
+        />
+        {isLoading ? (
+          <LoadingCopy text="Loading articles…" />
+        ) : isError ? (
+          <ErrorCopy text="Articles could not be loaded." />
+        ) : !posts?.length ? (
+          <EmptyCopy text="No articles published yet. Compose your first story on the left." />
+        ) : (
+          <div className="admin-record-list">
+            {posts.map((post) => (
+              <article className="admin-record-row" key={post.id}>
+                <div>
+                  <span className={`admin-status ${post.status}`}>{post.status}</span>
+                  <span className="admin-event-price-tag">{post.category}</span>
+                  <h3>{post.title}</h3>
+                  <p>
+                    By {post.authorName} ·{" "}
+                    {post.publishedAt
+                      ? new Date(post.publishedAt).toLocaleDateString()
+                      : "Unpublished"}
+                  </p>
+                </div>
+                <div className="admin-row-actions">
+                  <button
+                    onClick={() =>
+                      setForm({
+                        id: post.id,
+                        slug: post.slug,
+                        title: post.title,
+                        excerpt: post.excerpt,
+                        body: post.body,
+                        authorName: post.authorName,
+                        coverImageUrl: post.coverImageUrl || "",
+                        category: post.category,
+                        status: post.status as any,
+                        publishedAt: post.publishedAt
+                          ? new Date(post.publishedAt).toISOString().slice(0, 10)
+                          : new Date().toISOString().slice(0, 10),
+                      })
+                    }
+                  >
+                    <Pencil size={15} /> Edit
+                  </button>
+                  <button
+                    className="danger"
+                    onClick={() => {
+                      if (window.confirm(`Delete article "${post.title}"?`)) {
+                        remove.mutate({ id: post.id });
+                      }
+                    }}
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}
+
+function DonationsManager() {
+  const { data: summary } = trpc.admin.donations.summary.useQuery();
+  const { data: donations, isLoading: listLoading } = trpc.admin.donations.list.useQuery();
+
+  const handleExport = () => {
+    if (!donations || !donations.length) {
+      toast.error("No donations to export.");
+      return;
+    }
+    const rows = donations.map((d) => ({
+      ID: d.id,
+      "Donor Name": d.donorName,
+      Email: d.donorEmail,
+      Phone: d.donorPhone || "N/A",
+      "Amount GHS": (d.amountGhs / 100).toFixed(2),
+      Status: d.status,
+      "Paystack Ref": d.paystackRef || "N/A",
+      "Message / Note": d.message || "",
+      Date: new Date(d.createdAt).toLocaleString(),
+    }));
+    downloadCsv(`ybi_donations_${new Date().toISOString().slice(0, 10)}.csv`, rows);
+  };
+
+  const totalGhs = summary ? (summary.totalGhs / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "0.00";
+
+  return (
+    <div className="admin-donations-view">
+      {/* KPI Cards */}
+      <div className="admin-kpi-grid">
+        <div className="admin-kpi-card tone-green">
+          <span className="kpi-label">Total Raised</span>
+          <strong className="kpi-value">GHS {totalGhs}</strong>
+          <small className="kpi-note">Direct contributions via Paystack</small>
+        </div>
+        <div className="admin-kpi-card tone-blue">
+          <span className="kpi-label">Confirmed Donors</span>
+          <strong className="kpi-value">{summary?.donationCount ?? 0}</strong>
+          <small className="kpi-note">Successful transactions</small>
+        </div>
+        <div className="admin-kpi-card tone-yellow">
+          <span className="kpi-label">Pending Pledges</span>
+          <strong className="kpi-value">{summary?.pendingCount ?? 0}</strong>
+          <small className="kpi-note">Awaiting confirmation</small>
+        </div>
+      </div>
+
+      <section className="admin-panel admin-full-panel" style={{ marginTop: 24 }}>
+        <div className="admin-toolbar-row">
+          <PanelHeading
+            eyebrow="Financial Records"
+            title="Contributions & Donations"
+            count={donations?.length ?? 0}
+          />
+          <button type="button" onClick={handleExport} className="admin-secondary">
+            <Download size={15} /> Export CSV
+          </button>
+        </div>
+
+        {listLoading ? (
+          <LoadingCopy text="Loading donation records…" />
+        ) : !donations?.length ? (
+          <EmptyCopy text="No donation records yet. When visitors contribute on the Get Involved page, records will appear here." />
+        ) : (
+          <div className="admin-table-wrapper">
+            <table className="admin-data-table">
+              <thead>
+                <tr>
+                  <th>Donor</th>
+                  <th>Contact</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Paystack Ref</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {donations.map((d) => (
+                  <tr key={d.id}>
+                    <td>
+                      <strong>{d.donorName}</strong>
+                      {d.message && <div className="admin-donor-msg">“{d.message}”</div>}
+                    </td>
+                    <td>
+                      <div>{d.donorEmail}</div>
+                      <small>{d.donorPhone || "No phone"}</small>
+                    </td>
+                    <td>
+                      <strong>GHS {(d.amountGhs / 100).toFixed(2)}</strong>
+                    </td>
+                    <td>
+                      <span className={`admin-status ${d.status}`}>{d.status}</span>
+                    </td>
+                    <td>
+                      <code>{d.paystackRef || "Manual"}</code>
+                    </td>
+                    <td>{new Date(d.createdAt).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}
+
+function SmsBroadcastManager() {
+  const utils = trpc.useUtils();
+  const { data: logs, isLoading: logsLoading } = trpc.admin.sms.getLogs.useQuery();
+  const broadcast = trpc.admin.sms.sendBroadcast.useMutation({
+    onSuccess: (res) => {
+      utils.admin.sms.getLogs.invalidate();
+      toast.success("SMS broadcast completed!", {
+        description: `Successfully sent: ${res.sent}, Failed: ${res.failed}`,
+      });
+      setForm(blankSmsBroadcast);
+    },
+    onError: (err) =>
+      toast.error("SMS broadcast failed.", { description: err.message }),
+  });
+
+  const [form, setForm] = useState<SmsBroadcastForm>(blankSmsBroadcast);
+  const update = <K extends keyof SmsBroadcastForm>(k: K, v: SmsBroadcastForm[K]) =>
+    setForm((curr) => ({ ...curr, [k]: v }));
+
+  const msgLen = form.message.length;
+  const segments = Math.ceil(msgLen / 160) || 1;
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.message.trim()) {
+      return toast.error("Please enter a broadcast message.");
+    }
+    if (
+      !window.confirm(
+        `Are you sure you want to broadcast this SMS (${segments} segment${segments > 1 ? "s" : ""})?`
+      )
+    ) {
+      return;
+    }
+    broadcast.mutate({
+      message: form.message.trim(),
+      target: form.target,
+      customPhones:
+        form.target === "custom"
+          ? form.customPhones
+              .split(/[\n,]/)
+              .map((p) => p.trim())
+              .filter(Boolean)
+          : undefined,
+    });
+  };
+
+
+  return (
+    <div className="admin-manager-grid">
+      <section className="admin-panel">
+        <PanelHeading
+          eyebrow="Africa's Talking Gateway"
+          title="Compose SMS Broadcast"
+          icon={<Send size={24} />}
+        />
+        <form className="admin-form" onSubmit={submit}>
+          <label>Target Recipients</label>
+          <div className="admin-radio-group">
+            <label className="admin-radio">
+              <input
+                type="radio"
+                name="target"
+                value="all"
+                checked={form.target === "all"}
+                onChange={() => update("target", "all")}
+              />
+              <span>All Opted-In Contacts (Newsletter & Event Attendees)</span>
+            </label>
+            <label className="admin-radio">
+              <input
+                type="radio"
+                name="target"
+                value="newsletter"
+                checked={form.target === "newsletter"}
+                onChange={() => update("target", "newsletter")}
+              />
+              <span>Newsletter Subscribers (with Phone numbers)</span>
+            </label>
+            <label className="admin-radio">
+              <input
+                type="radio"
+                name="target"
+                value="events"
+                checked={form.target === "events"}
+                onChange={() => update("target", "events")}
+              />
+              <span>Event Registrants (with SMS Opt-in checked)</span>
+            </label>
+            <label className="admin-radio">
+              <input
+                type="radio"
+                name="target"
+                value="custom"
+                checked={form.target === "custom"}
+                onChange={() => update("target", "custom")}
+              />
+              <span>Custom Phone Number List</span>
+            </label>
+          </div>
+
+          {form.target === "custom" && (
+            <label>
+              Custom Phone Numbers (one per line or comma-separated)
+              <textarea
+                required
+                value={form.customPhones}
+                onChange={(e) => update("customPhones", e.target.value)}
+                placeholder="+233241234567&#10;+233501234567"
+              />
+            </label>
+          )}
+
+          <label>
+            Message Content
+            <textarea
+              required
+              maxLength={480}
+              className="admin-tall-textarea"
+              style={{ minHeight: "140px" }}
+              value={form.message}
+              onChange={(e) => update("message", e.target.value)}
+              placeholder="e.g. YBI Alert: Our Public Speaking masterclass starts this Saturday at 10 AM. See venue directions at ybi.org/events."
+            />
+            <div className="admin-sms-counter">
+              <span>
+                {msgLen} / 160 chars · {segments} SMS segment{segments > 1 ? "s" : ""}
+              </span>
+              <span>Max 480 chars</span>
+            </div>
+          </label>
+
+          <button
+            type="submit"
+            disabled={broadcast.isPending || !form.message.trim()}
+            className="admin-primary"
+          >
+            {broadcast.isPending ? "Sending Broadcast…" : "Send SMS Broadcast"}{" "}
+            <Send size={16} />
+          </button>
+        </form>
+      </section>
+
+      <section className="admin-panel admin-list-panel">
+        <PanelHeading
+          eyebrow="Delivery History"
+          title="Recent SMS Delivery Logs"
+          count={logs?.length ?? 0}
+        />
+        {logsLoading ? (
+          <LoadingCopy text="Loading SMS logs…" />
+        ) : !logs?.length ? (
+          <EmptyCopy text="No SMS messages sent yet. Messages sent via broadcast or event confirmation will log here." />
+        ) : (
+          <div className="admin-table-wrapper">
+            <table className="admin-data-table">
+              <thead>
+                <tr>
+                  <th>Recipient</th>
+                  <th>Message</th>
+                  <th>Status</th>
+                  <th>Timestamp</th>
+                </tr>
+              </thead>
+              <tbody>
+                {logs.map((log) => (
+                  <tr key={log.id}>
+                    <td>
+                      <code>{log.phoneNumber}</code>
+                    </td>
+                    <td>
+                      <span className="admin-log-snippet">{log.message}</span>
+                    </td>
+                    <td>
+                      <span className={`admin-status ${log.status}`}>{log.status}</span>
+                    </td>
+                    <td>{new Date(log.createdAt).toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}
+
+function FaqManager() {
+  const utils = trpc.useUtils();
+  const { data: faqs, isLoading, isError } = trpc.admin.faq.list.useQuery();
+  const save = trpc.admin.faq.save.useMutation({
+    onSuccess: () => {
+      utils.admin.faq.list.invalidate();
+      utils.publicSite.faq.list.invalidate();
+      toast.success("FAQ item saved.");
+      setForm(blankFaqAdmin);
+    },
+    onError: (err) => toast.error("Could not save FAQ.", { description: err.message }),
+  });
+  const remove = trpc.admin.faq.remove.useMutation({
+    onSuccess: () => {
+      utils.admin.faq.list.invalidate();
+      utils.publicSite.faq.list.invalidate();
+      toast.success("FAQ item removed.");
+    },
+    onError: (err) => toast.error("Could not remove FAQ.", { description: err.message }),
+  });
+
+  const [form, setForm] = useState<FaqAdminForm>(blankFaqAdmin);
+  const update = <K extends keyof FaqAdminForm>(k: K, v: FaqAdminForm[K]) =>
+    setForm((curr) => ({ ...curr, [k]: v }));
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    save.mutate(form);
+  };
+
+  return (
+    <div className="admin-manager-grid">
+      <section className="admin-panel">
+        <PanelHeading
+          eyebrow="Help Center"
+          title={form.id ? "Edit Question" : "Add FAQ Question"}
+          icon={<HelpCircle size={24} />}
+        />
+        <form className="admin-form" onSubmit={submit}>
+          <label>
+            Category
+            <select
+              value={form.category}
+              onChange={(e) => update("category", e.target.value)}
+            >
+              <option value="General">General</option>
+              <option value="Programs">Programs & Workshops</option>
+              <option value="Mentorship">Mentorship & Dialogue</option>
+              <option value="Donations">Donations & Support</option>
+              <option value="Volunteering">Volunteering</option>
+            </select>
+          </label>
+          <label>
+            Question
+            <input
+              required
+              value={form.question}
+              onChange={(e) => update("question", e.target.value)}
+              placeholder="e.g. How are mentor-mentee matches determined?"
+            />
+          </label>
+          <label>
+            Answer
+            <textarea
+              required
+              className="admin-tall-textarea"
+              value={form.answer}
+              onChange={(e) => update("answer", e.target.value)}
+              placeholder="Provide a clear, helpful explanation..."
+            />
+          </label>
+          <div className="admin-form-split">
+            <label>
+              Sort Order
+              <input
+                type="number"
+                min="0"
+                value={form.sortOrder}
+                onChange={(e) => update("sortOrder", Number(e.target.value))}
+              />
+            </label>
+            <label className="admin-check" style={{ alignItems: "center", marginTop: 22 }}>
+              <input
+                type="checkbox"
+                checked={form.isPublished}
+                onChange={(e) => update("isPublished", e.target.checked)}
+              />{" "}
+              Published (Visible)
+            </label>
+          </div>
+          <SaveButton
+            pending={save.isPending}
+            label={form.id ? "Save Question" : "Add Question"}
+          />
+          {form.id ? <CancelEdit onClick={() => setForm(blankFaqAdmin)} /> : null}
+        </form>
+      </section>
+
+      <section className="admin-panel admin-list-panel">
+        <PanelHeading
+          eyebrow="Published Questions"
+          title="All FAQ Items"
+          count={faqs?.length ?? 0}
+        />
+        {isLoading ? (
+          <LoadingCopy text="Loading FAQ items…" />
+        ) : isError ? (
+          <ErrorCopy text="FAQ items could not be loaded." />
+        ) : !faqs?.length ? (
+          <EmptyCopy text="No FAQ items yet. Add questions on the left." />
+        ) : (
+          <div className="admin-record-list">
+            {faqs.map((faq) => (
+              <article className="admin-record-row" key={faq.id}>
+                <div>
+                  <span className="admin-event-price-tag">{faq.category}</span>
+                  <h3>{faq.question}</h3>
+                  <p>{faq.answer.slice(0, 120)}...</p>
+                </div>
+                <div className="admin-row-actions">
+                  <button
+                    onClick={() =>
+                      setForm({
+                        id: faq.id,
+                        question: faq.question,
+                        answer: faq.answer,
+                        category: faq.category,
+                        sortOrder: faq.sortOrder,
+                        isPublished: faq.isPublished,
+                      })
+                    }
+                  >
+                    <Pencil size={15} /> Edit
+                  </button>
+                  <button
+                    className="danger"
+                    onClick={() => {
+                      if (window.confirm(`Delete question "${faq.question}"?`)) {
+                        remove.mutate({ id: faq.id });
+                      }
+                    }}
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}
+
+function LegalPagesManager() {
+  const utils = trpc.useUtils();
+  const [selectedDoc, setSelectedDoc] = useState<"privacy" | "terms">("privacy");
+  const contentKey = selectedDoc === "privacy" ? "legal:privacy-policy" : "legal:terms-of-use";
+  const { data: record } = trpc.publicSite.content.useQuery({ contentKey });
+
+  const save = trpc.admin.content.save.useMutation({
+    onSuccess: () => {
+      utils.publicSite.content.invalidate();
+      toast.success("Legal document updated successfully.");
+    },
+    onError: (err) => toast.error("Could not save legal document.", { description: err.message }),
+  });
+
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+
+  useEffect(() => {
+    if (record) {
+      setTitle(record.title || (selectedDoc === "privacy" ? "Privacy Policy & Data Protection" : "Terms of Use & Guidelines"));
+      setBody(record.body || "");
+    } else {
+      setTitle(selectedDoc === "privacy" ? "Privacy Policy & Data Protection" : "Terms of Use & Guidelines");
+      setBody("");
+    }
+  }, [record, selectedDoc]);
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    save.mutate({
+      contentKey,
+      label: selectedDoc === "privacy" ? "Privacy Policy" : "Terms of Use",
+      title,
+      body,
+    });
+  };
+
+  return (
+    <section className="admin-panel admin-full-panel">
+      <PanelHeading
+        eyebrow="Compliance & Governance"
+        title="Legal Documents & Safeguards"
+        icon={<Scale size={24} />}
+      />
+      <div className="admin-category-pills" style={{ marginBottom: 20 }}>
+        <button
+          type="button"
+          className={`admin-category-pill ${selectedDoc === "privacy" ? "active" : ""}`}
+          onClick={() => setSelectedDoc("privacy")}
+        >
+          Privacy Policy (/privacy-policy)
+        </button>
+        <button
+          type="button"
+          className={`admin-category-pill ${selectedDoc === "terms" ? "active" : ""}`}
+          onClick={() => setSelectedDoc("terms")}
+        >
+          Terms of Use (/terms-of-use)
+        </button>
+      </div>
+
+      <form className="admin-form" onSubmit={submit}>
+        <label>
+          Page Heading
+          <input
+            required
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </label>
+        <label>
+          Legal Text Body (Paragraphs separated by double line breaks. Leave blank to use authoritative NGO default text)
+          <textarea
+            className="admin-tall-textarea"
+            style={{ minHeight: "300px" }}
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            placeholder="Custom legal copy..."
+          />
+        </label>
+        <div style={{ display: "flex", gap: "12px", alignItems: "center", marginTop: "16px" }}>
+          <SaveButton pending={save.isPending} label={`Save ${selectedDoc === "privacy" ? "Privacy Policy" : "Terms of Use"}`} />
+          <Link
+            href={selectedDoc === "privacy" ? "/privacy-policy" : "/terms-of-use"}
+            target="_blank"
+            className="admin-secondary"
+          >
+            Preview Public Page <ExternalLink size={15} />
+          </Link>
+        </div>
+      </form>
+    </section>
+  );
+}
+
 function PasswordSettings() {
+
   const save = trpc.admin.settings.changePassword.useMutation({
     onSuccess: () => { setForm(blankPassword); toast.success("Admin password changed successfully!"); },
     onError: (err) => toast.error("Password change failed.", { description: err.message }),

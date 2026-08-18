@@ -5,33 +5,55 @@ export type FooterNavigationGroup = {
 
 export const footerNavigation: FooterNavigationGroup[] = [
   {
-    title: "Explore",
+    title: "Organization",
     links: [
-      { label: "About us", href: "/about" },
-      { label: "Focus areas", href: "/focus-areas" },
-      { label: "Programs", href: "/programs" },
+      { label: "About Us", href: "/about" },
+      { label: "Our Team", href: "/team" },
+      { label: "Focus Areas", href: "/focus-areas" },
+      { label: "Core Programs", href: "/programs" },
     ],
   },
   {
-    title: "Get involved",
+    title: "Participation",
     links: [
-      { label: "Volunteer", href: "/join-us#volunteer" },
-      { label: "Partner with us", href: "/join-us#partner" },
-      { label: "Contact us", href: "/contact" },
+      { label: "Upcoming Events", href: "/events" },
+      { label: "YBI Journal & Stories", href: "/blog" },
+      { label: "Make a Donation", href: "/get-involved#donate" },
+      { label: "Volunteer / Mentor", href: "/get-involved#volunteer" },
     ],
   },
   {
-    title: "Discover",
+    title: "Support & Legal",
     links: [
-      { label: "Our team", href: "/team" },
-      { label: "Gallery", href: "/gallery" },
-      { label: "Latest updates", href: "/media#stories" },
-      { label: "Newsletter", href: "/media#newsletter" },
+      { label: "Frequently Asked Questions", href: "/faq" },
+      { label: "Contact YBI", href: "/contact" },
+      { label: "Privacy Policy", href: "/privacy-policy" },
+      { label: "Terms of Use", href: "/terms-of-use" },
+    ],
+  },
+  {
+    title: "Connect",
+    links: [
+      { label: "Contact Us", href: "/contact" },
+      { label: "YBI Journal", href: "/blog" },
+      { label: "Events Calendar", href: "/events" },
+      { label: "Photo Gallery", href: "/gallery" },
+    ],
+  },
+  {
+    title: "Make an Impact",
+    links: [
+      { label: "Donate to YBI", href: "/get-involved#donate" },
+      { label: "Mentor with YBI", href: "/get-involved#volunteer" },
+      { label: "View Events Calendar", href: "/events" },
     ],
   },
 ];
 
 export const footerImpactActions = [
-  { label: "Volunteer with YBI", href: "/join-us#volunteer" },
-  { label: "Explore programs", href: "/programs" },
+  { label: "Donate to YBI", href: "/get-involved#donate" },
+  { label: "Mentor with YBI", href: "/get-involved#volunteer" },
+  { label: "View Events Calendar", href: "/events" },
 ];
+
+

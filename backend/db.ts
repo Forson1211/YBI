@@ -2,14 +2,21 @@ import * as dotenv from "dotenv";
 import { count, desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import {
+  blogPosts,
   communityInquiries,
+  donations,
+  eventRegistrations,
+  events,
+  faqItems,
   galleryPhotos,
   impactMetrics,
   InsertUser,
+  newsletterSubscribers,
   opportunities,
   programs,
   programSessions,
   siteContent,
+  smsLogs,
   updates,
   users,
 } from "./drizzle/schema";
@@ -42,7 +49,7 @@ export async function getDb() {
   return _db;
 }
 
-// In-memory mock store for standalone / local operation without external MySQL
+// In-memory mock store for standalone / local operation without external database
 const memoryStore = {
   users: new Map<string, any>(),
   galleryPhotos: [
@@ -50,30 +57,194 @@ const memoryStore = {
     { id: 2, title: "Mentorship Circle", altText: "Young people in guided discussion", imageUrl: "/ybi-assets/gallery/mentorship-1.jpg", storageKey: "mentorship-1.jpg", isPublished: true, sortOrder: 2, createdAt: new Date(), updatedAt: new Date() },
   ] as any[],
   programs: [
-    { id: 1, title: "Creative Tech & Robotics Lab", category: "Technology & STEAM", summary: "Hands-on engineering, problem-solving, and coding foundations for young innovators.", status: "published" as const, sortOrder: 1, createdAt: new Date(), updatedAt: new Date() },
-    { id: 2, title: "Purposeful Leadership & Mentoring", category: "Leadership & Mindset", summary: "Guiding emerging voices to discover their strengths, build resilience, and lead with empathy.", status: "published" as const, sortOrder: 2, createdAt: new Date(), updatedAt: new Date() },
-    { id: 3, title: "Community Innovation Studio", category: "Civic Impact", summary: "Connecting curiosity with community action to design practical solutions for real local challenges.", status: "published" as const, sortOrder: 3, createdAt: new Date(), updatedAt: new Date() },
+    { id: 1, title: "Public Speaking & Communication", category: "Public Speaking", summary: "Master vocal presence, speech crafting, debate, and the confidence to bring your voice and ideas into any room.", status: "published" as const, sortOrder: 1, createdAt: new Date(), updatedAt: new Date() },
+    { id: 2, title: "Youth Entrepreneurship & Enterprise", category: "Entrepreneurship", summary: "Turn meaningful ideas into viable ventures through problem validation, business fundamentals, and pitch coaching.", status: "published" as const, sortOrder: 2, createdAt: new Date(), updatedAt: new Date() },
+    { id: 3, title: "Generations in Conversation", category: "Mentorship", summary: "Structured intergenerational dialogue circles and 1-on-1 mentorship pairings connecting young ambition with elder wisdom.", status: "published" as const, sortOrder: 3, createdAt: new Date(), updatedAt: new Date() },
+    { id: 4, title: "Values-Led Leadership Lab", category: "Leadership", summary: "Develop self-awareness, ethical decision-making, and community stewardship habits to lead with integrity.", status: "published" as const, sortOrder: 4, createdAt: new Date(), updatedAt: new Date() },
   ] as any[],
   updates: [
-    { id: 1, title: "YBI Expands Hands-on Tech Spaces for 2026", excerpt: "New kits and creative problem-solving modules launched across community centres.", body: "Young Beginners Inspiration is expanding its experiential learning spaces to provide more young learners with early access to creative technology, mentoring circles, and values-led leadership development.", status: "published" as const, publishedAt: new Date(), createdAt: new Date(), updatedAt: new Date() },
+    { id: 1, title: "YBI Launches 2026 Intergenerational Mentorship Cohorts", excerpt: "Connecting young ambition with elder wisdom across community dialogue spaces.", body: "Young Beginners Inspiration is expanding its signature intergenerational mentorship cohorts, public speaking labs, and youth enterprise studios across local community centers.", status: "published" as const, publishedAt: new Date(), createdAt: new Date(), updatedAt: new Date() },
   ] as any[],
   siteContent: new Map<string, any>(),
   communityInquiries: [
-    { id: 1, name: "Ama Serwaa", email: "ama@example.org", interest: "Mentorship & Volunteering", message: "Hello YBI team, I would love to volunteer as a mentor in the upcoming tech cohort.", status: "new" as const, adminNotes: null, createdAt: new Date(), updatedAt: new Date() },
+    { id: 1, name: "Ama Serwaa", email: "ama@example.org", interest: "Mentorship & Volunteering", message: "Hello YBI team, I would love to volunteer as a mentor in the upcoming cohort.", status: "new" as const, adminNotes: null, createdAt: new Date(), updatedAt: new Date() },
   ] as any[],
   programSessions: [
-    { id: 1, title: "Design Sprint & Prototyping", focusArea: "STEAM & Engineering", details: "Collaborative session building physical prototypes.", scheduledFor: new Date(Date.now() + 86400000 * 7), venue: "YBI Innovation Hub, Accra", capacity: 25, status: "published" as const, createdAt: new Date(), updatedAt: new Date() },
+    { id: 1, title: "Public Speaking & Debate Practicum", focusArea: "Public Speaking", details: "Interactive speaking drills, body language coaching, and debate practice.", scheduledFor: new Date(Date.now() + 86400000 * 7), venue: "YBI Community Hub", capacity: 30, status: "published" as const, createdAt: new Date(), updatedAt: new Date() },
   ] as any[],
   opportunities: [
-    { id: 1, title: "Youth STEAM Mentor", category: "Mentorship", summary: "Guide youth through coding, robotics, and creative problem-solving.", commitment: "2 hours / week", status: "published" as const, sortOrder: 1, createdAt: new Date(), updatedAt: new Date() },
+    { id: 1, title: "Intergenerational Mentor", category: "Mentorship", summary: "Guide youth through structured dialogue, career exploration, and life reflection.", commitment: "2 hours / week", status: "published" as const, sortOrder: 1, createdAt: new Date(), updatedAt: new Date() },
   ] as any[],
   impactMetrics: [
-    { id: 1, title: "Young Learners Reached", focusArea: "STEAM Education", description: "Students actively participating in YBI learning workshops.", currentValue: 1250, targetValue: 2500, unit: "Learners", period: "2026", status: "active" as const, createdAt: new Date(), updatedAt: new Date() },
-    { id: 2, title: "Mentorship Hours Completed", focusArea: "Leadership", description: "One-on-one and small group mentorship sessions delivered.", currentValue: 480, targetValue: 1000, unit: "Hours", period: "2026", status: "active" as const, createdAt: new Date(), updatedAt: new Date() },
+    { id: 1, title: "Youth & Community Reached", focusArea: "Leadership & Learning", description: "Young learners and emerging leaders equipped through workshops and cohorts.", currentValue: 1250, targetValue: 2000, unit: "Participants", period: "2026", status: "active" as const, createdAt: new Date(), updatedAt: new Date() },
+    { id: 2, title: "Mentorship Hours Completed", focusArea: "Mentorship", description: "Dedicated one-on-one and small group intergenerational coaching sessions.", currentValue: 500, targetValue: 1000, unit: "Hours", period: "2026", status: "active" as const, createdAt: new Date(), updatedAt: new Date() },
+    { id: 3, title: "Programs & Cohorts Delivered", focusArea: "Education", description: "Hands-on speaking, entrepreneurship, and leadership cohorts run.", currentValue: 35, targetValue: 50, unit: "Cohorts", period: "2026", status: "active" as const, createdAt: new Date(), updatedAt: new Date() },
+    { id: 4, title: "Partner Communities Engaged", focusArea: "Community", description: "Partner schools, youth hubs, and intergenerational spaces connected.", currentValue: 15, targetValue: 25, unit: "Communities", period: "2026", status: "active" as const, createdAt: new Date(), updatedAt: new Date() },
   ] as any[],
   teamMembers: [
-    { id: 1, name: "Dr. Abena Mensah", role: "Executive Director", bio: "Visionary leader with 15 years of youth development experience across West Africa.", imageUrl: "/ybi-assets/team/director.jpg", email: "", linkedIn: "", sortOrder: 1, isPublished: true, createdAt: new Date(), updatedAt: new Date() },
+    { id: 1, name: "Executive Director & Founder", role: "Leadership & Strategy", bio: "Leads the vision and strategic expansion of YBI, championing intergenerational empowerment.", imageUrl: "/ybi-assets/team/director.jpg", email: "", linkedIn: "", sortOrder: 1, isPublished: true, createdAt: new Date(), updatedAt: new Date() },
+    { id: 2, name: "Programs & Curriculum Lead", role: "Learning Design", bio: "Designs experiential curricula across public speaking, youth enterprise, and leadership.", imageUrl: "/ybi-assets/programs/ybi-public-speaking.jpg", email: "", linkedIn: "", sortOrder: 2, isPublished: true, createdAt: new Date(), updatedAt: new Date() },
+    { id: 3, name: "Mentorship & Community Lead", role: "Intergenerational Mentorship", bio: "Facilitates structured mentor-mentee matching and Generations in Conversation circles.", imageUrl: "/ybi-assets/community/ybi-community.jpg", email: "", linkedIn: "", sortOrder: 3, isPublished: true, createdAt: new Date(), updatedAt: new Date() },
   ] as any[],
+  events: [
+    {
+      id: 1,
+      slug: "public-speaking-masterclass-2026",
+      title: "Public Speaking & Youth Voice Masterclass",
+      description: "A hands-on intensive workshop designed to build stage confidence, debate rhetoric, vocal modulation, and storytelling power for young emerging leaders.",
+      imageUrl: "/ybi-assets/programs/ybi-public-speaking.jpg",
+      scheduledFor: new Date(Date.now() + 86400000 * 14),
+      location: "Accra Community Center & Virtual Stream",
+      capacity: 50,
+      isFree: true,
+      priceGhs: 0,
+      status: "published" as const,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: 2,
+      slug: "generations-in-conversation-summit",
+      title: "Generations in Conversation: Annual Youth-Elder Summit",
+      description: "An inspiring intergenerational gathering bridging youth innovators and experienced community elders for dialogue, mentorship pairing, and legacy building.",
+      imageUrl: "/ybi-assets/community/ybi-community.jpg",
+      scheduledFor: new Date(Date.now() + 86400000 * 28),
+      location: "YBI Main Auditorium, East Legon, Accra",
+      capacity: 100,
+      isFree: false,
+      priceGhs: 5000,
+      status: "published" as const,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: 3,
+      slug: "youth-enterprise-pitch-lab",
+      title: "Youth Enterprise & Venture Pitch Lab",
+      description: "Practical business modeling, market validation, and pitch coaching for aspiring entrepreneurs aged 16-30.",
+      imageUrl: "/ybi-assets/gallery/workshop-1.jpg",
+      scheduledFor: new Date(Date.now() + 86400000 * 45),
+      location: "YBI Innovation Hub, Kumasi & Online",
+      capacity: 40,
+      isFree: true,
+      priceGhs: 0,
+      status: "published" as const,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ] as any[],
+  eventRegistrations: [] as any[],
+  blogPosts: [
+    {
+      id: 1,
+      slug: "power-of-intergenerational-dialogue",
+      title: "The Transformative Power of Intergenerational Dialogue in African Communities",
+      excerpt: "When youth ambition meets elder wisdom, sustainable community development accelerates. Here is what we learned from 500+ hours of mentorship circles.",
+      body: `## Bridging Generations Through Intentional Conversation\n\nIn many modern societies, generational disconnects leave young people navigating complex careers and leadership paths without grounded elder wisdom, while experienced leaders lack direct touchpoints with youth energy.\n\nAt Young Beginners Inspiration (YBI), our **Generations in Conversation** initiative was created to shatter these silos. Rather than formal lectures, we curate structured peer-to-peer and small-group circles where both sides actively listen, challenge assumptions, and build enduring mutual respect.\n\n### Key Takeaways from Our Recent Cohorts\n\n1. **Listening Precedes Leadership:** Young leaders who listen to past community struggles develop higher contextual empathy.\n2. **Mutual Learning:** Elders report feeling reinvigorated by the fresh perspectives, digital insights, and ethical curiosity of young mentees.\n3. **Practical Legacy:** Mentorship is not just advice—it is the deliberate transfer of resilience, cultural values, and network access.\n\nJoin our upcoming events or volunteer as a mentor to take part in this expanding movement.`,
+      authorName: "YBI Editorial Team",
+      coverImageUrl: "/ybi-assets/community/ybi-community.jpg",
+      category: "Mentorship",
+      status: "published" as const,
+      publishedAt: new Date(Date.now() - 86400000 * 3),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: 2,
+      slug: "building-confidence-through-public-speaking",
+      title: "Finding Your Voice: How Public Speaking Unlocks Leadership Potential",
+      excerpt: "Mastering vocal presence, speech crafting, and active listening transforms shy participants into confident changemakers across schools and enterprises.",
+      body: `## Voice as a Catalyst for Impact\n\nEvery impactful idea begins with the courage to articulate it clearly. In our public speaking workshops across Ghana, we consistently witness young individuals transition from hesitant observers to compelling communicators.\n\n### The Three Pillars of the YBI Speech Lab\n\n- **Authenticity over Performance:** Speaking with genuine conviction resonates far deeper than memorized rhetoric.\n- **Structured Argumentation:** Learning how to frame a problem, back it with lived evidence, and offer actionable solutions.\n- **Overcoming Stage Anxiety:** Practical breathwork and vocal drills that calm the nervous system before addressing any audience.\n\nWhether preparing for a classroom debate, an entrepreneurial pitch, or civic advocacy, mastering the spoken word is one of the most transferable skills for the 21st century.`,
+      authorName: "Kwame Mensah",
+      coverImageUrl: "/ybi-assets/programs/ybi-public-speaking.jpg",
+      category: "Public Speaking",
+      status: "published" as const,
+      publishedAt: new Date(Date.now() - 86400000 * 10),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: 3,
+      slug: "values-led-entrepreneurship-ghana",
+      title: "Values-Led Entrepreneurship: Building Ventures with Community Roots",
+      excerpt: "Why purpose-driven enterprise is key to youth employment and how YBI incubates sustainable, ethical business ideas.",
+      body: `## Beyond Profit: The Rise of Ethical Enterprise\n\nEntrepreneurship is often framed purely around rapid scale and valuation. However, in our communities, the most resilient enterprises are those solving fundamental local challenges—from educational access to sustainable agriculture.\n\n### Guiding Principles for Young Founders\n\n1. **Solve Real Pain Points:** Validate with actual community members before investing resources.\n2. **Maintain Ethical Transparency:** Trust is the ultimate currency of any enduring organization.\n3. **Reinvest in People:** Sustainable enterprises create dignified livelihoods and mentor the next generation.\n\nExplore our youth entrepreneurship cohorts to learn how we support early-stage venture builders.`,
+      authorName: "Ama Serwaa",
+      coverImageUrl: "/ybi-assets/programs/ybi-entrepreneurship.jpg",
+      category: "Entrepreneurship",
+      status: "published" as const,
+      publishedAt: new Date(Date.now() - 86400000 * 20),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ] as any[],
+  donations: [
+    {
+      id: 1,
+      name: "Kwesi Appiah",
+      email: "kwesi@example.com",
+      phone: "+233240000001",
+      amountGhs: 25000,
+      message: "Keep up the inspiring work empowering our youth!",
+      paystackRef: "ybi_don_mock_1",
+      paymentStatus: "success" as const,
+      createdAt: new Date(Date.now() - 86400000 * 2),
+      updatedAt: new Date(Date.now() - 86400000 * 2),
+    },
+  ] as any[],
+  faqItems: [
+    {
+      id: 1,
+      question: "What is Young Beginners Inspiration (YBI)?",
+      answer: "Young Beginners Inspiration (YBI) is a nonprofit organization dedicated to empowering youth through public speaking, entrepreneurship, intergenerational mentorship, and values-led leadership programs.",
+      category: "General",
+      sortOrder: 1,
+      isPublished: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: 2,
+      question: "Who can participate in YBI programs?",
+      answer: "Our core programs are designed for young people aged 12 to 30, while our mentorship circles actively welcome experienced elders, professionals, and community leaders of all ages as mentors.",
+      category: "Programs",
+      sortOrder: 2,
+      isPublished: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: 3,
+      question: "How can I volunteer or become a mentor?",
+      answer: "You can apply directly through our Get Involved page or contact us. We match volunteers based on interest, experience, and availability for cohorts and community workshops.",
+      category: "Get Involved",
+      sortOrder: 3,
+      isPublished: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: 4,
+      question: "Are YBI events free to attend?",
+      answer: "Most of our community workshops and public lectures are completely free. Select specialized summits or masterclasses have a nominal fee to cover materials and venue costs, with scholarship waivers available upon request.",
+      category: "Events",
+      sortOrder: 4,
+      isPublished: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: 5,
+      question: "How are donations utilized?",
+      answer: "100% of public donations directly fund student workshop materials, mentorship venue logistics, rural outreach cohorts, and facilitator stipends.",
+      category: "Donations",
+      sortOrder: 5,
+      isPublished: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ] as any[],
+  smsLogs: [] as any[],
   newsletterSubscribers: [] as any[],
   autoId: 100,
 };
@@ -173,17 +344,43 @@ export async function getDashboardOverview() {
       impactMetrics: memoryStore.impactMetrics.length,
       teamMembers: memoryStore.teamMembers.length,
       subscribers: memoryStore.newsletterSubscribers.length,
+      events: memoryStore.events.length,
+      blogPosts: memoryStore.blogPosts.length,
+      donations: memoryStore.donations.length,
+      registrations: memoryStore.eventRegistrations.length,
+      faqItems: memoryStore.faqItems.length,
     };
   }
-  const [gallery, programCount, updateCount, contentCount, inquiryCount, sessionCount, opportunityCount, metricCount] = await Promise.all([
-    db.select({ value: count() }).from(galleryPhotos),
-    db.select({ value: count() }).from(programs),
-    db.select({ value: count() }).from(updates),
-    db.select({ value: count() }).from(siteContent),
-    db.select({ value: count() }).from(communityInquiries),
-    db.select({ value: count() }).from(programSessions),
-    db.select({ value: count() }).from(opportunities),
-    db.select({ value: count() }).from(impactMetrics),
+  const [
+    gallery,
+    programCount,
+    updateCount,
+    contentCount,
+    inquiryCount,
+    sessionCount,
+    opportunityCount,
+    metricCount,
+    eventCount,
+    blogCount,
+    donationCount,
+    regCount,
+    faqCount,
+    subCount,
+  ] = await Promise.all([
+    db.select({ value: count() }).from(galleryPhotos).catch(() => [{ value: memoryStore.galleryPhotos.length }]),
+    db.select({ value: count() }).from(programs).catch(() => [{ value: memoryStore.programs.length }]),
+    db.select({ value: count() }).from(updates).catch(() => [{ value: memoryStore.updates.length }]),
+    db.select({ value: count() }).from(siteContent).catch(() => [{ value: memoryStore.siteContent.size }]),
+    db.select({ value: count() }).from(communityInquiries).catch(() => [{ value: memoryStore.communityInquiries.length }]),
+    db.select({ value: count() }).from(programSessions).catch(() => [{ value: memoryStore.programSessions.length }]),
+    db.select({ value: count() }).from(opportunities).catch(() => [{ value: memoryStore.opportunities.length }]),
+    db.select({ value: count() }).from(impactMetrics).catch(() => [{ value: memoryStore.impactMetrics.length }]),
+    db.select({ value: count() }).from(events).catch(() => [{ value: memoryStore.events.length }]),
+    db.select({ value: count() }).from(blogPosts).catch(() => [{ value: memoryStore.blogPosts.length }]),
+    db.select({ value: count() }).from(donations).catch(() => [{ value: memoryStore.donations.length }]),
+    db.select({ value: count() }).from(eventRegistrations).catch(() => [{ value: memoryStore.eventRegistrations.length }]),
+    db.select({ value: count() }).from(faqItems).catch(() => [{ value: memoryStore.faqItems.length }]),
+    db.select({ value: count() }).from(newsletterSubscribers).catch(() => [{ value: memoryStore.newsletterSubscribers.length }]),
   ]);
   return {
     gallery: gallery[0]?.value ?? 0,
@@ -194,8 +391,13 @@ export async function getDashboardOverview() {
     sessions: sessionCount[0]?.value ?? 0,
     opportunities: opportunityCount[0]?.value ?? 0,
     impactMetrics: metricCount[0]?.value ?? 0,
-    teamMembers: 0,
-    subscribers: 0,
+    teamMembers: memoryStore.teamMembers.length,
+    subscribers: subCount[0]?.value ?? memoryStore.newsletterSubscribers.length,
+    events: eventCount[0]?.value ?? memoryStore.events.length,
+    blogPosts: blogCount[0]?.value ?? memoryStore.blogPosts.length,
+    donations: donationCount[0]?.value ?? memoryStore.donations.length,
+    registrations: regCount[0]?.value ?? memoryStore.eventRegistrations.length,
+    faqItems: faqCount[0]?.value ?? memoryStore.faqItems.length,
   };
 }
 
@@ -667,19 +869,580 @@ export async function removeTeamMember(id: number) {
 
 // ─── Newsletter Subscribers ───────────────────────────────────────────────────
 
-export async function addNewsletterSubscriber(input: { email: string; name: string }) {
-  const existing = memoryStore.newsletterSubscribers.find(s => s.email.toLowerCase() === input.email.toLowerCase());
-  if (existing) return existing.id;
-  const id = ++memoryStore.autoId;
-  memoryStore.newsletterSubscribers.unshift({ id, ...input, createdAt: new Date() });
-  return id;
+export async function addNewsletterSubscriber(input: {
+  email: string;
+  name?: string;
+  phone?: string;
+  smsOptIn?: boolean;
+}) {
+  const db = await getDb();
+  if (!db) {
+    const existing = memoryStore.newsletterSubscribers.find(s => s.email.toLowerCase() === input.email.toLowerCase());
+    if (existing) {
+      if (input.phone) existing.phone = input.phone;
+      if (input.smsOptIn !== undefined) existing.smsOptIn = input.smsOptIn;
+      if (input.name) existing.name = input.name;
+      return existing.id;
+    }
+    const id = ++memoryStore.autoId;
+    memoryStore.newsletterSubscribers.unshift({
+      id,
+      email: input.email,
+      name: input.name || "",
+      phone: input.phone || null,
+      smsOptIn: input.smsOptIn ?? false,
+      subscribedAt: new Date(),
+    });
+    return id;
+  }
+  try {
+    const existing = await db.select().from(newsletterSubscribers).where(eq(newsletterSubscribers.email, input.email)).limit(1);
+    if (existing.length > 0) {
+      await db.update(newsletterSubscribers).set({
+        name: input.name ?? existing[0].name,
+        phone: input.phone ?? existing[0].phone,
+        smsOptIn: input.smsOptIn ?? existing[0].smsOptIn,
+      }).where(eq(newsletterSubscribers.email, input.email));
+      return existing[0].id;
+    }
+    const result = await db.insert(newsletterSubscribers).values({
+      email: input.email,
+      name: input.name || null,
+      phone: input.phone || null,
+      smsOptIn: input.smsOptIn ?? false,
+    }).returning({ id: newsletterSubscribers.id });
+    return Number(result[0].id);
+  } catch {
+    const id = ++memoryStore.autoId;
+    memoryStore.newsletterSubscribers.unshift({
+      id,
+      email: input.email,
+      name: input.name || "",
+      phone: input.phone || null,
+      smsOptIn: input.smsOptIn ?? false,
+      subscribedAt: new Date(),
+    });
+    return id;
+  }
 }
 
 export async function listNewsletterSubscribers() {
-  return memoryStore.newsletterSubscribers;
+  const db = await getDb();
+  if (!db) return memoryStore.newsletterSubscribers;
+  try {
+    return await db.select().from(newsletterSubscribers).orderBy(desc(newsletterSubscribers.subscribedAt));
+  } catch {
+    return memoryStore.newsletterSubscribers;
+  }
 }
 
 export async function removeNewsletterSubscriber(id: number) {
-  const index = memoryStore.newsletterSubscribers.findIndex(s => s.id === id);
-  if (index !== -1) memoryStore.newsletterSubscribers.splice(index, 1);
+  const db = await getDb();
+  if (!db) {
+    const index = memoryStore.newsletterSubscribers.findIndex(s => s.id === id);
+    if (index !== -1) memoryStore.newsletterSubscribers.splice(index, 1);
+    return;
+  }
+  try {
+    await db.delete(newsletterSubscribers).where(eq(newsletterSubscribers.id, id));
+  } catch {
+    const index = memoryStore.newsletterSubscribers.findIndex(s => s.id === id);
+    if (index !== -1) memoryStore.newsletterSubscribers.splice(index, 1);
+  }
 }
+
+// ─── Phase 2: Events ─────────────────────────────────────────────────────────
+
+export async function listEvents(includeDrafts = true) {
+  const db = await getDb();
+  if (!db) {
+    return includeDrafts
+      ? memoryStore.events
+      : memoryStore.events.filter(e => e.status === "published");
+  }
+  try {
+    const rows = await db.select().from(events).orderBy(events.scheduledFor);
+    return includeDrafts ? rows : rows.filter(e => e.status === "published");
+  } catch {
+    return includeDrafts
+      ? memoryStore.events
+      : memoryStore.events.filter(e => e.status === "published");
+  }
+}
+
+export async function getEventBySlug(slug: string) {
+  const db = await getDb();
+  if (!db) return memoryStore.events.find(e => e.slug === slug) ?? null;
+  try {
+    const rows = await db.select().from(events).where(eq(events.slug, slug)).limit(1);
+    return rows[0] ?? memoryStore.events.find(e => e.slug === slug) ?? null;
+  } catch {
+    return memoryStore.events.find(e => e.slug === slug) ?? null;
+  }
+}
+
+export async function getEventById(id: number) {
+  const db = await getDb();
+  if (!db) return memoryStore.events.find(e => e.id === id) ?? null;
+  try {
+    const rows = await db.select().from(events).where(eq(events.id, id)).limit(1);
+    return rows[0] ?? memoryStore.events.find(e => e.id === id) ?? null;
+  } catch {
+    return memoryStore.events.find(e => e.id === id) ?? null;
+  }
+}
+
+export async function saveEvent(input: {
+  id?: number;
+  slug: string;
+  title: string;
+  description: string;
+  imageUrl?: string | null;
+  scheduledFor: Date;
+  location: string;
+  capacity?: number | null;
+  isFree: boolean;
+  priceGhs: number;
+  status: "draft" | "published" | "cancelled";
+}) {
+  const db = await getDb();
+  if (!db) {
+    if (input.id) {
+      const index = memoryStore.events.findIndex(e => e.id === input.id);
+      if (index !== -1) {
+        memoryStore.events[index] = { ...memoryStore.events[index], ...input, updatedAt: new Date() };
+        return input.id;
+      }
+    }
+    const id = ++memoryStore.autoId;
+    memoryStore.events.push({ id, ...input, createdAt: new Date(), updatedAt: new Date() });
+    return id;
+  }
+  const values = {
+    slug: input.slug,
+    title: input.title,
+    description: input.description,
+    imageUrl: input.imageUrl ?? null,
+    scheduledFor: input.scheduledFor,
+    location: input.location,
+    capacity: input.capacity ?? null,
+    isFree: input.isFree,
+    priceGhs: input.priceGhs,
+    status: input.status,
+    updatedAt: new Date(),
+  };
+  try {
+    if (input.id) {
+      await db.update(events).set(values).where(eq(events.id, input.id));
+      return input.id;
+    }
+    const result = await db.insert(events).values(values).returning({ id: events.id });
+    return Number(result[0].id);
+  } catch {
+    if (input.id) {
+      const index = memoryStore.events.findIndex(e => e.id === input.id);
+      if (index !== -1) {
+        memoryStore.events[index] = { ...memoryStore.events[index], ...input, updatedAt: new Date() };
+        return input.id;
+      }
+    }
+    const id = ++memoryStore.autoId;
+    memoryStore.events.push({ id, ...input, createdAt: new Date(), updatedAt: new Date() });
+    return id;
+  }
+}
+
+export async function removeEvent(id: number) {
+  const db = await getDb();
+  if (!db) {
+    const index = memoryStore.events.findIndex(e => e.id === id);
+    if (index !== -1) memoryStore.events.splice(index, 1);
+    return;
+  }
+  try {
+    await db.delete(events).where(eq(events.id, id));
+  } catch {
+    const index = memoryStore.events.findIndex(e => e.id === id);
+    if (index !== -1) memoryStore.events.splice(index, 1);
+  }
+}
+
+// ─── Phase 2: Event Registrations ──────────────────────────────────────────
+
+export async function createEventRegistration(input: {
+  eventId: number;
+  name: string;
+  email: string;
+  phone: string;
+  smsOptIn?: boolean;
+  paystackRef?: string | null;
+  paymentStatus?: "pending" | "success" | "failed" | "free";
+  isWaitlist?: boolean;
+  confirmedAt?: Date | null;
+}) {
+  const db = await getDb();
+  const record = {
+    eventId: input.eventId,
+    name: input.name,
+    email: input.email,
+    phone: input.phone,
+    smsOptIn: input.smsOptIn ?? false,
+    paystackRef: input.paystackRef ?? null,
+    paymentStatus: input.paymentStatus ?? "pending",
+    isWaitlist: input.isWaitlist ?? false,
+    confirmedAt: input.confirmedAt ?? (input.paymentStatus === "success" || input.paymentStatus === "free" ? new Date() : null),
+  };
+  if (!db) {
+    const id = ++memoryStore.autoId;
+    memoryStore.eventRegistrations.push({ id, ...record, createdAt: new Date(), updatedAt: new Date() });
+    return id;
+  }
+  try {
+    const result = await db.insert(eventRegistrations).values(record).returning({ id: eventRegistrations.id });
+    return Number(result[0].id);
+  } catch {
+    const id = ++memoryStore.autoId;
+    memoryStore.eventRegistrations.push({ id, ...record, createdAt: new Date(), updatedAt: new Date() });
+    return id;
+  }
+}
+
+export async function listEventRegistrations(eventId?: number) {
+  const db = await getDb();
+  if (!db) {
+    return eventId
+      ? memoryStore.eventRegistrations.filter(r => r.eventId === eventId)
+      : memoryStore.eventRegistrations;
+  }
+  try {
+    if (eventId) {
+      return await db.select().from(eventRegistrations).where(eq(eventRegistrations.eventId, eventId)).orderBy(desc(eventRegistrations.createdAt));
+    }
+    return await db.select().from(eventRegistrations).orderBy(desc(eventRegistrations.createdAt));
+  } catch {
+    return eventId
+      ? memoryStore.eventRegistrations.filter(r => r.eventId === eventId)
+      : memoryStore.eventRegistrations;
+  }
+}
+
+export async function updateEventRegistrationPayment(
+  paystackRef: string,
+  paymentStatus: "pending" | "success" | "failed" | "free"
+) {
+  const db = await getDb();
+  const item = memoryStore.eventRegistrations.find(r => r.paystackRef === paystackRef);
+  if (item) {
+    item.paymentStatus = paymentStatus;
+    if (paymentStatus === "success" || paymentStatus === "free") item.confirmedAt = new Date();
+    item.updatedAt = new Date();
+  }
+  if (db) {
+    try {
+      await db.update(eventRegistrations).set({
+        paymentStatus,
+        confirmedAt: paymentStatus === "success" || paymentStatus === "free" ? new Date() : null,
+        updatedAt: new Date(),
+      }).where(eq(eventRegistrations.paystackRef, paystackRef));
+    } catch {}
+  }
+}
+
+// ─── Phase 2: Blog Posts ───────────────────────────────────────────────────
+
+export async function listBlogPosts(includeDrafts = true) {
+  const db = await getDb();
+  if (!db) {
+    return includeDrafts
+      ? memoryStore.blogPosts
+      : memoryStore.blogPosts.filter(p => p.status === "published");
+  }
+  try {
+    const rows = await db.select().from(blogPosts).orderBy(desc(blogPosts.publishedAt), desc(blogPosts.createdAt));
+    return includeDrafts ? rows : rows.filter(p => p.status === "published");
+  } catch {
+    return includeDrafts
+      ? memoryStore.blogPosts
+      : memoryStore.blogPosts.filter(p => p.status === "published");
+  }
+}
+
+export async function getBlogPostBySlug(slug: string) {
+  const db = await getDb();
+  if (!db) return memoryStore.blogPosts.find(p => p.slug === slug) ?? null;
+  try {
+    const rows = await db.select().from(blogPosts).where(eq(blogPosts.slug, slug)).limit(1);
+    return rows[0] ?? memoryStore.blogPosts.find(p => p.slug === slug) ?? null;
+  } catch {
+    return memoryStore.blogPosts.find(p => p.slug === slug) ?? null;
+  }
+}
+
+export async function saveBlogPost(input: {
+  id?: number;
+  slug: string;
+  title: string;
+  excerpt: string;
+  body: string;
+  authorName: string;
+  coverImageUrl?: string | null;
+  category: string;
+  status: "draft" | "published";
+  publishedAt?: Date | null;
+}) {
+  const db = await getDb();
+  const publishedAt = input.publishedAt ?? (input.status === "published" ? new Date() : null);
+  if (!db) {
+    if (input.id) {
+      const index = memoryStore.blogPosts.findIndex(p => p.id === input.id);
+      if (index !== -1) {
+        memoryStore.blogPosts[index] = { ...memoryStore.blogPosts[index], ...input, publishedAt, updatedAt: new Date() };
+        return input.id;
+      }
+    }
+    const id = ++memoryStore.autoId;
+    memoryStore.blogPosts.push({ id, ...input, publishedAt, createdAt: new Date(), updatedAt: new Date() });
+    return id;
+  }
+  const values = {
+    slug: input.slug,
+    title: input.title,
+    excerpt: input.excerpt,
+    body: input.body,
+    authorName: input.authorName,
+    coverImageUrl: input.coverImageUrl ?? null,
+    category: input.category,
+    status: input.status,
+    publishedAt,
+    updatedAt: new Date(),
+  };
+  try {
+    if (input.id) {
+      await db.update(blogPosts).set(values).where(eq(blogPosts.id, input.id));
+      return input.id;
+    }
+    const result = await db.insert(blogPosts).values(values).returning({ id: blogPosts.id });
+    return Number(result[0].id);
+  } catch {
+    if (input.id) {
+      const index = memoryStore.blogPosts.findIndex(p => p.id === input.id);
+      if (index !== -1) {
+        memoryStore.blogPosts[index] = { ...memoryStore.blogPosts[index], ...input, publishedAt, updatedAt: new Date() };
+        return input.id;
+      }
+    }
+    const id = ++memoryStore.autoId;
+    memoryStore.blogPosts.push({ id, ...input, publishedAt, createdAt: new Date(), updatedAt: new Date() });
+    return id;
+  }
+}
+
+export async function removeBlogPost(id: number) {
+  const db = await getDb();
+  if (!db) {
+    const index = memoryStore.blogPosts.findIndex(p => p.id === id);
+    if (index !== -1) memoryStore.blogPosts.splice(index, 1);
+    return;
+  }
+  try {
+    await db.delete(blogPosts).where(eq(blogPosts.id, id));
+  } catch {
+    const index = memoryStore.blogPosts.findIndex(p => p.id === id);
+    if (index !== -1) memoryStore.blogPosts.splice(index, 1);
+  }
+}
+
+// ─── Phase 2: Donations ────────────────────────────────────────────────────
+
+export async function createDonation(input: {
+  name: string;
+  email: string;
+  phone?: string | null;
+  amountGhs: number; // in pesewas
+  message?: string | null;
+  paystackRef?: string | null;
+  paymentStatus?: "pending" | "success" | "failed" | "free";
+}) {
+  const db = await getDb();
+  const values = {
+    name: input.name,
+    email: input.email,
+    phone: input.phone ?? null,
+    amountGhs: input.amountGhs,
+    message: input.message ?? null,
+    paystackRef: input.paystackRef ?? null,
+    paymentStatus: input.paymentStatus ?? "pending",
+  };
+  if (!db) {
+    const id = ++memoryStore.autoId;
+    memoryStore.donations.unshift({ id, ...values, createdAt: new Date(), updatedAt: new Date() });
+    return id;
+  }
+  try {
+    const result = await db.insert(donations).values(values).returning({ id: donations.id });
+    return Number(result[0].id);
+  } catch {
+    const id = ++memoryStore.autoId;
+    memoryStore.donations.unshift({ id, ...values, createdAt: new Date(), updatedAt: new Date() });
+    return id;
+  }
+}
+
+export async function listDonations() {
+  const db = await getDb();
+  if (!db) return memoryStore.donations;
+  try {
+    return await db.select().from(donations).orderBy(desc(donations.createdAt));
+  } catch {
+    return memoryStore.donations;
+  }
+}
+
+export async function updateDonationPayment(
+  paystackRef: string,
+  paymentStatus: "pending" | "success" | "failed" | "free"
+) {
+  const db = await getDb();
+  const item = memoryStore.donations.find(d => d.paystackRef === paystackRef);
+  if (item) {
+    item.paymentStatus = paymentStatus;
+    item.updatedAt = new Date();
+  }
+  if (db) {
+    try {
+      await db.update(donations).set({
+        paymentStatus,
+        updatedAt: new Date(),
+      }).where(eq(donations.paystackRef, paystackRef));
+    } catch {}
+  }
+}
+
+// ─── Phase 2: FAQ Items ────────────────────────────────────────────────────
+
+export async function listFaqItems(includeUnpublished = true) {
+  const db = await getDb();
+  if (!db) {
+    const items = includeUnpublished
+      ? memoryStore.faqItems
+      : memoryStore.faqItems.filter(f => f.isPublished);
+    return items.slice().sort((a, b) => a.sortOrder - b.sortOrder);
+  }
+  try {
+    const rows = await db.select().from(faqItems).orderBy(faqItems.sortOrder, desc(faqItems.createdAt));
+    return includeUnpublished ? rows : rows.filter(f => f.isPublished);
+  } catch {
+    const items = includeUnpublished
+      ? memoryStore.faqItems
+      : memoryStore.faqItems.filter(f => f.isPublished);
+    return items.slice().sort((a, b) => a.sortOrder - b.sortOrder);
+  }
+}
+
+export async function saveFaqItem(input: {
+  id?: number;
+  question: string;
+  answer: string;
+  category: string;
+  sortOrder: number;
+  isPublished: boolean;
+}) {
+  const db = await getDb();
+  if (!db) {
+    if (input.id) {
+      const index = memoryStore.faqItems.findIndex(f => f.id === input.id);
+      if (index !== -1) {
+        memoryStore.faqItems[index] = { ...memoryStore.faqItems[index], ...input, updatedAt: new Date() };
+        return input.id;
+      }
+    }
+    const id = ++memoryStore.autoId;
+    memoryStore.faqItems.push({ id, ...input, createdAt: new Date(), updatedAt: new Date() });
+    return id;
+  }
+  const values = {
+    question: input.question,
+    answer: input.answer,
+    category: input.category,
+    sortOrder: input.sortOrder,
+    isPublished: input.isPublished,
+    updatedAt: new Date(),
+  };
+  try {
+    if (input.id) {
+      await db.update(faqItems).set(values).where(eq(faqItems.id, input.id));
+      return input.id;
+    }
+    const result = await db.insert(faqItems).values(values).returning({ id: faqItems.id });
+    return Number(result[0].id);
+  } catch {
+    if (input.id) {
+      const index = memoryStore.faqItems.findIndex(f => f.id === input.id);
+      if (index !== -1) {
+        memoryStore.faqItems[index] = { ...memoryStore.faqItems[index], ...input, updatedAt: new Date() };
+        return input.id;
+      }
+    }
+    const id = ++memoryStore.autoId;
+    memoryStore.faqItems.push({ id, ...input, createdAt: new Date(), updatedAt: new Date() });
+    return id;
+  }
+}
+
+export async function removeFaqItem(id: number) {
+  const db = await getDb();
+  if (!db) {
+    const index = memoryStore.faqItems.findIndex(f => f.id === id);
+    if (index !== -1) memoryStore.faqItems.splice(index, 1);
+    return;
+  }
+  try {
+    await db.delete(faqItems).where(eq(faqItems.id, id));
+  } catch {
+    const index = memoryStore.faqItems.findIndex(f => f.id === id);
+    if (index !== -1) memoryStore.faqItems.splice(index, 1);
+  }
+}
+
+// ─── Phase 2: SMS Logs ─────────────────────────────────────────────────────
+
+export async function createSmsLog(input: {
+  recipientPhone: string;
+  message: string;
+  provider?: string;
+  status?: string;
+  providerRef?: string | null;
+}) {
+  const db = await getDb();
+  const values = {
+    recipientPhone: input.recipientPhone,
+    message: input.message,
+    provider: input.provider ?? "africastalking",
+    status: input.status ?? "sent",
+    providerRef: input.providerRef ?? null,
+  };
+  if (!db) {
+    const id = ++memoryStore.autoId;
+    memoryStore.smsLogs.unshift({ id, ...values, sentAt: new Date() });
+    return id;
+  }
+  try {
+    const result = await db.insert(smsLogs).values(values).returning({ id: smsLogs.id });
+    return Number(result[0].id);
+  } catch {
+    const id = ++memoryStore.autoId;
+    memoryStore.smsLogs.unshift({ id, ...values, sentAt: new Date() });
+    return id;
+  }
+}
+
+export async function listSmsLogs() {
+  const db = await getDb();
+  if (!db) return memoryStore.smsLogs;
+  try {
+    return await db.select().from(smsLogs).orderBy(desc(smsLogs.sentAt));
+  } catch {
+    return memoryStore.smsLogs;
+  }
+}
+

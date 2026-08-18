@@ -28,46 +28,45 @@ export const publicNavItems: PublicNavItem[] = [
       { label: "About Us", href: "/about" },
       { label: "Our Team", href: "/team" },
       { label: "Our Approach", href: "/about#approach" },
-    ],
-  },
-  {
-    label: "Focus Areas",
-    href: "/focus-areas",
-    items: [
-      { label: "Leadership", href: "/focus-areas#leadership" },
-      { label: "Education", href: "/focus-areas#education" },
-      { label: "Business", href: "/focus-areas#business" },
+      { label: "Focus Areas", href: "/focus-areas" },
     ],
   },
   {
     label: "Programs",
     href: "/programs",
     items: [
+      { label: "All Programs", href: "/programs" },
       { label: "Public Speaking", href: "/programs#public-speaking" },
       { label: "Entrepreneurship", href: "/programs#entrepreneurship" },
       { label: "Generations in Conversation", href: "/programs#generations" },
     ],
   },
   {
-    label: "Join Us",
-    href: "/join-us",
+    label: "Events",
+    href: "/events",
+  },
+  {
+    label: "Journal",
+    href: "/blog",
     items: [
-      { label: "Participate", href: "/join-us#participate" },
-      { label: "Mentor", href: "/join-us#volunteer" },
-      { label: "Partner", href: "/join-us#partner" },
+      { label: "Stories & Articles", href: "/blog" },
+      { label: "Platform Media", href: "/media" },
+      { label: "Community Gallery", href: "/gallery" },
     ],
   },
   {
-    label: "Media",
-    href: "/media",
+    label: "Get Involved",
+    href: "/get-involved",
     items: [
-      { label: "Platform Stories", href: "/media#stories" },
-      { label: "Stay Connected", href: "/media#newsletter" },
-      { label: "Gallery", href: "/gallery" },
+      { label: "Donate", href: "/get-involved#donate" },
+      { label: "Mentor / Volunteer", href: "/get-involved#volunteer" },
+      { label: "Institutional Partner", href: "/get-involved#partner" },
     ],
   },
+  { label: "FAQ", href: "/faq" },
   { label: "Contact", href: "/contact" },
 ];
+
 
 export function getNextMobileSubmenu(current: string | null, target: string) {
   return current === target ? null : target;

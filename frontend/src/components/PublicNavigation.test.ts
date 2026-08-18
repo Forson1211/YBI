@@ -6,15 +6,16 @@ describe("public navigation structure", () => {
   it("keeps all primary header destinations and dropdown sections available", () => {
     expect(publicNavItems.map((item) => item.label)).toEqual([
       "About",
-      "Focus Areas",
       "Programs",
-      "Join Us",
-      "Media",
+      "Events",
+      "Journal",
+      "Get Involved",
+      "FAQ",
       "Contact",
     ]);
 
     const dropdownLabels = publicNavItems.filter((item) => item.items).map((item) => item.label);
-    expect(dropdownLabels).toEqual(["About", "Focus Areas", "Programs", "Join Us", "Media"]);
+    expect(dropdownLabels).toEqual(["About", "Programs", "Journal", "Get Involved"]);
     expect(publicNavItems.find((item) => item.label === "Gallery")).toBeUndefined();
     expect(publicNavItems.find((item) => item.label === "Contact")?.href).toBe("/contact");
 
@@ -25,9 +26,10 @@ describe("public navigation structure", () => {
 
     const destinations = publicNavItems.flatMap((item) => [item.href, ...(item.items?.map((link) => link.href) ?? [])]);
     expect(destinations.every((href) => href.startsWith("/"))).toBe(true);
-    expect(destinations).toContain("/media#newsletter");
-    expect(publicNavItems.find((item) => item.label === "Media")?.items).toContainEqual({
-      label: "Gallery",
+    expect(destinations).toContain("/events");
+    expect(destinations).toContain("/get-involved#donate");
+    expect(publicNavItems.find((item) => item.label === "Journal")?.items).toContainEqual({
+      label: "Community Gallery",
       href: "/gallery",
     });
   });
@@ -47,12 +49,13 @@ describe("public navigation structure", () => {
 
   it("identifies the current route and its parent navigation section without treating hash links as separate pages", () => {
     const about = publicNavItems.find((item) => item.label === "About")!;
-    const media = publicNavItems.find((item) => item.label === "Media")!;
+    const journal = publicNavItems.find((item) => item.label === "Journal")!;
 
     expect(getPublicPathname("/about#approach")).toBe("/about");
     expect(isPublicRouteActive("/programs#public-speaking", "/programs")).toBe(true);
     expect(isPublicNavItemActive(about, "/team")).toBe(true);
-    expect(isPublicNavItemActive(media, "/gallery")).toBe(true);
+    expect(isPublicNavItemActive(journal, "/gallery")).toBe(true);
     expect(isPublicNavItemActive(about, "/programs")).toBe(false);
   });
 });
+

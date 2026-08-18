@@ -18,9 +18,41 @@ import {
   SidebarProvider,
   useSidebar,
 } from "@/components/ui/sidebar";
+
 import { startLogin } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { BookOpen, BotMessageSquare, CalendarDays, Download, HandHeart, Image, ImagePlus, LayoutDashboard, LogOut, Mail, Menu, MessageSquareHeart, Newspaper, PanelLeft, PanelsTopLeft, Settings, Target, Users, X } from "lucide-react";
+import {
+
+
+  BookOpen,
+  BotMessageSquare,
+  Calendar,
+  CalendarDays,
+  Coins,
+  Download,
+  FileText,
+  HandHeart,
+  HelpCircle,
+  Image,
+  ImagePlus,
+  LayoutDashboard,
+  LogOut,
+  Mail,
+  Menu,
+  MessageSquare,
+  MessageSquareHeart,
+  Newspaper,
+  PanelLeft,
+  PanelsTopLeft,
+  Scale,
+  Send,
+  Settings,
+  ShieldCheck,
+  Target,
+  Ticket,
+  Users,
+  X,
+} from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -28,10 +60,16 @@ import { Button } from "./ui/button";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Overview", path: "/admin" },
+  { icon: Calendar, label: "Events Manager", path: "/admin/events" },
+  { icon: Ticket, label: "Registrations", path: "/admin/registrations" },
+  { icon: Newspaper, label: "Blog & News CMS", path: "/admin/blog" },
+  { icon: Coins, label: "Donations Tracker", path: "/admin/donations" },
+  { icon: Send, label: "SMS Broadcast", path: "/admin/sms" },
+  { icon: HelpCircle, label: "FAQ Manager", path: "/admin/faq" },
+  { icon: Scale, label: "Legal Pages", path: "/admin/legal" },
   { icon: ImagePlus, label: "Site images", path: "/admin/images" },
   { icon: Image, label: "Gallery", path: "/admin/gallery" },
   { icon: BookOpen, label: "Programs", path: "/admin/programs" },
-  { icon: Newspaper, label: "Updates", path: "/admin/updates" },
   { icon: PanelsTopLeft, label: "Site content", path: "/admin/content" },
   { icon: BotMessageSquare, label: "Assistant questions", path: "/admin/assistant-settings" },
   { icon: CalendarDays, label: "Program calendar", path: "/admin/sessions" },
@@ -43,6 +81,7 @@ const menuItems = [
   { icon: Download, label: "Export data", path: "/admin/export" },
   { icon: Settings, label: "Settings", path: "/admin/settings" },
 ];
+
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
 const DEFAULT_WIDTH = 280;
