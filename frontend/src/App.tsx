@@ -28,6 +28,7 @@ import JoinUs from "./pages/JoinUs";
 import Media from "./pages/Media";
 import Programs from "./pages/Programs";
 import Team from "./pages/Team";
+import TeamProfile from "./pages/TeamProfile";
 import Events from "./pages/Events";
 import EventDetail from "./pages/EventDetail";
 import Blog from "./pages/Blog";
@@ -43,6 +44,7 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/about"} component={About} />
       <Route path={"/team"} component={Team} />
+      <Route path={"/team/:slug"} component={TeamProfile} />
       <Route path={"/focus-areas"} component={FocusAreas} />
       <Route path={"/programs"} component={Programs} />
       <Route path={"/events"} component={Events} />

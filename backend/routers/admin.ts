@@ -8,6 +8,7 @@ import {
 import {
   createCommunityInquiry,
   getDashboardOverview,
+  getTeamMemberBySlug,
   getSiteContent,
   listCommunityInquiries,
   listGalleryPhotos,
@@ -160,6 +161,12 @@ const teamMemberInput = z.object({
   isPublished: z.boolean().default(true),
 });
 
+const teamPortraitUploadInput = z.object({
+  fileName: z.string().trim().min(1).max(220),
+  mimeType: z.enum(["image/jpeg", "image/png", "image/webp"]),
+  base64: z.string().min(10),
+});
+
 const newsletterSubscriberInput = z.object({
   email: z.string().trim().email().max(320),
   name: z.string().trim().max(140).default(""),
@@ -174,6 +181,10 @@ export const publicSiteRouter = router({
   gallery: publicProcedure.query(() => listGalleryPhotos(false)),
   programs: publicProcedure.query(() => listPrograms(false)),
   updates: publicProcedure.query(() => listUpdates(false)),
+  team: router({
+    list: publicProcedure.query(() => listTeamMembers(false)),
+    getBySlug: publicProcedure.input(z.object({ slug: z.string().trim().min(1).max(180) })).query(({ input }) => getTeamMemberBySlug(input.slug, false)),
+  }),
   content: publicProcedure.input(z.object({ contentKey: z.string().min(1).max(100) })).query(({ input }) => getSiteContent(input.contentKey)),
   events: eventsPublicRouter,
   blog: blogPublicRouter,
@@ -348,6 +359,15 @@ export const adminRouter = router({
   team: router({
     list: adminProcedure.query(() => listTeamMembers()),
     save: adminProcedure.input(teamMemberInput).mutation(({ input }) => saveTeamMember(input as any)),
+    uploadPortrait: adminProcedure.input(teamPortraitUploadInput).mutation(async ({ input }) => {
+      const file = Buffer.from(input.base64, "base64");
+      if (file.length > 5 * 1024 * 1024) {
+        throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "Portrait images must be 5 MB or smaller." });
+      }
+      const safeFileName = input.fileName.replace(/[^a-zA-Z0-9._-]+/g, "-");
+      const { url } = await storagePut(`team-members/${Date.now()}-${safeFileName}`, file, input.mimeType);
+      return { imageUrl: url };
+    }),
     remove: adminProcedure.input(z.object({ id: z.number().int().positive() })).mutation(({ input }) => removeTeamMember(input.id)),
   }),
   newsletter: router({

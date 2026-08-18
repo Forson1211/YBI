@@ -736,8 +736,31 @@ function TeamMembersManager() {
     onSuccess: () => { utils.admin.team.list.invalidate(); toast.success("Team member removed."); },
     onError: (err) => toast.error("Team member could not be removed.", { description: err.message }),
   });
+  const uploadPortrait = trpc.admin.team.uploadPortrait.useMutation({
+    onSuccess: ({ imageUrl }) => {
+      upd("imageUrl", imageUrl);
+      toast.success("Portrait uploaded. Save the profile to publish this image.");
+    },
+    onError: (err) => toast.error("Portrait could not be uploaded.", { description: err.message }),
+  });
   const [form, setForm] = useState<TeamMemberForm>(blankTeamMember);
   const upd = <K extends keyof TeamMemberForm>(key: K, value: TeamMemberForm[K]) => setForm(c => ({ ...c, [key]: value }));
+  const handlePortraitUpload = async (file?: File) => {
+    if (!file) return;
+    if (!(["image/jpeg", "image/png", "image/webp"] as string[]).includes(file.type)) {
+      toast.error("Choose a JPG, PNG, or WebP portrait.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Portrait images must be 5 MB or smaller.");
+      return;
+    }
+    try {
+      uploadPortrait.mutate({ fileName: file.name, mimeType: file.type as "image/jpeg" | "image/png" | "image/webp", base64: await fileToBase64(file) });
+    } catch {
+      toast.error("Portrait image could not be read.");
+    }
+  };
 
   return (
     <div className="admin-manager-grid">
@@ -746,8 +769,16 @@ function TeamMembersManager() {
         <form className="admin-form" onSubmit={(e) => { e.preventDefault(); save.mutate(form as any, { onSuccess: () => setForm(blankTeamMember) }); }}>
           <label>Full name<input required value={form.name} onChange={(e) => upd("name", e.target.value)} placeholder="Dr. Abena Mensah" /></label>
           <label>Role / Title<input required value={form.role} onChange={(e) => upd("role", e.target.value)} placeholder="Executive Director" /></label>
-          <label>Short bio<textarea required value={form.bio} onChange={(e) => upd("bio", e.target.value)} placeholder="Describe their background and contribution to YBI." /></label>
-          <label>Photo URL<input value={form.imageUrl} onChange={(e) => upd("imageUrl", e.target.value)} placeholder="/ybi-assets/team/photo.jpg" /></label>
+          <label>Biography<textarea required value={form.bio} onChange={(e) => upd("bio", e.target.value)} placeholder="Add an approved biography. This text appears on the member’s public profile page." /></label>
+          <div className="admin-portrait-upload">
+            <div>
+              <span>Professional portrait</span>
+              <small>Upload an approved JPG, PNG, or WebP image up to 5 MB. You can also paste a hosted image URL.</small>
+            </div>
+            <label className="admin-upload-control"><UploadCloud size={16} /> {uploadPortrait.isPending ? "Uploading…" : "Upload portrait"}<input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => handlePortraitUpload(e.target.files?.[0])} disabled={uploadPortrait.isPending} /></label>
+          </div>
+          {form.imageUrl ? <img className="admin-portrait-preview" src={form.imageUrl} alt="Current team portrait preview" /> : null}
+          <label>Portrait image URL<input value={form.imageUrl} onChange={(e) => upd("imageUrl", e.target.value)} placeholder="Upload a portrait or paste a hosted image URL" /></label>
           <div className="admin-form-split">
             <label>Email (optional)<input type="email" value={form.email} onChange={(e) => upd("email", e.target.value)} placeholder="member@ybi.org" /></label>
             <label>LinkedIn URL<input value={form.linkedIn} onChange={(e) => upd("linkedIn", e.target.value)} placeholder="https://linkedin.com/in/..." /></label>

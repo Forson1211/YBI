@@ -1,49 +1,13 @@
-import { ArrowUpRight, Award, BriefcaseBusiness, Compass, HandHeart, Sparkles, UsersRound } from "lucide-react";
+import { ArrowUpRight, UsersRound } from "lucide-react";
 import { PublicPageShell } from "@/components/PublicSiteChrome";
-import { useSiteImages } from "@/lib/useSiteImage";
+import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
+import "../team-profiles.css";
+
+const TEAM_PROFILE_FALLBACK_IMAGE = "/ybi-assets/community/ybi-community.jpg";
 
 export default function Team() {
-  const { getImage } = useSiteImages();
-  const teamCommunity = getImage("team_community", "/ybi-assets/community/ybi-community.jpg", "Community hosts and facilitators");
-  const teamPublicSpeaking = getImage("team_public_speaking", "/ybi-assets/programs/ybi-public-speaking.jpg", "Program builders and mentors");
-  const teamEntrepreneurship = getImage("team_entrepreneurship", "/ybi-assets/programs/ybi-entrepreneurship.jpg", "Partners and innovation coaches");
-  const teamLeadership = getImage("team_leadership", "/ybi-assets/image-wall/ybi-wall-youth-leadership.jpg", "Leadership and strategic direction");
-
-  const dynamicRoles = [
-    {
-      image: teamLeadership.src,
-      alt: "Executive leadership and strategic direction",
-      label: "Leadership & Strategy",
-      title: "Executive Director & Founder",
-      text: "Leads the vision and strategic expansion of YBI, championing intergenerational empowerment and building institutional partnerships across education and enterprise.",
-      icon: Compass,
-    },
-    {
-      image: teamPublicSpeaking.src,
-      alt: "Programs & curriculum leadership",
-      label: "Learning Design",
-      title: "Programs & Curriculum Lead",
-      text: "Designs experiential, hands-on curricula across public speaking, youth entrepreneurship, and leadership labs—ensuring every session delivers practical confidence.",
-      icon: Award,
-    },
-    {
-      image: teamCommunity.src,
-      alt: "Intergenerational mentorship and community circles",
-      label: "Intergenerational Mentorship",
-      title: "Mentorship & Community Lead",
-      text: "Facilitates structured mentor-mentee matching, oversees 'Generations in Conversation' circles, and fosters inclusive, intergenerational dialogue.",
-      icon: UsersRound,
-    },
-    {
-      image: teamEntrepreneurship.src,
-      alt: "Community hosts and innovation partners",
-      label: "Partnerships & Enterprise",
-      title: "Enterprise & Venture Coach",
-      text: "Mentors emerging changemakers in business model validation, seed project prototyping, and community problem-solving.",
-      icon: BriefcaseBusiness,
-    },
-  ];
+  const { data: members, isLoading } = trpc.publicSite.team.list.useQuery();
 
   return <PublicPageShell><main className="public-page team-page">
     <section className="page-hero page-hero-team"><div className="page-width"><p className="reference-eyebrow light"><span /> The people behind the platform</p><div className="page-hero-layout"><div><h1>People who make <span>space for possibility.</span></h1><p>YBI is carried forward by educators, mentors, and community builders who believe that young and aged voices become stronger when they have a shared room to learn, contribute, and lead.</p><p className="team-hero-context">Intergenerational by design · Practical in action · Community-led</p></div><p className="page-hero-mark">02<br /><span>Our team</span></p></div></div></section>
@@ -67,20 +31,18 @@ export default function Team() {
           </div>
           <p>Each role brings practical experience, care, and accountability to the moments where beginners become contributors and community ideas become action.</p>
         </div>
-        <div className="team-role-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
-          {dynamicRoles.map(({ image, alt, label, title, text, icon: Icon }, index) => (
-            <article className={`team-role-card team-role-${index + 1}`} key={title}>
-              <img src={image} alt={alt} />
+        {isLoading ? <div className="team-directory-state">Loading the YBI team…</div> : !members?.length ? <div className="team-directory-state"><UsersRound size={22} /><p>Team profiles will appear here as soon as the YBI administrator publishes them.</p></div> : <div className="team-role-grid">
+          {members.map((member) => (
+            <Link className="team-role-card" key={member.id} href={`/team/${member.slug}`} aria-label={`Read ${member.name}'s full profile`}>
+              <img src={member.imageUrl || TEAM_PROFILE_FALLBACK_IMAGE} alt={`Professional portrait of ${member.name}`} />
               <div className="team-role-copy">
-                <span className="team-role-count">0{index + 1}</span>
-                <span className="team-role-icon"><Icon size={19} strokeWidth={2} /></span>
-                <p>{label}</p>
-                <h3>{title}</h3>
-                <span className="team-role-text">{text}</span>
+                <h3>{member.name}</h3>
+                <p>{member.role}</p>
+                <span className="team-role-link">Learn More <ArrowUpRight size={15} aria-hidden="true" /></span>
               </div>
-            </article>
+            </Link>
           ))}
-        </div>
+        </div>}
       </div>
     </section>
 

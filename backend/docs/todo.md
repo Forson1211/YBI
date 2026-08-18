@@ -1,5 +1,15 @@
 # Revision Tasks
 
+- [x] Audit the current Team cards, admin dashboard, database schema, and image-storage patterns for editable member profiles.
+- [x] Add persistent Team member profile records with editable names, roles, biographies, portrait storage, display order, and publication state.
+- [x] Add protected admin tools to create, edit, reorder, publish, and remove Team members, including portrait upload controls.
+- [x] Replace static Team role cards with database-driven, clickable member profiles and create individual public biography pages.
+- [x] Add regression coverage, validate public and admin Team flows across viewports, and publish the verified enhancement.
+- [x] Audit the Team directory against the supplied simple-card reference, focusing on circular portraits, concise metadata, spacing, and clear profile actions.
+- [x] Replace the editorial Team cards with clean white profile cards containing a circular portrait, member name, role, and compact Learn More action.
+- [x] Preserve admin-managed profile data and individual biography-page links while refining responsive layout behavior.
+- [x] Add regression coverage, validate the simplified directory on desktop and mobile, and publish the verified update.
+- [ ] Save and publish a new checkpoint for the simplified Team directory after the verified tests, build, and visual review.
 - [x] Audit the Team page layout, content hierarchy, and responsive behavior at desktop and mobile breakpoints.
 - [x] Refine the Team page interface so its hero, team roles, imagery, and calls to action follow the established YBI design system.
 - [x] Add regression coverage, validate the improved Team page across viewports, and publish the verified refinement.

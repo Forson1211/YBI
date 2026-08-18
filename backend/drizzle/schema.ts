@@ -263,6 +263,7 @@ export const smsLogs = pgTable("smsLogs", {
 
 export const teamMembers = pgTable("teamMembers", {
   id: serial("id").primaryKey(),
+  slug: varchar("slug", { length: 180 }).notNull().unique(),
   name: varchar("name", { length: 140 }).notNull(),
   role: varchar("role", { length: 100 }).notNull(),
   bio: text("bio").notNull(),
@@ -294,4 +295,3 @@ export type Donation = typeof donations.$inferSelect;
 export type FaqItem = typeof faqItems.$inferSelect;
 export type NewsletterSubscriber = typeof newsletterSubscribers.$inferSelect;
 export type SmsLog = typeof smsLogs.$inferSelect;
-

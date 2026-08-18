@@ -27,9 +27,17 @@ import { ENV } from './_core/env';
 dotenv.config();
 
 let _db: ReturnType<typeof drizzle<typeof schema>> | null = null;
+let _teamProfilePool: import("mysql2/promise").Pool | null = null;
+let teamProfilePoolUnavailable = false;
 
 // Lazily create the drizzle (postgres) instance — falls back to in-memory if no DATABASE_URL.
 export async function getDb() {
+  // This project’s managed data connection is MySQL-compatible. The legacy
+  // PostgreSQL helper below cannot service that URL and otherwise waits for a
+  // failing socket before callers can use their safe fallback paths.
+  if (process.env.DATABASE_URL && !process.env.DATABASE_URL.startsWith("postgres")) {
+    return null;
+  }
   if (!_db && process.env.DATABASE_URL) {
     try {
       const postgres = (await import("postgres")).default;
@@ -82,9 +90,10 @@ const memoryStore = {
     { id: 4, title: "Partner Communities Engaged", focusArea: "Community", description: "Partner schools, youth hubs, and intergenerational spaces connected.", currentValue: 15, targetValue: 25, unit: "Communities", period: "2026", status: "active" as const, createdAt: new Date(), updatedAt: new Date() },
   ] as any[],
   teamMembers: [
-    { id: 1, name: "Executive Director & Founder", role: "Leadership & Strategy", bio: "Leads the vision and strategic expansion of YBI, championing intergenerational empowerment.", imageUrl: "/ybi-assets/team/director.jpg", email: "", linkedIn: "", sortOrder: 1, isPublished: true, createdAt: new Date(), updatedAt: new Date() },
-    { id: 2, name: "Programs & Curriculum Lead", role: "Learning Design", bio: "Designs experiential curricula across public speaking, youth enterprise, and leadership.", imageUrl: "/ybi-assets/programs/ybi-public-speaking.jpg", email: "", linkedIn: "", sortOrder: 2, isPublished: true, createdAt: new Date(), updatedAt: new Date() },
-    { id: 3, name: "Mentorship & Community Lead", role: "Intergenerational Mentorship", bio: "Facilitates structured mentor-mentee matching and Generations in Conversation circles.", imageUrl: "/ybi-assets/community/ybi-community.jpg", email: "", linkedIn: "", sortOrder: 3, isPublished: true, createdAt: new Date(), updatedAt: new Date() },
+    { id: 1, slug: "executive-director-founder", name: "Executive Director & Founder", role: "Leadership & Strategy", bio: "This profile is ready for the YBI administrator to personalise with the approved leader name, professional portrait, and full biography.", imageUrl: "/ybi-assets/community/ybi-community.jpg", email: "", linkedIn: "", sortOrder: 1, isPublished: true, createdAt: new Date(), updatedAt: new Date() },
+    { id: 2, slug: "programs-curriculum-lead", name: "Programs & Curriculum Lead", role: "Learning Design", bio: "This profile is ready for the YBI administrator to personalise with the approved team member name, professional portrait, and biography.", imageUrl: "/ybi-assets/programs/ybi-public-speaking.jpg", email: "", linkedIn: "", sortOrder: 2, isPublished: true, createdAt: new Date(), updatedAt: new Date() },
+    { id: 3, slug: "mentorship-community-lead", name: "Mentorship & Community Lead", role: "Intergenerational Mentorship", bio: "This profile is ready for the YBI administrator to personalise with the approved team member name, professional portrait, and biography.", imageUrl: "/ybi-assets/community/ybi-community.jpg", email: "", linkedIn: "", sortOrder: 3, isPublished: true, createdAt: new Date(), updatedAt: new Date() },
+    { id: 4, slug: "enterprise-venture-coach", name: "Enterprise & Venture Coach", role: "Partnerships & Enterprise", bio: "This profile is ready for the YBI administrator to personalise with the approved team member name, professional portrait, and biography.", imageUrl: "/ybi-assets/programs/ybi-entrepreneurship.jpg", email: "", linkedIn: "", sortOrder: 4, isPublished: true, createdAt: new Date(), updatedAt: new Date() },
   ] as any[],
   events: [
     {
@@ -835,8 +844,116 @@ export async function removeSiteContent(contentKey: string) {
 
 // ─── Team Members ────────────────────────────────────────────────────────────
 
-export async function listTeamMembers() {
-  return memoryStore.teamMembers.slice().sort((a, b) => a.sortOrder - b.sortOrder);
+type TeamProfileRecord = {
+  id: number;
+  slug: string;
+  name: string;
+  role: string;
+  bio: string;
+  imageUrl: string;
+  email: string | null;
+  linkedIn: string | null;
+  sortOrder: number;
+  isPublished: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+async function getTeamProfilePool() {
+  if (!_teamProfilePool && !teamProfilePoolUnavailable && ENV.databaseUrl) {
+    try {
+      const mysql = await import("mysql2/promise");
+      _teamProfilePool = mysql.createPool({
+        uri: ENV.databaseUrl,
+        connectionLimit: 5,
+        enableKeepAlive: true,
+      });
+    } catch (error) {
+      console.warn("[Team] MySQL profile store is unavailable; using the local fallback.", error);
+      teamProfilePoolUnavailable = true;
+    }
+  }
+  return _teamProfilePool;
+}
+
+function fallbackTeamMembers(includeUnpublished: boolean) {
+  const rows = memoryStore.teamMembers.slice().sort((a, b) => a.sortOrder - b.sortOrder);
+  return includeUnpublished ? rows : rows.filter(member => member.isPublished);
+}
+
+function normalizeTeamProfile(row: any): TeamProfileRecord {
+  return {
+    ...row,
+    id: Number(row.id),
+    sortOrder: Number(row.sortOrder),
+    isPublished: Boolean(row.isPublished),
+  } as TeamProfileRecord;
+}
+
+async function seedTeamProfiles(pool: import("mysql2/promise").Pool) {
+  for (const member of memoryStore.teamMembers) {
+    await pool.execute(
+      "INSERT INTO `teamMembers` (`slug`, `name`, `role`, `bio`, `imageUrl`, `email`, `linkedIn`, `sortOrder`, `isPublished`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `slug` = `slug`",
+      [member.slug, member.name, member.role, member.bio, member.imageUrl, member.email || null, member.linkedIn || null, member.sortOrder, member.isPublished],
+    );
+  }
+}
+
+function normalizeTeamSlug(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 160) || "team-member";
+}
+
+async function resolveTeamSlug(name: string, id?: number) {
+  const baseSlug = normalizeTeamSlug(name);
+  const pool = await getTeamProfilePool();
+  if (pool) {
+    try {
+      const [rows] = await pool.execute("SELECT `id` FROM `teamMembers` WHERE `slug` = ? LIMIT 1", [baseSlug]) as [Array<{ id: number }>, unknown];
+      return rows.length && Number(rows[0].id) !== id ? `${baseSlug}-${id ?? Date.now().toString(36)}` : baseSlug;
+    } catch (error) {
+      console.warn("[Team] Could not verify a profile slug in MySQL.", error);
+    }
+  }
+  const duplicate = memoryStore.teamMembers.find(member => member.slug === baseSlug && member.id !== id);
+  return duplicate ? `${baseSlug}-${id ?? Date.now().toString(36)}` : baseSlug;
+}
+
+export async function listTeamMembers(includeUnpublished = true) {
+  const pool = await getTeamProfilePool();
+  if (pool) {
+    try {
+      let [rows] = await pool.query("SELECT * FROM `teamMembers` ORDER BY `sortOrder`, `id`") as [any[], unknown];
+      if (!rows.length) {
+        await seedTeamProfiles(pool);
+        [rows] = await pool.query("SELECT * FROM `teamMembers` ORDER BY `sortOrder`, `id`") as [any[], unknown];
+      }
+      const profiles = rows.map(normalizeTeamProfile);
+      return includeUnpublished ? profiles : profiles.filter(member => member.isPublished);
+    } catch (error) {
+      console.warn("[Team] Could not list profiles from MySQL; using the local fallback.", error);
+    }
+  }
+  return fallbackTeamMembers(includeUnpublished);
+}
+
+export async function getTeamMemberBySlug(slug: string, includeUnpublished = false) {
+  const pool = await getTeamProfilePool();
+  if (pool) {
+    try {
+      const [rows] = await pool.execute("SELECT * FROM `teamMembers` WHERE `slug` = ? LIMIT 1", [slug]) as [any[], unknown];
+      const member = rows[0] ? normalizeTeamProfile(rows[0]) : null;
+      return member && (includeUnpublished || member.isPublished) ? member : null;
+    } catch (error) {
+      console.warn("[Team] Could not load a profile from MySQL; using the local fallback.", error);
+    }
+  }
+  const member = memoryStore.teamMembers.find(item => item.slug === slug) ?? null;
+  return member && (includeUnpublished || member.isPublished) ? member : null;
 }
 
 export async function saveTeamMember(input: {
@@ -850,20 +967,50 @@ export async function saveTeamMember(input: {
   sortOrder: number;
   isPublished: boolean;
 }) {
+  const slug = await resolveTeamSlug(input.name, input.id);
+  const pool = await getTeamProfilePool();
+  if (pool) {
+    try {
+      const values = [slug, input.name, input.role, input.bio, input.imageUrl, input.email || null, input.linkedIn || null, input.sortOrder, input.isPublished];
+      if (input.id) {
+        const [result] = await pool.execute(
+          "UPDATE `teamMembers` SET `slug` = ?, `name` = ?, `role` = ?, `bio` = ?, `imageUrl` = ?, `email` = ?, `linkedIn` = ?, `sortOrder` = ?, `isPublished` = ? WHERE `id` = ?",
+          [...values, input.id],
+        ) as [{ affectedRows: number }, unknown];
+        if (result.affectedRows) return input.id;
+      }
+      const [result] = await pool.execute(
+        "INSERT INTO `teamMembers` (`slug`, `name`, `role`, `bio`, `imageUrl`, `email`, `linkedIn`, `sortOrder`, `isPublished`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        values,
+      ) as [{ insertId: number }, unknown];
+      return Number(result.insertId);
+    } catch (error) {
+      console.warn("[Team] Could not save a profile to MySQL; using the local fallback.", error);
+    }
+  }
   if (input.id) {
     const index = memoryStore.teamMembers.findIndex(m => m.id === input.id);
     if (index !== -1) {
-      memoryStore.teamMembers[index] = { ...memoryStore.teamMembers[index], ...input, updatedAt: new Date() };
+      memoryStore.teamMembers[index] = { ...memoryStore.teamMembers[index], ...input, slug, updatedAt: new Date() };
       return input.id;
     }
   }
   const id = ++memoryStore.autoId;
-  memoryStore.teamMembers.push({ id, ...input, email: input.email || "", linkedIn: input.linkedIn || "", createdAt: new Date(), updatedAt: new Date() });
+  memoryStore.teamMembers.push({ id, ...input, slug, email: input.email || "", linkedIn: input.linkedIn || "", createdAt: new Date(), updatedAt: new Date() });
   return id;
 }
 
 export async function removeTeamMember(id: number) {
-  const index = memoryStore.teamMembers.findIndex(m => m.id === id);
+  const pool = await getTeamProfilePool();
+  if (pool) {
+    try {
+      await pool.execute("DELETE FROM `teamMembers` WHERE `id` = ?", [id]);
+      return;
+    } catch (error) {
+      console.warn("[Team] Could not remove a profile from MySQL; using the local fallback.", error);
+    }
+  }
+  const index = memoryStore.teamMembers.findIndex(member => member.id === id);
   if (index !== -1) memoryStore.teamMembers.splice(index, 1);
 }
 
@@ -1445,4 +1592,3 @@ export async function listSmsLogs() {
     return memoryStore.smsLogs;
   }
 }
-
