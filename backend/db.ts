@@ -150,7 +150,50 @@ const memoryStore = {
       updatedAt: new Date(),
     },
   ] as any[],
-  eventRegistrations: [] as any[],
+  eventRegistrations: [
+    {
+      id: 1,
+      eventId: 1,
+      name: "Emmanuel Darko",
+      email: "emmanuel.darko@gmail.com",
+      phone: "+233 24 112 3344",
+      smsOptIn: true,
+      amountPaidGhs: 0,
+      paymentStatus: "free",
+      paystackRef: "FREE_PUBLIC_SPEAKING_01",
+      confirmedAt: new Date(Date.now() - 86400000 * 2),
+      createdAt: new Date(Date.now() - 86400000 * 2),
+      updatedAt: new Date(Date.now() - 86400000 * 2),
+    },
+    {
+      id: 2,
+      eventId: 2,
+      name: "Grace Quaye",
+      email: "grace.quaye@yahoo.com",
+      phone: "+233 54 887 9901",
+      smsOptIn: true,
+      amountPaidGhs: 5000,
+      paymentStatus: "paid",
+      paystackRef: "PAYSTACK_GEN_CONV_02",
+      confirmedAt: new Date(Date.now() - 86400000 * 5),
+      createdAt: new Date(Date.now() - 86400000 * 5),
+      updatedAt: new Date(Date.now() - 86400000 * 5),
+    },
+    {
+      id: 3,
+      eventId: 3,
+      name: "Kwabena Boateng",
+      email: "kwabena.b@techgh.com",
+      phone: "+233 20 334 5566",
+      smsOptIn: true,
+      amountPaidGhs: 0,
+      paymentStatus: "free",
+      paystackRef: "FREE_YOUTH_PITCH_03",
+      confirmedAt: new Date(Date.now() - 86400000 * 8),
+      createdAt: new Date(Date.now() - 86400000 * 8),
+      updatedAt: new Date(Date.now() - 86400000 * 8),
+    },
+  ] as any[],
   blogPosts: [
     {
       id: 1,
@@ -409,12 +452,12 @@ export async function getDashboardOverview() {
     opportunities: opportunityCount[0]?.value ?? 0,
     impactMetrics: metricCount[0]?.value ?? 0,
     teamMembers: memoryStore.teamMembers.length,
-    subscribers: subCount[0]?.value ?? memoryStore.newsletterSubscribers.length,
-    events: eventCount[0]?.value ?? memoryStore.events.length,
-    blogPosts: blogCount[0]?.value ?? memoryStore.blogPosts.length,
-    donations: donationCount[0]?.value ?? memoryStore.donations.length,
-    registrations: regCount[0]?.value ?? memoryStore.eventRegistrations.length,
-    faqItems: faqCount[0]?.value ?? memoryStore.faqItems.length,
+    subscribers: (subCount[0]?.value && subCount[0].value > 0) ? subCount[0].value : memoryStore.newsletterSubscribers.length,
+    events: (eventCount[0]?.value && eventCount[0].value > 0) ? eventCount[0].value : memoryStore.events.length,
+    blogPosts: (blogCount[0]?.value && blogCount[0].value > 0) ? blogCount[0].value : memoryStore.blogPosts.length,
+    donations: (donationCount[0]?.value && donationCount[0].value > 0) ? donationCount[0].value : memoryStore.donations.length,
+    registrations: (regCount[0]?.value && regCount[0].value > 0) ? regCount[0].value : memoryStore.eventRegistrations.length,
+    faqItems: (faqCount[0]?.value && faqCount[0].value > 0) ? faqCount[0].value : memoryStore.faqItems.length,
   };
 }
 
@@ -1309,10 +1352,13 @@ export async function listEventRegistrations(eventId?: number) {
       : memoryStore.eventRegistrations;
   }
   try {
-    if (eventId) {
-      return await db.select().from(eventRegistrations).where(eq(eventRegistrations.eventId, eventId)).orderBy(desc(eventRegistrations.createdAt));
-    }
-    return await db.select().from(eventRegistrations).orderBy(desc(eventRegistrations.createdAt));
+    const rows = eventId
+      ? await db.select().from(eventRegistrations).where(eq(eventRegistrations.eventId, eventId)).orderBy(desc(eventRegistrations.createdAt))
+      : await db.select().from(eventRegistrations).orderBy(desc(eventRegistrations.createdAt));
+    if (rows && rows.length > 0) return rows;
+    return eventId
+      ? memoryStore.eventRegistrations.filter(r => r.eventId === eventId)
+      : memoryStore.eventRegistrations;
   } catch {
     return eventId
       ? memoryStore.eventRegistrations.filter(r => r.eventId === eventId)

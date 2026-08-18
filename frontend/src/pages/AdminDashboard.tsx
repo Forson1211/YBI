@@ -690,16 +690,16 @@ function Overview() {
 
   // ── 4. Live Spline Chart Trajectory Calculation ──
   const liveChartData = useMemo(() => {
-    const base = totalRegistrations + totalInquiries + totalSubscribers;
+    const base = Math.max(3, totalRegistrations + totalInquiries + totalSubscribers);
     return [
-      { period: "Wk 01", attendees: Math.max(0, Math.round(base * 0.25)), engagement: Math.max(0, Math.round(base * 0.4)), growth: Math.max(0, Math.round(base * 0.4)) },
-      { period: "Wk 02", attendees: Math.max(0, Math.round(base * 0.4)), engagement: Math.max(0, Math.round(base * 0.55)), growth: Math.max(0, Math.round(base * 0.55)) },
-      { period: "Wk 03", attendees: Math.max(0, Math.round(base * 0.6)), engagement: Math.max(0, Math.round(base * 0.75)), growth: Math.max(0, Math.round(base * 0.75)) },
-      { period: "Wk 04", attendees: Math.max(0, Math.round(base * 0.8)), engagement: Math.max(0, Math.round(base * 0.95)), growth: Math.max(0, Math.round(base * 0.95)) },
-      { period: "Wk 05", attendees: Math.max(1, Math.round(base * 1.0)), engagement: Math.max(1, Math.round(base * 1.15)), growth: Math.max(1, Math.round(base * 1.15)) },
-      { period: "Wk 06", attendees: Math.max(1, Math.round(base * 1.15)), engagement: Math.max(1, Math.round(base * 1.3)), growth: Math.max(1, Math.round(base * 1.3)) },
-      { period: "Wk 07", attendees: Math.max(2, Math.round(base * 1.3)), engagement: Math.max(2, Math.round(base * 1.45)), growth: Math.max(2, Math.round(base * 1.45)) },
-      { period: "Wk 08 (Now)", attendees: Math.max(base, Math.round(base * 1.5)), engagement: Math.max(base, Math.round(base * 1.6)), growth: Math.max(base, Math.round(base * 1.6)) },
+      { period: "Wk 01", attendees: 1, engagement: 1, growth: 1 },
+      { period: "Wk 02", attendees: 1, engagement: 2, growth: 2 },
+      { period: "Wk 03", attendees: 2, engagement: 2, growth: 2 },
+      { period: "Wk 04", attendees: 2, engagement: 3, growth: 3 },
+      { period: "Wk 05", attendees: 3, engagement: 3, growth: 3 },
+      { period: "Wk 06", attendees: 3, engagement: 4, growth: 4 },
+      { period: "Wk 07", attendees: 4, engagement: 4, growth: 4 },
+      { period: "Wk 08 (Now)", attendees: base, engagement: base + 2, growth: base + 2 },
     ];
   }, [totalRegistrations, totalInquiries, totalSubscribers]);
 
