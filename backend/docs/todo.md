@@ -1,5 +1,13 @@
 # Revision Tasks
 
+- [x] Audit the Team page layout, content hierarchy, and responsive behavior at desktop and mobile breakpoints.
+- [x] Refine the Team page interface so its hero, team roles, imagery, and calls to action follow the established YBI design system.
+- [x] Add regression coverage, validate the improved Team page across viewports, and publish the verified refinement.
+- [x] Refine the Team page hero and call-to-action treatment so the full page follows the established YBI design system.
+- [x] Save a checkpoint for the verified Team page interface refinement.
+- [x] Audit subpage hero layouts for excessive blank space above labels, titles, and descriptions, including Programs and similarly structured pages.
+- [x] Reduce hero top spacing with responsive layout rules that preserve readable hierarchy and fixed-header clearance.
+- [x] Add regression coverage, validate refined headers on desktop and mobile, and publish the verified spacing update.
 - [x] Audit all remaining public-page heroes for yellow-corner shapes or divider-line overlays that differ from the clean donation header.
 - [x] Apply the clean header treatment to every matching public page while retaining page content, shared footer-blue backgrounds, and responsive hierarchy.
 - [x] Add regression coverage, validate the consistent public-header treatment across desktop and mobile, and publish the verified update.

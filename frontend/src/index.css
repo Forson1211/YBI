@@ -3224,7 +3224,9 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
    ========================================================================== */
 
 .page-hero {
-  padding: clamp(3.5rem, 6vw, 5.5rem) 0 3rem;
+  display: block;
+  min-height: 0;
+  padding: clamp(2rem, 4vw, 3.5rem) 0 2.5rem;
   background: var(--footer-blue);
   color: #ffffff;
   position: relative;
@@ -3604,16 +3606,43 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
   background: var(--cream);
 }
 
+.team-role-heading {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  align-items: end;
+  gap: clamp(2rem, 5vw, 4.5rem);
+  margin-bottom: clamp(2rem, 4vw, 3.5rem);
+}
+
+.team-role-heading h2 {
+  margin: 0;
+  color: var(--blue-deep);
+}
+
+.team-role-heading h2 span {
+  color: var(--red);
+}
+
+.team-role-heading > p {
+  max-width: 620px;
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(1rem, 1.2vw, 1.1rem);
+  line-height: 1.65;
+}
+
 .team-role-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
+  gap: clamp(1.25rem, 2.3vw, 2rem);
 }
 
 .team-role-card {
+  position: relative;
+  min-height: 0;
   background: #ffffff;
   border: 1px solid rgba(7, 60, 82, 0.1);
-  border-radius: 0 !important;
+  border-radius: 18px !important;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -3624,36 +3653,63 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 .team-role-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 20px 42px rgba(7, 60, 82, 0.12);
+  border-color: rgba(239, 43, 31, 0.38);
 }
 
 .team-role-card img {
+  position: static;
+  inset: auto;
   width: 100%;
-  height: 240px;
+  height: clamp(190px, 17vw, 240px);
   object-fit: cover;
   display: block;
+  opacity: 1;
   border-radius: 0 !important;
+  transition: transform 0.35s var(--ease);
 }
 
-.team-role-card > div {
-  padding: 1.5rem;
+.team-role-card:hover > img {
+  opacity: 1;
+  transform: scale(1.035);
+}
+
+.team-role-card > .team-role-copy {
+  z-index: auto;
+  height: auto;
+  min-height: 0;
+  justify-content: flex-start;
+  padding: 1.45rem 1.35rem 1.55rem;
   display: flex;
   flex-direction: column;
   flex: 1;
   position: relative;
+  background: #ffffff;
 }
 
 .team-role-count {
   position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
-  color: rgba(7, 60, 82, 0.2);
-  font-size: 1.4rem;
+  top: 1.35rem;
+  right: 1.35rem;
+  left: auto;
+  color: rgba(7, 60, 82, 0.28);
+  font-size: 1.1rem;
   font-weight: 900;
 }
 
-.team-role-card svg {
-  color: var(--yellow);
-  margin-bottom: 0.75rem;
+.team-role-icon {
+  display: inline-grid;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 0.95rem;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 208, 0, 0.18);
+  color: var(--blue-deep);
+}
+
+.team-role-icon svg {
+  color: currentColor;
+  margin: 0;
 }
 
 .team-role-card p {
@@ -3666,17 +3722,59 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 }
 
 .team-role-card h3 {
-  margin: 0 0 0.75rem 0;
-  font-size: 1.25rem;
+  margin: 0 1.85rem 0.75rem 0;
+  font-size: clamp(1.2rem, 1.65vw, 1.38rem);
+  line-height: 1.18;
   font-weight: 800;
   color: var(--blue-deep);
 }
 
-.team-role-card span {
+.team-role-card .team-role-text {
+  display: block;
+  flex: none !important;
+  margin: 0.2rem 0 0 !important;
+  color: var(--muted) !important;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.team-hero-context {
+  display: inline-flex;
+  width: fit-content;
+  margin: 1.35rem 0 0 !important;
+  padding: 0.58rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  color: rgba(255, 255, 255, 0.9) !important;
+  background: rgba(255, 255, 255, 0.07);
+  font-size: 0.72rem !important;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  line-height: 1.35 !important;
+  text-transform: uppercase;
+}
+
+.team-page .page-action-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.team-page .page-action-panel::before {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: min(16rem, 42vw);
+  height: 3px;
+  background: var(--yellow);
+  content: "";
+  transform: translateX(-50%);
+}
+
+.team-action-copy {
+  max-width: 610px;
+  margin: -0.55rem 0 1.65rem;
   color: var(--muted);
-  font-size: 0.88rem;
-  line-height: 1.55;
-  flex: 1;
+  font-size: 1rem;
+  line-height: 1.65;
 }
 
 .team-principles {
@@ -3962,6 +4060,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
   .page-intro-grid,
   .programs-intro-grid,
   .team-lead-grid,
+  .team-role-heading,
   .about-story-grid,
   .team-principles .page-width,
   .contact-main-grid {
@@ -3984,6 +4083,36 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
   }
 }
 
+@media (max-width: 600px) {
+  .team-hero-context {
+    margin-top: 1rem !important;
+    padding: 0.5rem 0.6rem;
+    font-size: 0.62rem !important;
+  }
+
+  .team-role-heading {
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .team-role-heading h2 {
+    font-size: clamp(2rem, 10vw, 2.65rem);
+  }
+
+  .team-role-card img {
+    height: 190px;
+  }
+
+  .team-role-card > .team-role-copy {
+    padding: 1.3rem 1.15rem 1.4rem;
+  }
+
+  .team-action-copy {
+    margin-top: -0.8rem;
+    font-size: 0.94rem;
+  }
+}
+
 /* ==========================================================================
    Get Involved Page Styles (/get-involved)
    ========================================================================== */
@@ -3995,7 +4124,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 }
 
 .get-involved-hero {
-  padding: clamp(3.5rem, 6vw, 5.5rem) 0 3rem;
+  padding: clamp(2rem, 4vw, 3.5rem) 0 2.5rem;
   background: var(--footer-blue);
   color: #ffffff;
   text-align: left;
@@ -6277,7 +6406,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
    ========================================================================== */
 
 .page-hero-contact {
-  padding: clamp(4.5rem, 7vw, 6.5rem) 0 clamp(3.5rem, 5vw, 5rem);
+  padding: clamp(2rem, 4vw, 3.5rem) 0 clamp(2.5rem, 4vw, 3.5rem);
   background: var(--footer-blue);
   color: #ffffff;
 }
@@ -7217,8 +7346,3 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
     font-size: 0.68rem;
   }
 }
-
-
-
-
-

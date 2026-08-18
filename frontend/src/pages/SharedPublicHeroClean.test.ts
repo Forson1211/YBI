@@ -9,4 +9,16 @@ describe("shared public-page hero styling", () => {
       /\.page-hero::before,\s*\.page-hero::after\s*\{[\s\S]*?display:\s*none;/,
     );
   });
+
+  it("uses compact responsive vertical spacing across shared and clean donation-style heroes", () => {
+    expect(stylesheet).toContain(
+      ".page-hero {\n  display: block;\n  min-height: 0;\n  padding: clamp(2rem, 4vw, 3.5rem) 0 2.5rem;",
+    );
+    expect(stylesheet).toContain(
+      ".get-involved-hero {\n  padding: clamp(2rem, 4vw, 3.5rem) 0 2.5rem;",
+    );
+    expect(stylesheet).toContain(
+      ".page-hero-contact {\n  padding: clamp(2rem, 4vw, 3.5rem) 0 clamp(2.5rem, 4vw, 3.5rem);",
+    );
+  });
 });

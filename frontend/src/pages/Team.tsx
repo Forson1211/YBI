@@ -46,7 +46,7 @@ export default function Team() {
   ];
 
   return <PublicPageShell><main className="public-page team-page">
-    <section className="page-hero page-hero-team"><div className="page-width"><p className="reference-eyebrow light"><span /> The people behind the platform</p><div className="page-hero-layout"><div><h1>People who make <span>space for possibility.</span></h1><p>YBI is carried forward by educators, mentors, and community builders who believe that young and aged voices become stronger when they have a shared room to learn, contribute, and lead.</p></div><p className="page-hero-mark">02<br /><span>Our team</span></p></div></div></section>
+    <section className="page-hero page-hero-team"><div className="page-width"><p className="reference-eyebrow light"><span /> The people behind the platform</p><div className="page-hero-layout"><div><h1>People who make <span>space for possibility.</span></h1><p>YBI is carried forward by educators, mentors, and community builders who believe that young and aged voices become stronger when they have a shared room to learn, contribute, and lead.</p><p className="team-hero-context">Intergenerational by design · Practical in action · Community-led</p></div><p className="page-hero-mark">02<br /><span>Our team</span></p></div></div></section>
     
     <section className="team-lead section-white">
       <div className="page-width team-lead-grid">
@@ -60,16 +60,23 @@ export default function Team() {
 
     <section className="team-roles section-cream">
       <div className="page-width">
+        <div className="team-role-heading">
+          <div>
+            <p className="reference-eyebrow"><span /> The people who move the work</p>
+            <h2>Different strengths.<br /><span>One shared platform.</span></h2>
+          </div>
+          <p>Each role brings practical experience, care, and accountability to the moments where beginners become contributors and community ideas become action.</p>
+        </div>
         <div className="team-role-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
           {dynamicRoles.map(({ image, alt, label, title, text, icon: Icon }, index) => (
             <article className={`team-role-card team-role-${index + 1}`} key={title}>
               <img src={image} alt={alt} />
-              <div>
+              <div className="team-role-copy">
                 <span className="team-role-count">0{index + 1}</span>
-                <Icon size={27} strokeWidth={1.6} />
+                <span className="team-role-icon"><Icon size={19} strokeWidth={2} /></span>
                 <p>{label}</p>
                 <h3>{title}</h3>
-                <span>{text}</span>
+                <span className="team-role-text">{text}</span>
               </div>
             </article>
           ))}
@@ -96,6 +103,7 @@ export default function Team() {
       <div className="page-width">
         <p className="reference-eyebrow"><span /> Add your experience</p>
         <h2>Could your time, ideas, or perspective <span>strengthen the work?</span></h2>
+        <p className="team-action-copy">Whether you are ready to mentor, partner, volunteer, or simply share an idea, there is room for your experience at YBI.</p>
         <Link className="reference-button blue-button" href="/contact">Start a conversation <ArrowUpRight size={18} /></Link>
       </div>
     </section>
