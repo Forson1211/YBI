@@ -545,6 +545,7 @@ function Overview() {
   const totalInquiries = liveInquiries.length;
   const totalRegistrations = (overview?.registrations && overview.registrations > 0) ? overview.registrations : Math.max(liveRegistrations.length, 38);
   const totalSubscribers = (subscribersList && subscribersList.length > 0) ? subscribersList.length : (overview?.subscribers || 42);
+  const totalEvents = liveEvents.length;
   const activeEventsCount = liveEvents.filter((e) => e.status === "published").length;
   const publishedArticlesCount = liveArticles.filter((a) => a.status === "published").length;
 
@@ -553,6 +554,7 @@ function Overview() {
   const displayTotalReach = liveTotalReach.toLocaleString();
 
   const { data: dbPrograms } = trpc.admin.programs.list.useQuery();
+  const { data: impactMetricsList } = trpc.admin.impact.list.useQuery();
 
   // ── 2. Live Dynamic 4 Program Pillar Cards ──
   const programCardsData = useMemo(() => {
