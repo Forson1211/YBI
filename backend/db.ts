@@ -47,6 +47,7 @@ export async function getDb() {
       const client = postgres(process.env.DATABASE_URL, {
         max: 5,
         ssl: "require",
+        prepare: false,
         idle_timeout: 20,
         connect_timeout: 10,
       });

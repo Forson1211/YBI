@@ -24,4 +24,6 @@ app.use("/api/trpc", trpcHandler);
 app.use("/trpc", trpcHandler);
 app.use("/", trpcHandler);
 
-export default app;
+export default function handler(req: any, res: any) {
+  return app(req, res);
+}
