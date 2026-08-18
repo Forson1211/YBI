@@ -21,6 +21,8 @@ import {
   Building,
 } from "lucide-react";
 
+import { DEFAULT_EVENTS } from "@/lib/defaultEvents";
+
 export default function EventDetail() {
   const [, params] = useRoute("/events/:slug");
   const [location] = useLocation();
@@ -48,7 +50,10 @@ export default function EventDetail() {
     { enabled: Boolean(slug), staleTime: 1000 * 60 * 10 }
   );
 
-  const event = fetchedEvent || eventsList?.find((e) => e.slug === slug);
+  const event =
+    fetchedEvent ||
+    eventsList?.find((e) => e.slug === slug) ||
+    DEFAULT_EVENTS.find((e) => e.slug === slug);
   const isLoading = !event && isFetchingDirect;
 
   // Form State

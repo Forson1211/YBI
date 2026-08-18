@@ -7,9 +7,9 @@ import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 import { useSiteImages } from "@/lib/useSiteImage";
 import { createImageWallRows, type ImageWallPhoto } from "@/lib/imageWall";
-import { homepageUpdates } from "@/lib/homeUpdates";
-import { footerImpactActions, footerNavigation } from "@/lib/footerNavigation";
 import { aboutMediaSlides } from "@/lib/aboutMedia";
+import { DEFAULT_EVENTS } from "@/lib/defaultEvents";
+import { DEFAULT_ARTICLES } from "@/lib/defaultArticles";
 import PublicNavigation from "@/components/PublicNavigation";
 import { PublicFooter } from "@/components/PublicSiteChrome";
 import {
@@ -285,9 +285,9 @@ export default function Home() {
 
 
   const dynamicEvents = useMemo(() => {
-    if (!upcomingEvents) return [];
+    const list = upcomingEvents?.length ? upcomingEvents : DEFAULT_EVENTS;
     const now = new Date().getTime();
-    return upcomingEvents
+    return list
       .filter((e) => new Date(e.scheduledFor).getTime() >= now)
       .slice(0, 3);
   }, [upcomingEvents]);
@@ -663,7 +663,6 @@ export default function Home() {
                       style={{
                         background: badgeBg,
                         color: iconColor,
-                        borderRadius: "50%",
                       }}
                     >
                       <IconComponent size={28} strokeWidth={2.2} />
@@ -737,7 +736,7 @@ export default function Home() {
             </div>
 
             <div className="home-blog-grid">
-              {(latestBlogPosts ?? []).slice(0, 3).map((post) => {
+              {(latestBlogPosts?.length ? latestBlogPosts : DEFAULT_ARTICLES).slice(0, 3).map((post) => {
                 const fallbackImg =
                   post.category === "Entrepreneurship"
                     ? "/ybi-assets/programs/ybi-entrepreneurship.jpg"

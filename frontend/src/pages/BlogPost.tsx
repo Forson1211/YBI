@@ -106,6 +106,8 @@ function formatInline(text: string): string {
     .replace(/`([^`]+)`/g, "<code>$1</code>");
 }
 
+import { DEFAULT_ARTICLES } from "@/lib/defaultArticles";
+
 export default function BlogPost() {
   const [, params] = useRoute("/blog/:slug");
   const slug = params?.slug || "";
@@ -121,14 +123,17 @@ export default function BlogPost() {
     { enabled: Boolean(slug), staleTime: 1000 * 60 * 10 }
   );
 
-  const post = fetchedPost || recentPosts?.find((p) => p.slug === slug);
+  const effectiveRecentPosts = recentPosts?.length ? recentPosts : DEFAULT_ARTICLES;
+  const post =
+    fetchedPost ||
+    effectiveRecentPosts.find((p) => p.slug === slug) ||
+    DEFAULT_ARTICLES.find((p) => p.slug === slug);
   const isLoading = !post && isFetchingDirect;
 
-
   const otherPosts = useMemo(() => {
-    if (!recentPosts || !post) return [];
-    return recentPosts.filter((p) => p.id !== post.id).slice(0, 3);
-  }, [recentPosts, post]);
+    if (!post) return [];
+    return effectiveRecentPosts.filter((p) => p.id !== post.id).slice(0, 3);
+  }, [effectiveRecentPosts, post]);
 
   const handleCopyLink = () => {
     if (typeof window !== "undefined") {

@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { toast } from "sonner";
 import { PublicPageShell } from "@/components/PublicSiteChrome";
 import { trpc } from "@/lib/trpc";
+import { DEFAULT_ARTICLES } from "@/lib/defaultArticles";
 import {
   BookOpen,
   Calendar,
@@ -32,9 +33,10 @@ export default function Blog() {
   const [subscriberEmail, setSubscriberEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
 
-  const { data: posts, isLoading } = trpc.publicSite.blog.list.useQuery({
+  const { data: posts } = trpc.publicSite.blog.list.useQuery({
     limit: 30,
   });
+  const effectivePosts = posts?.length ? posts : DEFAULT_ARTICLES;
 
   const subscribeMutation = trpc.publicSite.newsletter.subscribe.useMutation({
     onSuccess: () => {
@@ -47,8 +49,7 @@ export default function Blog() {
   });
 
   const filteredPosts = useMemo(() => {
-    if (!posts) return [];
-    return posts.filter((post) => {
+    return effectivePosts.filter((post) => {
       const matchesCategory =
         selectedCategory === "All" ||
         post.category.toLowerCase() === selectedCategory.toLowerCase();
@@ -61,12 +62,12 @@ export default function Blog() {
 
       return matchesCategory && matchesSearch;
     });
-  }, [posts, selectedCategory, searchQuery]);
+  }, [effectivePosts, selectedCategory, searchQuery]);
 
   const featuredPost = useMemo(() => {
-    if (!posts || posts.length === 0) return null;
-    return posts[0];
-  }, [posts]);
+    if (effectivePosts.length === 0) return null;
+    return effectivePosts[0];
+  }, [effectivePosts]);
 
   const regularPosts = useMemo(() => {
     if (selectedCategory !== "All" || searchQuery.trim() !== "") {
@@ -137,20 +138,7 @@ export default function Blog() {
         {/* Main Editorial Content */}
         <section className="blog-content-section">
           <div className="page-width">
-            {isLoading ? (
-              <div className="blog-loading-grid">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="blog-card-skeleton">
-                    <div className="skeleton-img" />
-                    <div className="skeleton-body">
-                      <div className="skeleton-line short" />
-                      <div className="skeleton-line title" />
-                      <div className="skeleton-line desc" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : filteredPosts.length === 0 ? (
+            {filteredPosts.length === 0 ? (
               <div className="blog-empty-state">
                 <BookOpen size={42} />
                 <h3>No articles found</h3>

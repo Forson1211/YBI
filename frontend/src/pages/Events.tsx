@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { PublicPageShell } from "@/components/PublicSiteChrome";
 import { trpc } from "@/lib/trpc";
 import { useSiteImages } from "@/lib/useSiteImage";
+import { DEFAULT_EVENTS } from "@/lib/defaultEvents";
 import {
   Calendar,
   Clock,
@@ -23,23 +24,21 @@ export default function Events() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-  const { data: eventsList, isLoading } = trpc.publicSite.events.list.useQuery();
-
+  const { data: eventsList } = trpc.publicSite.events.list.useQuery();
+  const effectiveEvents = eventsList?.length ? eventsList : DEFAULT_EVENTS;
 
   const now = useMemo(() => new Date(), []);
 
   const categorizedEvents = useMemo(() => {
-    if (!eventsList) return { upcoming: [], past: [] };
-
-    const upcoming = eventsList.filter(
+    const upcoming = effectiveEvents.filter(
       (e) => new Date(e.scheduledFor).getTime() >= now.getTime()
     );
-    const past = eventsList.filter(
+    const past = effectiveEvents.filter(
       (e) => new Date(e.scheduledFor).getTime() < now.getTime()
     );
 
     return { upcoming, past };
-  }, [eventsList, now]);
+  }, [effectiveEvents, now]);
 
   const filteredEvents = useMemo(() => {
     const list = activeTab === "upcoming" ? categorizedEvents.upcoming : categorizedEvents.past;
@@ -147,21 +146,7 @@ export default function Events() {
         {/* Events Grid Section */}
         <section className="events-listing-section">
           <div className="page-width">
-            {isLoading ? (
-              <div className="events-loading-grid">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="event-card-skeleton">
-                    <div className="skeleton-img" />
-                    <div className="skeleton-body">
-                      <div className="skeleton-line short" />
-                      <div className="skeleton-line title" />
-                      <div className="skeleton-line desc" />
-                      <div className="skeleton-line desc" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : filteredEvents.length === 0 ? (
+            {filteredEvents.length === 0 ? (
               <div className="events-empty-state">
                 <div className="events-empty-icon">
                   <Calendar size={40} />
@@ -211,7 +196,7 @@ export default function Events() {
                         ? "/ybi-assets/programs/ybi-public-speaking.jpg"
                         : event.slug.includes("generations")
                         ? "/ybi-assets/community/ybi-community.jpg"
-                        : "/ybi-assets/gallery/workshop-1.jpg";
+                        : "/ybi-assets/programs/ybi-entrepreneurship.jpg";
 
                     return (
                       <article key={event.id} className="event-card">
