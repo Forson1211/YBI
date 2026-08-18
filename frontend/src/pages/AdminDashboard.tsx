@@ -205,11 +205,74 @@ function downloadCsv(filename: string, rows: Record<string, any>[]) {
   URL.revokeObjectURL(url);
 }
 
-function fileToBase64(file: File) {
-  return new Promise<string>((resolve, reject) => {
+function compressAndConvertToBase64(
+  file: File,
+  maxDimension = 1400,
+  quality = 0.82
+): Promise<{ base64: string; mimeType: "image/jpeg" | "image/png" | "image/webp" | "image/svg+xml" }> {
+  // If SVG, don't canvas compress
+  if (file.type.includes("svg")) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const full = String(reader.result ?? "");
+        const base64 = full.includes(",") ? full.split(",")[1] : full;
+        resolve({ base64, mimeType: "image/svg+xml" });
+      };
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  return new Promise((resolve) => {
     const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result).split(",")[1] ?? "");
-    reader.onerror = () => reject(reader.error);
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxDimension || height > maxDimension) {
+          if (width > height) {
+            height = Math.round((height * maxDimension) / width);
+            width = maxDimension;
+          } else {
+            width = Math.round((width * maxDimension) / height);
+            height = maxDimension;
+          }
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const outputMime: "image/jpeg" | "image/png" = file.type === "image/png" ? "image/png" : "image/jpeg";
+          const dataUrl = canvas.toDataURL(outputMime, quality);
+          const base64 = dataUrl.split(",")[1] || "";
+          resolve({ base64, mimeType: outputMime });
+          return;
+        }
+
+        const full = String(reader.result ?? "");
+        resolve({
+          base64: full.includes(",") ? full.split(",")[1] : full,
+          mimeType: (file.type as any) || "image/jpeg",
+        });
+      };
+      img.onerror = () => {
+        const full = String(reader.result ?? "");
+        resolve({
+          base64: full.includes(",") ? full.split(",")[1] : full,
+          mimeType: (file.type as any) || "image/jpeg",
+        });
+      };
+      img.src = String(e.target?.result);
+    };
+    reader.onerror = () => {
+      resolve({ base64: "", mimeType: "image/jpeg" });
+    };
     reader.readAsDataURL(file);
   });
 }
@@ -1242,11 +1305,11 @@ function SiteImagesManager() {
             slot={slot}
             onSave={(imageUrl, altText) => saveMutation.mutate({ slotKey: slot.key, imageUrl, altText })}
             onUpload={async (file, altText) => {
-              const base64 = await fileToBase64(file);
+              const { base64, mimeType } = await compressAndConvertToBase64(file);
               uploadMutation.mutate({
                 slotKey: slot.key,
                 fileName: file.name,
-                mimeType: file.type as any,
+                mimeType: mimeType as any,
                 base64,
                 altText,
               });
@@ -1400,7 +1463,7 @@ function GalleryManager() {
   const save = trpc.admin.gallery.save.useMutation({ onSuccess: () => { utils.admin.gallery.list.invalidate(); utils.publicSite.gallery.invalidate(); toast.success("Gallery photo updated."); }, onError: (error) => toast.error("Gallery photo could not be updated.", { description: error.message }) });
   const remove = trpc.admin.gallery.remove.useMutation({ onSuccess: () => { utils.admin.gallery.list.invalidate(); utils.admin.overview.invalidate(); utils.publicSite.gallery.invalidate(); toast.success("Gallery photo removed from the site."); }, onError: (error) => toast.error("Gallery photo could not be removed.", { description: error.message }) });
   const [file, setFile] = useState<File | null>(null); const [title, setTitle] = useState(""); const [altText, setAltText] = useState(""); const [isPublished, setIsPublished] = useState(true);
-  const uploadPhoto = async (event: React.FormEvent) => { event.preventDefault(); if (!file) return toast.error("Choose a JPG, PNG, or WEBP photo first."); if (!/[jpeg|png|webp]/.test(file.type)) return toast.error("Use a JPG, PNG, or WEBP photo."); try { const base64 = await fileToBase64(file); upload.mutate({ title: title || file.name.replace(/\.[^/.]+$/, ""), altText: altText || "Young Beginners Inspiration community moment", fileName: file.name, mimeType: file.type as "image/jpeg" | "image/png" | "image/webp", base64, isPublished, sortOrder: (photos?.length ?? 0) + 1 }); setFile(null); setTitle(""); setAltText(""); } catch { toast.error("The image could not be read. Please try again."); } };
+  const uploadPhoto = async (event: React.FormEvent) => { event.preventDefault(); if (!file) return toast.error("Choose a JPG, PNG, or WEBP photo first."); if (!/[jpeg|png|webp|jpg]/.test(file.type.toLowerCase())) return toast.error("Use a JPG, PNG, or WEBP photo."); try { const { base64, mimeType } = await compressAndConvertToBase64(file); upload.mutate({ title: title || file.name.replace(/\.[^/.]+$/, ""), altText: altText || "Young Beginners Inspiration community moment", fileName: file.name, mimeType: mimeType as "image/jpeg" | "image/png" | "image/webp", base64, isPublished, sortOrder: (photos?.length ?? 0) + 1 }); setFile(null); setTitle(""); setAltText(""); } catch { toast.error("The image could not be read. Please try again."); } };
   return <div className="admin-manager-grid"><section className="admin-panel"><PanelHeading eyebrow="Persistent storage" title="Upload a gallery moment" icon={<UploadCloud size={25} />} /><form className="admin-form" onSubmit={uploadPhoto}><label>Photo file<input type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => setFile(event.target.files?.[0] ?? null)} required /></label><label>Photo title<input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Community workshop" /></label><label>Accessible description<input value={altText} onChange={(event) => setAltText(event.target.value)} placeholder="Participants sharing ideas at a YBI workshop" /></label><label className="admin-check"><input type="checkbox" checked={isPublished} onChange={(event) => setIsPublished(event.target.checked)} /> Publish this photo immediately</label><button disabled={upload.isPending} className="admin-primary" type="submit">{upload.isPending ? "Uploading…" : "Upload to shared gallery"} <UploadCloud size={17} /></button></form><p className="admin-help">JPG, PNG, or WEBP only. Photos can be published or hidden later.</p></section><section className="admin-panel admin-list-panel"><PanelHeading eyebrow="Current collection" title="Manage photos" count={photos?.length ?? 0} />{isError ? <ErrorCopy text="Gallery data could not be loaded. Refresh and try again." /> : !photos?.length ? (isLoading ? null : <EmptyCopy text="No shared photos yet. Upload the first one from this screen." />) : <div className="admin-photo-list">{photos.map((photo) => <article className="admin-photo-row" key={photo.id}><img src={photo.imageUrl} alt={photo.altText} /><div><h3>{photo.title}</h3><p>{photo.altText}</p><span className={photo.isPublished ? "admin-status published" : "admin-status draft"}>{photo.isPublished ? "Published" : "Hidden"}</span></div><div className="admin-row-actions"><button onClick={() => save.mutate({ id: photo.id, title: photo.title, altText: photo.altText, isPublished: !photo.isPublished, sortOrder: photo.sortOrder })}>{photo.isPublished ? "Hide" : "Publish"}</button><button className="danger" onClick={() => { if (window.confirm(`Remove “${photo.title}” from the gallery?`)) remove.mutate({ id: photo.id }); }}><Trash2 size={15} /></button></div></article>)}</div>}</section></div>;
 }
 
@@ -1590,8 +1653,8 @@ function TeamMembersManager() {
       return;
     }
     try {
-      const base64 = await fileToBase64(file);
-      const dataUrl = `data:${file.type};base64,${base64}`;
+      const { base64, mimeType } = await compressAndConvertToBase64(file, 800, 0.85);
+      const dataUrl = `data:${mimeType};base64,${base64}`;
       const orderKey = form.sortOrder || 1;
       const slugKey = (form.name || "member").toLowerCase().replace(/[^a-z0-9]+/g, "-");
 

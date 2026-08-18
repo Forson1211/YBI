@@ -69,7 +69,19 @@ export async function storagePut(
     }
   }
 
-  // Fallback: Local file storage
+  // In serverless / Vercel environment or without cloud storage, use base64 data URL
+  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    const b64 =
+      typeof data === "string"
+        ? (data.startsWith("data:") ? data : Buffer.from(data).toString("base64"))
+        : Buffer.isBuffer(data)
+        ? data.toString("base64")
+        : Buffer.from(data).toString("base64");
+    const url = b64.startsWith("data:") ? b64 : `data:${contentType};base64,${b64}`;
+    return { key, url };
+  }
+
+  // Fallback: Local file storage for local development
   try {
     const buffer =
       typeof data === "string"
@@ -94,13 +106,15 @@ export async function storagePut(
 
     return { key, url: `/uploads/${key}` };
   } catch (err) {
-    console.error("Local file storage write error:", err);
     // Ultimate fallback: data URL
     const b64 =
       typeof data === "string"
-        ? Buffer.from(data).toString("base64")
+        ? (data.startsWith("data:") ? data : Buffer.from(data).toString("base64"))
+        : Buffer.isBuffer(data)
+        ? data.toString("base64")
         : Buffer.from(data).toString("base64");
-    return { key, url: `data:${contentType};base64,${b64}` };
+    const url = b64.startsWith("data:") ? b64 : `data:${contentType};base64,${b64}`;
+    return { key, url };
   }
 }
 
