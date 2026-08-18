@@ -270,7 +270,12 @@ export const adminRouter = router({
       let imageUrl = "";
       try {
         const { url } = await storagePut(`site-images/${input.slotKey}-${Date.now()}-${input.fileName}`, file, input.mimeType);
-        imageUrl = url;
+        // If storagePut returned a local /uploads/ path, it won't work on Vercel — use data URL instead
+        if (url.startsWith("/uploads/") || url.startsWith("/manus-storage/")) {
+          imageUrl = `data:${input.mimeType};base64,${input.base64}`;
+        } else {
+          imageUrl = url;
+        }
       } catch {
         imageUrl = `data:${input.mimeType};base64,${input.base64}`;
       }
@@ -296,7 +301,11 @@ export const adminRouter = router({
         throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "Images must be 5 MB or smaller." });
       }
       const { key, url } = await storagePut(`gallery/${Date.now()}-${input.fileName}`, file, input.mimeType);
-      return saveGalleryPhoto({ ...input, imageUrl: url, storageKey: key });
+      // Use base64 data URL if path is local-only (won't work on Vercel)
+      const imageUrl = (url.startsWith("/uploads/") || url.startsWith("/manus-storage/"))
+        ? `data:${input.mimeType};base64,${input.base64}`
+        : url;
+      return saveGalleryPhoto({ ...input, imageUrl, storageKey: key });
     }),
     save: adminProcedure.input(z.object({
       id: z.number().int().positive(),
@@ -366,7 +375,11 @@ export const adminRouter = router({
       }
       const safeFileName = input.fileName.replace(/[^a-zA-Z0-9._-]+/g, "-");
       const { url } = await storagePut(`team-members/${Date.now()}-${safeFileName}`, file, input.mimeType);
-      return { imageUrl: url };
+      // Use base64 data URL if path is local-only (won't work on Vercel)
+      const imageUrl = (url.startsWith("/uploads/") || url.startsWith("/manus-storage/"))
+        ? `data:${input.mimeType};base64,${input.base64}`
+        : url;
+      return { imageUrl };
     }),
     remove: adminProcedure.input(z.object({ id: z.number().int().positive() })).mutation(({ input }) => removeTeamMember(input.id)),
   }),
