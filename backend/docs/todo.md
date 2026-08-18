@@ -1,5 +1,9 @@
 # Revision Tasks
 
+- [x] Audit the About and Contact hero decorations that differ from the clean donation header.
+- [x] Remove the yellow corner shape and divider lines from About and Contact heroes while preserving their shared footer-blue background and hierarchy.
+- [x] Add regression coverage, validate the simplified headers at desktop and mobile breakpoints, and publish the verified refinement.
+- [x] Save a checkpoint and publish the verified About/Contact clean-header refinement after the passing regression, build, and desktop/mobile visual checks.
 - [x] Audit the footer’s deep-blue token and identify inconsistent deep-blue surfaces across donation, About, Contact, and other public pages.
 - [x] Apply the shared footer-blue token to relevant public-page panels while preserving text contrast, yellow accents, and responsive layouts.
 - [x] Add regression coverage, validate shared blue consistency on representative public pages, and publish the verified refinement.

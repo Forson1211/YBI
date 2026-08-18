@@ -684,6 +684,12 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 .page-hero-join { background: linear-gradient(128deg, #ef2b1f 0%, #f14526 56%, #ff9f0a 100%); }
 .page-hero-media { background: linear-gradient(128deg, #073c52 0%, #144f67 46%, #ef2b1f 100%); }
 .page-hero-contact { background: linear-gradient(128deg, #073c52 0%, #0b5d7b 48%, #ff9f0a 100%); }
+.page-hero-about::before,
+.page-hero-about::after,
+.page-hero-contact::before,
+.page-hero-contact::after {
+  display: none;
+}
 .page-hero .reference-eyebrow { margin-bottom: 23px; }
 .page-hero-layout { display: flex; align-items: flex-end; justify-content: space-between; gap: 70px; }
 .page-hero h1 { max-width: 780px; margin-bottom: 21px; color: white; font-size: clamp(54px, 6.8vw, 88px); }
@@ -3229,6 +3235,12 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
   color: #ffffff;
   position: relative;
   overflow: hidden;
+}
+
+/* Keep About and Contact as clean heading-and-lead headers, matching the donation page. */
+.page-hero-about,
+.page-hero-contact {
+  background: var(--footer-blue);
 }
 
 .page-hero-layout {
@@ -7211,8 +7223,6 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
     font-size: 0.68rem;
   }
 }
-
-
 
 
 
