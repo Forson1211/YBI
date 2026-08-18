@@ -4982,9 +4982,11 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
   flex: 1;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
 
 .blog-post-link {
   display: inline-flex;
