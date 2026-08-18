@@ -21,7 +21,7 @@ const eventInput = z.object({
   slug: z.string().trim().min(2).max(200),
   title: z.string().trim().min(2).max(180),
   description: z.string().trim().min(10).max(10000),
-  imageUrl: z.string().trim().max(600).nullable().optional(),
+  imageUrl: z.string().trim().max(25000000).nullable().optional(),
   scheduledFor: z.string().datetime(),
   location: z.string().trim().min(2).max(240),
   capacity: z.number().int().min(1).max(100000).nullable().optional(),

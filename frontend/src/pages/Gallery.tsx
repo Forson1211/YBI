@@ -4,10 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Expand, HandHeart, ImagePlus, Menu, X } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { useSiteImages } from "@/lib/useSiteImage";
 import PublicNavigation from "@/components/PublicNavigation";
 import { PublicFooter } from "@/components/PublicSiteChrome";
 
-const mark = "/ybi-assets/brand/ybi-logo.png";
 const hero = "/ybi-assets/homepage/ybi-hero.jpg";
 const publicSpeaking = "/ybi-assets/programs/ybi-public-speaking.jpg";
 const entrepreneurship = "/ybi-assets/programs/ybi-entrepreneurship.jpg";
@@ -24,6 +24,8 @@ const seededPhotos: GalleryPhoto[] = [
 export default function Gallery() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activePhoto, setActivePhoto] = useState<number | null>(null);
+  const { getImage } = useSiteImages();
+  const brandLogo = getImage("brand_logo", "/ybi-assets/brand/ybi-logo.png", "Young Beginners Inspiration logo");
   const { data: managedPhotos } = trpc.publicSite.gallery.useQuery();
   const photos = useMemo(() => {
     const saved = (managedPhotos ?? []).map((photo) => ({ id: photo.id, src: photo.imageUrl, title: photo.title, caption: photo.altText }));
@@ -45,7 +47,7 @@ export default function Gallery() {
   const nextPhoto = () => setActivePhoto((current) => current === null ? null : (current + 1) % photos.length);
 
   return <div className="reference-site-shell">
-    <header className="reference-header"><div className="reference-header-inner"><button className="mobile-menu-button" type="button" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}>{menuOpen ? <X size={27} /> : <Menu size={29} />}</button><Link className="reference-brand" href="/" aria-label="Young Beginners Inspiration home"><img src={mark} alt="Young Beginners Inspiration logo" /><span>Young Beginners<br />Inspiration</span></Link><PublicNavigation menuOpen={menuOpen} onNavigate={() => setMenuOpen(false)} /><Link className="header-support" href="/join-us" onClick={() => setMenuOpen(false)}><HandHeart size={22} /><span>Support Us</span></Link></div></header>
+    <header className="reference-header"><div className="reference-header-inner"><button className="mobile-menu-button" type="button" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}>{menuOpen ? <X size={27} /> : <Menu size={29} />}</button><Link className="reference-brand" href="/" aria-label="Young Beginners Inspiration home"><img src={brandLogo.src} alt={brandLogo.alt} /><span>Young Beginners<br />Inspiration</span></Link><PublicNavigation menuOpen={menuOpen} onNavigate={() => setMenuOpen(false)} /><Link className="header-support" href="/join-us" onClick={() => setMenuOpen(false)}><HandHeart size={22} /><span>Support Us</span></Link></div></header>
     <main className="public-route-enter">
       <section className="gallery-hero section-blue"><div className="page-width gallery-hero-inner"><p className="reference-eyebrow light"><span /> From the platform</p><h1>Moments worth<br /><span>holding onto.</span></h1><p>See the conversations, courage, and connections that give Young Beginners Inspiration its heartbeat.</p></div></section>
       <section className="gallery-content section-cream"><div className="page-width"><div className="gallery-intro-grid"><div><p className="reference-eyebrow"><span /> The YBI gallery</p><h2>Every picture<br /><span>holds a beginning.</span></h2></div><div className="gallery-upload-card"><div className="gallery-upload-icon"><ImagePlus size={25} /></div><div><h3>Share a moment</h3><p>New gallery photos are curated and published by the Young Beginners Inspiration team.</p></div><Link className="reference-button blue-button gallery-upload-button" href="/admin/gallery">Manage gallery <ArrowUpRight size={16} /></Link><small>Published gallery moments are shared with every visitor.</small></div></div><div className="gallery-grid">{photos.map((photo, index) => <article className={`gallery-card ${index === 0 ? "gallery-card-featured" : ""}`} key={photo.id} style={{ "--gallery-index": index } as React.CSSProperties}><button type="button" className="gallery-image-button" onClick={() => setActivePhoto(index)} aria-label={`Open ${photo.title}`}><img src={photo.src} alt={photo.title} /><span className="gallery-card-shade" /><span className="gallery-card-open"><Expand size={18} /></span></button><div className="gallery-card-caption"><p>{photo.title}</p><span>{photo.caption}</span></div></article>)}</div></div></section>

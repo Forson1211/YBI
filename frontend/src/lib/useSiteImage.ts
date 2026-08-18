@@ -1,6 +1,6 @@
 import { trpc } from "@/lib/trpc";
 import { SITE_IMAGE_SLOTS } from "@shared/siteImages";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const defaultSlotsMap = new Map(
   SITE_IMAGE_SLOTS.map(slot => [slot.key, { src: slot.defaultSrc, alt: slot.defaultAlt }])
@@ -8,12 +8,30 @@ const defaultSlotsMap = new Map(
 
 export function useSiteImages() {
   const query = trpc.publicSite.siteImages.getAll.useQuery(undefined, {
-    staleTime: 30_000,
+    staleTime: 60_000,
     refetchOnWindowFocus: false,
   });
 
+  const [cachedOverrides] = useState<Record<string, { src?: string; alt?: string }>>(() => {
+    if (typeof window === "undefined") return {};
+    try {
+      const saved = localStorage.getItem("ybi_site_images_overrides");
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  useEffect(() => {
+    if (query.data && Object.keys(query.data).length > 0) {
+      try {
+        localStorage.setItem("ybi_site_images_overrides", JSON.stringify(query.data));
+      } catch {}
+    }
+  }, [query.data]);
+
   const images = useMemo(() => {
-    const overrides = query.data ?? {};
+    const overrides = query.data ?? cachedOverrides ?? {};
     const result: Record<string, { src: string; alt: string }> = {};
 
     defaultSlotsMap.forEach((val, key) => {
@@ -28,7 +46,7 @@ export function useSiteImages() {
     });
 
     return result;
-  }, [query.data]);
+  }, [query.data, cachedOverrides]);
 
   return {
     images,

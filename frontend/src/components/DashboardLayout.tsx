@@ -30,6 +30,7 @@ import {
   CalendarDays,
   Coins,
   Download,
+  ExternalLink,
   FileText,
   HandHeart,
   HelpCircle,
@@ -58,27 +59,26 @@ import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
 
+import "../admin-dashboard.css";
+
 const menuItems = [
-  { icon: LayoutDashboard, label: "Overview", path: "/admin" },
-  { icon: Calendar, label: "Events Manager", path: "/admin/events" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
+  { icon: Calendar, label: "Events & Cohorts", path: "/admin/events" },
   { icon: Ticket, label: "Registrations", path: "/admin/registrations" },
-  { icon: Newspaper, label: "Blog & News CMS", path: "/admin/blog" },
+  { icon: Newspaper, label: "Articles & News CMS", path: "/admin/blog" },
+  { icon: MessageSquareHeart, label: "Community Inbox", path: "/admin/inquiries" },
   { icon: Coins, label: "Donations Tracker", path: "/admin/donations" },
   { icon: Send, label: "SMS Broadcast", path: "/admin/sms" },
-  { icon: HelpCircle, label: "FAQ Manager", path: "/admin/faq" },
-  { icon: Scale, label: "Legal Pages", path: "/admin/legal" },
-  { icon: ImagePlus, label: "Site images", path: "/admin/images" },
+  { icon: Users, label: "Team Members", path: "/admin/team" },
+  { icon: Target, label: "Impact Tracker", path: "/admin/impact" },
+  { icon: ImagePlus, label: "Site Images", path: "/admin/images" },
   { icon: Image, label: "Gallery", path: "/admin/gallery" },
   { icon: BookOpen, label: "Programs", path: "/admin/programs" },
-  { icon: PanelsTopLeft, label: "Site content", path: "/admin/content" },
-  { icon: BotMessageSquare, label: "Assistant questions", path: "/admin/assistant-settings" },
-  { icon: CalendarDays, label: "Program calendar", path: "/admin/sessions" },
-  { icon: MessageSquareHeart, label: "Community inbox", path: "/admin/inquiries" },
-  { icon: HandHeart, label: "Opportunities", path: "/admin/opportunities" },
-  { icon: Target, label: "Impact tracker", path: "/admin/impact" },
-  { icon: Users, label: "Team members", path: "/admin/team" },
+  { icon: PanelsTopLeft, label: "Site Content", path: "/admin/content" },
+  { icon: HelpCircle, label: "FAQ Manager", path: "/admin/faq" },
+  { icon: Scale, label: "Legal Pages", path: "/admin/legal" },
   { icon: Mail, label: "Newsletter", path: "/admin/newsletter" },
-  { icon: Download, label: "Export data", path: "/admin/export" },
+  { icon: Download, label: "Export Data", path: "/admin/export" },
   { icon: Settings, label: "Settings", path: "/admin/settings" },
 ];
 
@@ -138,18 +138,29 @@ function DashboardLayoutContent({
 }: DashboardLayoutContentProps) {
   const { user, logout } = useAuth();
   const [location, setLocation] = useLocation();
-  const { state, toggleSidebar, setOpenMobile, openMobile } = useSidebar();
+  const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
   const [isResizing, setIsResizing] = useState(false);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const activeMenuItem = menuItems.find(item => item.path === location);
-  const isMobile = useIsMobile();
+  const activeMenuItem = menuItems.find((item) => item.path === location);
 
   useEffect(() => {
     if (isCollapsed) {
       setIsResizing(false);
     }
   }, [isCollapsed]);
+
+  // Close mobile drawer on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && mobileDrawerOpen) {
+        setMobileDrawerOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [mobileDrawerOpen]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -183,46 +194,110 @@ function DashboardLayoutContent({
 
   const handleNavigation = (path: string) => {
     setLocation(path);
-    if (isMobile) setOpenMobile(false);
+    setMobileDrawerOpen(false);
   };
 
   return (
     <>
-      <div className="relative" ref={sidebarRef}>
+      {/* ── 1. Bulletproof Self-Contained Mobile Sliding Navigation Drawer ── */}
+      <div
+        className={`admin-mobile-drawer-root ${mobileDrawerOpen ? "open" : ""}`}
+        aria-hidden={!mobileDrawerOpen}
+      >
+        {/* Backdrop overlay */}
+        <div
+          className="admin-mobile-drawer-backdrop"
+          onClick={() => setMobileDrawerOpen(false)}
+        />
+
+        {/* Sliding Panel */}
+        <aside className="admin-mobile-drawer-panel" role="dialog" aria-label="YBI Admin Navigation">
+          <div className="admin-drawer-header">
+            <div className="admin-drawer-header-inner">
+              <div className="admin-drawer-brand">
+                <img src={ybiMark} alt="Young Beginners Inspiration" />
+                <div>
+                  <strong>YBI Admin</strong>
+                  <span>Control Center</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="admin-drawer-close"
+                onClick={() => setMobileDrawerOpen(false)}
+                aria-label="Close navigation"
+              >
+                <X size={18} />
+              </button>
+            </div>
+          </div>
+
+          <nav className="admin-drawer-nav">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location === item.path;
+              return (
+                <button
+                  key={item.path}
+                  type="button"
+                  className={`admin-drawer-item ${isActive ? "active" : ""}`}
+                  onClick={() => handleNavigation(item.path)}
+                >
+                  <Icon size={18} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          <div className="admin-drawer-footer">
+            <div className="admin-drawer-user-row">
+              <Avatar className="h-8 w-8 border">
+                <AvatarFallback className="text-xs font-bold text-white bg-slate-700">
+                  {user?.name?.charAt(0).toUpperCase() || "A"}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-white truncate">{user?.name || "Administrator"}</p>
+                <p className="text-[10px] text-slate-400 truncate">{user?.email || "admin@ybi.org"}</p>
+              </div>
+              <button
+                type="button"
+                onClick={logout}
+                className="admin-drawer-logout-btn"
+                title="Sign out"
+              >
+                <LogOut size={15} />
+              </button>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      {/* ── 2. Desktop Sidebar ── */}
+      <div className="relative hidden md:block" ref={sidebarRef}>
         <Sidebar
           collapsible="icon"
           className="border-r-0 admin-sidebar"
           disableTransition={isResizing}
         >
-          <SidebarHeader className={isMobile ? "admin-drawer-header" : "h-16 justify-center"}>
-            {isMobile ? (
-              <div className="admin-drawer-header-inner">
-                <div className="admin-drawer-brand">
-                  <img src={ybiMark} alt="Young Beginners Inspiration" />
-                  <div><strong>YBI Admin</strong><span>Management workspace</span></div>
-                </div>
-                <button onClick={() => setOpenMobile(false)} className="admin-drawer-close" aria-label="Close management menu"><X size={18} /></button>
+          <SidebarHeader className="h-16 justify-center">
+            <div className="flex items-center px-4 py-2 transition-all w-full">
+              <div className="admin-sidebar-brand flex items-center gap-3">
+                <img src={ybiMark} alt="Young Beginners Inspiration" style={{ width: "32px", height: "32px", objectFit: "contain" }} />
+                {!isCollapsed ? (
+                  <div className="flex flex-col">
+                    <strong style={{ color: "#ffffff", fontSize: "0.95rem", fontWeight: 900, letterSpacing: "-0.02em", lineHeight: 1.1 }}>YBI Admin</strong>
+                    <span style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", marginTop: "2px" }}>Control Center</span>
+                  </div>
+                ) : null}
               </div>
-            ) : (
-              <div className="flex items-center gap-3 px-2 transition-all w-full">
-                <button
-                  onClick={toggleSidebar}
-                  className="h-8 w-8 flex items-center justify-center hover:bg-accent rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring shrink-0"
-                  aria-label="Toggle navigation"
-                >
-                  <PanelLeft className="h-4 w-4 text-muted-foreground" />
-                </button>
-                <div className="admin-sidebar-brand">
-                  <img src={ybiMark} alt="Young Beginners Inspiration" />
-                  {!isCollapsed ? <span>YBI Admin</span> : null}
-                </div>
-              </div>
-            )}
+            </div>
           </SidebarHeader>
 
           <SidebarContent className="admin-sidebar-content gap-0">
             <SidebarMenu className="px-2 py-1">
-              {menuItems.map(item => {
+              {menuItems.map((item) => {
                 const isActive = location === item.path;
                 return (
                   <SidebarMenuItem key={item.path}>
@@ -230,7 +305,7 @@ function DashboardLayoutContent({
                       isActive={isActive}
                       onClick={() => handleNavigation(item.path)}
                       tooltip={item.label}
-                      className={`h-10 transition-all font-normal`}
+                      className="h-10 transition-all font-normal"
                     >
                       <item.icon
                         className={`h-4 w-4 ${isActive ? "text-primary" : ""}`}
@@ -274,38 +349,86 @@ function DashboardLayoutContent({
             </DropdownMenu>
           </SidebarFooter>
         </Sidebar>
-        {!isMobile && <div
+        <div
           className={`absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-primary/20 transition-colors ${isCollapsed ? "hidden" : ""}`}
           onMouseDown={() => {
             if (isCollapsed) return;
             setIsResizing(true);
           }}
           style={{ zIndex: 50 }}
-        />}
+        />
       </div>
 
+      {/* ── 3. Main Inset Content with Mobile Header Bar ── */}
       <SidebarInset className="admin-content-inset">
-        {isMobile && (
-          <div className="admin-mobile-topbar">
-            <div className="admin-mobile-topbar-inner">
-              <button
-                type="button"
-                className="admin-mobile-menu-button"
-                onClick={toggleSidebar}
-                aria-label="Open YBI Admin navigation"
-                aria-expanded={openMobile}
-              >
-                <Menu size={20} strokeWidth={2.2} />
-                <span className="sr-only">Open management menu</span>
-              </button>
-              <div className="admin-mobile-brand">
-                <img className="admin-mobile-mark" src={ybiMark} alt="Young Beginners Inspiration" />
-                <div><strong>YBI Admin</strong><span>{activeMenuItem?.label ?? "Overview"}</span></div>
+        <div className="admin-mobile-topbar md:hidden">
+          <div className="admin-mobile-topbar-inner">
+            <button
+              type="button"
+              className="admin-mobile-menu-button"
+              onClick={() => setMobileDrawerOpen((prev) => !prev)}
+              aria-label="Open YBI Admin navigation"
+              aria-expanded={mobileDrawerOpen}
+            >
+              <Menu size={20} strokeWidth={2.2} />
+              <span className="sr-only">Open management menu</span>
+            </button>
+            <div className="admin-mobile-brand">
+              <img className="admin-mobile-mark" src={ybiMark} alt="Young Beginners Inspiration" />
+              <div>
+                <strong>YBI Admin</strong>
+                <span>{activeMenuItem?.label ?? "Overview"}</span>
               </div>
             </div>
-            <span className="admin-mobile-status"><span aria-hidden="true" />Secure</span>
           </div>
-        )}
+
+          {/* Meaningful Admin Profile & Action Menu */}
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="admin-mobile-user-btn"
+                  aria-label="Admin account menu"
+                >
+                  <div className="admin-mobile-avatar-circle">
+                    {user?.name ? user.name.charAt(0).toUpperCase() : "A"}
+                  </div>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="admin-dropdown-menu" sideOffset={8}>
+                <div className="admin-dropdown-header">
+                  <p className="admin-dropdown-user-name">{user?.name || "YBI Administrator"}</p>
+                  <p className="admin-dropdown-user-email">{user?.email || "admin@ybi.org"}</p>
+                  <span className="admin-dropdown-badge">
+                    Admin Active
+                  </span>
+                </div>
+                <DropdownMenuItem
+                  onClick={() => window.open("/", "_blank")}
+                  className="admin-dropdown-item"
+                >
+                  <ExternalLink size={14} />
+                  <span>Visit Live Website</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setLocation("/admin/settings")}
+                  className="admin-dropdown-item"
+                >
+                  <Settings size={14} />
+                  <span>Admin Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={logout}
+                  className="admin-dropdown-item danger"
+                >
+                  <LogOut size={14} />
+                  <span>Sign out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
         <main className="admin-shell-main">{children}</main>
       </SidebarInset>
     </>

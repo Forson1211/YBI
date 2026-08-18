@@ -227,7 +227,7 @@ export function PublicFooter() {
           </div>
         </div>
 
-        {/* Bottom Bar: Copyright, Center Legal & Ghana badge, Back to Top */}
+        {/* Bottom Bar: Copyright, Center Legal & Ghana badge, Developed by, Back to Top */}
         <div className="footer-bottom-bar">
           <div className="footer-bottom-copy">
             © 2026 Young Beginners Inspiration. All rights reserved.
@@ -238,6 +238,18 @@ export function PublicFooter() {
             <Link href="/terms-of-use">Terms of Use</Link>
             <span className="footer-sep">•</span>
             <span className="footer-ngo-tag">Registered NGO • Ghana</span>
+            <span className="footer-sep">•</span>
+            <span className="footer-developed-by">
+              Developed by{" "}
+              <a
+                href="https://oflexcreative.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-author-link"
+              >
+                Oflex Creative
+              </a>
+            </span>
           </div>
           <div className="footer-bottom-actions">
             <button type="button" className="footer-back-to-top-btn" onClick={scrollToTop}>

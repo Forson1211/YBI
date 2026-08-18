@@ -48,6 +48,11 @@ export default function About() {
     "/ybi-assets/community/ybi-community.jpg",
     "YBI participants sharing an intergenerational conversation"
   );
+  const mentoringImage = getImage(
+    "about_mentoring",
+    "/ybi-assets/programs/ybi-public-speaking.jpg",
+    "YBI mentor working with participants"
+  );
 
   return (
     <PublicPageShell>
@@ -110,8 +115,8 @@ export default function About() {
                 </p>
                 <div className="genesis-image-box">
                   <img
-                    src="/ybi-assets/community/ybi-community.jpg"
-                    alt="YBI community gathering"
+                    src={storyImage.src}
+                    alt={storyImage.alt}
                     loading="lazy"
                   />
                 </div>
@@ -167,7 +172,7 @@ export default function About() {
                 viewport={{ once: true, amount: 0.25 }}
                 transition={{ duration: 0.6 }}
               >
-                <img src={storyImage.src} alt={storyImage.alt} loading="lazy" />
+                <img src={mentoringImage.src} alt={mentoringImage.alt} loading="lazy" />
                 <div className="mission-media-overlay">
                   <div className="media-tag">
                     <Compass size={16} /> Intergenerational Impact

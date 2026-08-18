@@ -17,7 +17,7 @@ const blogPostInput = z.object({
   excerpt: z.string().trim().min(5).max(2000),
   body: z.string().trim().min(10).max(50000),
   authorName: z.string().trim().min(2).max(120),
-  coverImageUrl: z.string().trim().max(600).nullable().optional(),
+  coverImageUrl: z.string().trim().max(25000000).nullable().optional(),
   category: z.string().trim().min(2).max(80),
   status: blogStatus,
   publishedAt: z.string().datetime().nullable().optional(),

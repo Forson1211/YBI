@@ -1,7 +1,6 @@
-// Preconfigured storage helpers for Manus WebDev templates
-// Uploads via Forge Server presigned URL to S3 (PUT direct).
-// Downloads return /manus-storage/{key} paths served via 307 redirect.
-
+// Preconfigured storage helpers for Manus WebDev templates with Local Storage Fallback
+import fs from "fs";
+import path from "path";
 import { ENV } from "./_core/env";
 
 function getForgeConfig() {
@@ -9,9 +8,7 @@ function getForgeConfig() {
   const forgeKey = ENV.forgeApiKey;
 
   if (!forgeUrl || !forgeKey) {
-    throw new Error(
-      "Storage config missing: set BUILT_IN_FORGE_API_URL and BUILT_IN_FORGE_API_KEY",
-    );
+    return null;
   }
 
   return { forgeUrl: forgeUrl.replace(/\/+$/, ""), forgeKey };
@@ -33,65 +30,109 @@ export async function storagePut(
   data: Buffer | Uint8Array | string,
   contentType = "application/octet-stream",
 ): Promise<{ key: string; url: string }> {
-  const { forgeUrl, forgeKey } = getForgeConfig();
   const key = appendHashSuffix(normalizeKey(relKey));
+  const forgeConfig = getForgeConfig();
 
-  // 1. Get presigned PUT URL from Forge
-  const presignUrl = new URL("v1/storage/presign/put", forgeUrl + "/");
-  presignUrl.searchParams.set("path", key);
+  if (forgeConfig) {
+    try {
+      const { forgeUrl, forgeKey } = forgeConfig;
+      // 1. Get presigned PUT URL from Forge
+      const presignUrl = new URL("v1/storage/presign/put", forgeUrl + "/");
+      presignUrl.searchParams.set("path", key);
 
-  const presignResp = await fetch(presignUrl, {
-    headers: { Authorization: `Bearer ${forgeKey}` },
-  });
+      const presignResp = await fetch(presignUrl, {
+        headers: { Authorization: `Bearer ${forgeKey}` },
+      });
 
-  if (!presignResp.ok) {
-    const msg = await presignResp.text().catch(() => presignResp.statusText);
-    throw new Error(`Storage presign failed (${presignResp.status}): ${msg}`);
+      if (presignResp.ok) {
+        const { url: s3Url } = (await presignResp.json()) as { url: string };
+        if (s3Url) {
+          // 2. PUT file directly to S3
+          const blob =
+            typeof data === "string"
+              ? new Blob([data], { type: contentType })
+              : new Blob([data as any], { type: contentType });
+
+          const uploadResp = await fetch(s3Url, {
+            method: "PUT",
+            headers: { "Content-Type": contentType },
+            body: blob,
+          });
+
+          if (uploadResp.ok) {
+            return { key, url: `/manus-storage/${key}` };
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Forge S3 upload failed, falling back to local file storage:", e);
+    }
   }
 
-  const { url: s3Url } = (await presignResp.json()) as { url: string };
-  if (!s3Url) throw new Error("Forge returned empty presign URL");
+  // Fallback: Local file storage
+  try {
+    const buffer =
+      typeof data === "string"
+        ? Buffer.from(data)
+        : Buffer.isBuffer(data)
+        ? data
+        : Buffer.from(data);
 
-  // 2. PUT file directly to S3
-  const blob =
-    typeof data === "string"
-      ? new Blob([data], { type: contentType })
-      : new Blob([data as any], { type: contentType });
+    // Save to backend/uploads and frontend/public/uploads if possible
+    const localUploadsDir = path.resolve(process.cwd(), "uploads");
+    const targetPath = path.join(localUploadsDir, key);
+    fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+    fs.writeFileSync(targetPath, buffer);
 
-  const uploadResp = await fetch(s3Url, {
-    method: "PUT",
-    headers: { "Content-Type": contentType },
-    body: blob,
-  });
+    // Also copy to frontend public directory if it exists
+    const frontendPublicUploads = path.resolve(process.cwd(), "frontend", "public", "uploads");
+    try {
+      const fePath = path.join(frontendPublicUploads, key);
+      fs.mkdirSync(path.dirname(fePath), { recursive: true });
+      fs.writeFileSync(fePath, buffer);
+    } catch (e) {}
 
-  if (!uploadResp.ok) {
-    throw new Error(`Storage upload to S3 failed (${uploadResp.status})`);
+    return { key, url: `/uploads/${key}` };
+  } catch (err) {
+    console.error("Local file storage write error:", err);
+    // Ultimate fallback: data URL
+    const b64 =
+      typeof data === "string"
+        ? Buffer.from(data).toString("base64")
+        : Buffer.from(data).toString("base64");
+    return { key, url: `data:${contentType};base64,${b64}` };
   }
-
-  return { key, url: `/manus-storage/${key}` };
 }
 
 export async function storageGet(relKey: string): Promise<{ key: string; url: string }> {
   const key = normalizeKey(relKey);
-  return { key, url: `/manus-storage/${key}` };
+  const forgeConfig = getForgeConfig();
+  if (forgeConfig) {
+    return { key, url: `/manus-storage/${key}` };
+  }
+  return { key, url: `/uploads/${key}` };
 }
 
 export async function storageGetSignedUrl(relKey: string): Promise<string> {
-  const { forgeUrl, forgeKey } = getForgeConfig();
+  const forgeConfig = getForgeConfig();
   const key = normalizeKey(relKey);
 
-  const getUrl = new URL("v1/storage/presign/get", forgeUrl + "/");
-  getUrl.searchParams.set("path", key);
+  if (forgeConfig) {
+    try {
+      const { forgeUrl, forgeKey } = forgeConfig;
+      const getUrl = new URL("v1/storage/presign/get", forgeUrl + "/");
+      getUrl.searchParams.set("path", key);
 
-  const resp = await fetch(getUrl, {
-    headers: { Authorization: `Bearer ${forgeKey}` },
-  });
+      const resp = await fetch(getUrl, {
+        headers: { Authorization: `Bearer ${forgeKey}` },
+      });
 
-  if (!resp.ok) {
-    const msg = await resp.text().catch(() => resp.statusText);
-    throw new Error(`Storage signed URL failed (${resp.status}): ${msg}`);
+      if (resp.ok) {
+        const { url } = (await resp.json()) as { url: string };
+        if (url) return url;
+      }
+    } catch (e) {}
   }
 
-  const { url } = (await resp.json()) as { url: string };
-  return url;
+  return `/uploads/${key}`;
 }

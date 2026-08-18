@@ -141,10 +141,19 @@ export const SITE_IMAGE_SLOTS: SiteImageDefinition[] = [
   {
     key: "program_community",
     category: "Programs & Pathways",
-    label: "Program: Community & Civic Action",
-    description: "Visual for local community service and civic leadership programs.",
+    label: "Program: Generations in Conversation",
+    description: "Visual for structured intergenerational dialogue and mentorship cohorts.",
     defaultSrc: "/ybi-assets/community/ybi-community.jpg",
-    defaultAlt: "Group of participants carrying out community service",
+    defaultAlt: "Group of youth and elders in guided mentorship dialogue",
+    aspectRatio: "4:3",
+  },
+  {
+    key: "program_leadership",
+    category: "Programs & Pathways",
+    label: "Program: Values-Led Leadership Lab",
+    description: "Visual for ethical leadership, character development, and stewardship circles.",
+    defaultSrc: "/ybi-assets/image-wall/ybi-wall-youth-leadership.jpg",
+    defaultAlt: "Young leader facilitating a values-based community session",
     aspectRatio: "4:3",
   },
 

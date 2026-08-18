@@ -206,7 +206,14 @@ const testimonials = [
   },
 ];
 
-function RotatingAboutImage() {
+function RotatingAboutImage({
+  slides,
+}: {
+  slides?: Array<{ src: string; alt: string }>;
+}) {
+  const defaultSlides = aboutMediaSlides;
+  const activeSlides = slides && slides.length > 0 ? slides : defaultSlides;
+
   const [activeIndex, setActiveIndex] = useState(0);
   const [exitingIndex, setExitingIndex] = useState<number | null>(null);
   const [direction, setDirection] = useState<1 | -1>(1);
@@ -217,7 +224,7 @@ function RotatingAboutImage() {
     setActiveIndex((currentIndex) => {
       setExitingIndex(currentIndex);
       setDirection(step);
-      return (currentIndex + step + aboutMediaSlides.length) % aboutMediaSlides.length;
+      return (currentIndex + step + activeSlides.length) % activeSlides.length;
     });
   };
 
@@ -233,7 +240,7 @@ function RotatingAboutImage() {
     if (reducedMotion) return;
     const rotation = window.setInterval(() => changeImage(1), 8200);
     return () => window.clearInterval(rotation);
-  }, [reducedMotion]);
+  }, [reducedMotion, activeSlides.length]);
 
   return (
     <div
@@ -251,10 +258,10 @@ function RotatingAboutImage() {
         changeImage(distance < 0 ? 1 : -1);
       }}
     >
-      {aboutMediaSlides.map((image, index) => (
+      {activeSlides.map((image, index) => (
         <img
           aria-hidden="true"
-          alt=""
+          alt={image.alt}
           className={`about-rotating-image${index === activeIndex ? " is-active" : ""}${
             index === exitingIndex ? " is-exiting" : ""
           }${direction === -1 ? " is-reverse" : ""}`}
@@ -270,7 +277,13 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { getImage } = useSiteImages();
 
+  const brandLogo = getImage("brand_logo", "/ybi-assets/brand/ybi-logo.png", "Young Beginners Inspiration logo");
   const heroImage = getImage("home_hero", "/ybi-assets/homepage/ybi-hero.jpg", "Young facilitator inspiring participants");
+  const progSpeaking = getImage("program_public_speaking", "/ybi-assets/programs/ybi-public-speaking.jpg", "Public Speaking & Youth Voice");
+  const progEnterprise = getImage("program_entrepreneurship", "/ybi-assets/programs/ybi-entrepreneurship.jpg", "Youth Entrepreneurship & Enterprise");
+  const progCommunity = getImage("program_community", "/ybi-assets/community/ybi-community.jpg", "Generations in Conversation");
+  const progLeadership = getImage("program_leadership", "/ybi-assets/image-wall/ybi-wall-youth-leadership.jpg", "Values-Led Leadership Lab");
+
   const wall1 = getImage("home_wall_1", "/ybi-assets/image-wall/ybi-wall-youth-leadership.jpg", "Young facilitator leading a community leadership workshop");
   const wall2 = getImage("home_wall_2", "/ybi-assets/image-wall/ybi-wall-intergenerational-mentoring.jpg", "Intergenerational mentoring around a practical project");
   const wall3 = getImage("home_wall_3", "/ybi-assets/image-wall/ybi-wall-entrepreneurship.jpg", "Community members developing an entrepreneurship idea");
@@ -283,6 +296,52 @@ export default function Home() {
   const { data: upcomingEvents } = trpc.publicSite.events.list.useQuery();
   const { data: latestBlogPosts } = trpc.publicSite.blog.list.useQuery({ limit: 3 });
 
+  const rotatingSlides = useMemo(
+    () => [
+      { src: progSpeaking.src, alt: progSpeaking.alt },
+      { src: progCommunity.src, alt: progCommunity.alt },
+      { src: progEnterprise.src, alt: progEnterprise.alt },
+    ],
+    [progSpeaking, progCommunity, progEnterprise]
+  );
+
+  const dynamicProgramCards = useMemo(
+    () => [
+      {
+        image: progSpeaking.src,
+        number: "01",
+        kicker: "Voice · Presence · Courage",
+        title: "Public Speaking & Communication",
+        text: "Master vocal presence, speech crafting, debate, and the confidence to bring your voice and ideas into any room.",
+        href: "/programs#public-speaking",
+      },
+      {
+        image: progEnterprise.src,
+        number: "02",
+        kicker: "Ideas · Enterprise · Responsibility",
+        title: "Youth Entrepreneurship & Enterprise",
+        text: "Turn meaningful ideas into viable ventures through problem validation, business fundamentals, and pitch coaching.",
+        href: "/programs#entrepreneurship",
+      },
+      {
+        image: progCommunity.src,
+        number: "03",
+        kicker: "Mentorship · Intergenerational · Purpose",
+        title: "Generations in Conversation",
+        text: "Structured intergenerational dialogue circles connecting young ambition with elder wisdom for mutual learning.",
+        href: "/programs#generations",
+      },
+      {
+        image: progLeadership.src,
+        number: "04",
+        kicker: "Ethics · Stewardship · Influence",
+        title: "Values-Led Leadership Lab",
+        text: "Develop self-awareness, ethical decision-making, and community stewardship habits to lead with enduring integrity.",
+        href: "/programs#leadership",
+      },
+    ],
+    [progSpeaking, progEnterprise, progCommunity, progLeadership]
+  );
 
   const dynamicEvents = useMemo(() => {
     const list = upcomingEvents?.length ? upcomingEvents : DEFAULT_EVENTS;
@@ -294,16 +353,16 @@ export default function Home() {
 
   const dynamicWallFallback: ImageWallPhoto[] = useMemo(
     () => [
-      { src: publicSpeaking, alt: "Young people developing public-speaking confidence" },
-      { src: entrepreneurship, alt: "Participants exploring entrepreneurship together" },
-      { src: community, alt: "Intergenerational community conversation" },
+      { src: progSpeaking.src, alt: "Young people developing public-speaking confidence" },
+      { src: progEnterprise.src, alt: "Participants exploring entrepreneurship together" },
+      { src: progCommunity.src, alt: "Intergenerational community conversation" },
       { src: wall1.src, alt: wall1.alt },
       { src: wall2.src, alt: wall2.alt },
       { src: wall3.src, alt: wall3.alt },
       { src: wall4.src, alt: wall4.alt },
       { src: wall5.src, alt: wall5.alt },
     ],
-    [wall1, wall2, wall3, wall4, wall5]
+    [progSpeaking, progEnterprise, progCommunity, wall1, wall2, wall3, wall4, wall5]
   );
 
   const imageWallRows = useMemo(() => {
@@ -336,7 +395,7 @@ export default function Home() {
             onClick={closeMenu}
             aria-label="Young Beginners Inspiration home"
           >
-            <img src={mark} alt="Young Beginners Inspiration logo" />
+            <img src={brandLogo.src} alt={brandLogo.alt} />
             <span>
               Young Beginners
               <br />
@@ -417,7 +476,7 @@ export default function Home() {
               </Link>
             </div>
             <figure className="about-reference-image">
-              <RotatingAboutImage />
+              <RotatingAboutImage slides={rotatingSlides} />
             </figure>
           </div>
         </section>
@@ -513,7 +572,7 @@ export default function Home() {
             </div>
 
             <div className="initiative-grid four-cards">
-              {programCards.map((card) => (
+              {dynamicProgramCards.map((card) => (
                 <article className="initiative-card" key={card.number}>
                   <div className="initiative-image">
                     <img src={card.image} alt={card.title} loading="lazy" />

@@ -154,7 +154,7 @@ const teamMemberInput = z.object({
   name: z.string().trim().min(2).max(140),
   role: z.string().trim().min(2).max(100),
   bio: z.string().trim().min(10).max(3000),
-  imageUrl: z.string().trim().max(600).default(""),
+  imageUrl: z.string().trim().max(25000000).default(""),
   email: z.string().trim().email().max(320).optional().or(z.literal("")),
   linkedIn: z.string().trim().max(300).optional().or(z.literal("")),
   sortOrder: z.number().int().min(0).max(9999).default(0),

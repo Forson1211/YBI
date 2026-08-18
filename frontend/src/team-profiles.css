@@ -56,8 +56,12 @@
   border-radius: 50% !important;
   overflow: hidden;
   margin-bottom: 1.25rem;
-  border: 3px solid rgba(7, 60, 82, 0.1);
+  border: 3px solid rgba(7, 60, 82, 0.08);
+  box-shadow: 0 4px 14px rgba(7, 60, 82, 0.08);
+  background: #ffffff;
   flex-shrink: 0;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .team-card-photo {
@@ -65,7 +69,9 @@
   height: 100%;
   border-radius: 50% !important;
   object-fit: cover;
-  object-position: top center;
+  object-position: center 15%;
+  image-rendering: auto;
+  display: block;
 }
 
 .team-card-info {
@@ -326,6 +332,8 @@
   width: 100%;
   min-height: 360px;
   object-fit: cover;
+  object-position: center 15%;
+  image-rendering: auto;
   box-shadow: 18px 18px 0 var(--yellow);
 }
 
