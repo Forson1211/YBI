@@ -2,12 +2,6 @@
   "version": 2,
   "buildCommand": "pnpm build",
   "outputDirectory": "dist/public",
-  "framework": "vite",
-  "functions": {
-    "api/index.ts": {
-      "runtime": "@vercel/node@4"
-    }
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",
