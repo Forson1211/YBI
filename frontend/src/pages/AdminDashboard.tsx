@@ -207,8 +207,8 @@ function downloadCsv(filename: string, rows: Record<string, any>[]) {
 
 function compressAndConvertToBase64(
   file: File,
-  maxDimension = 1400,
-  quality = 0.82
+  maxDimension = 1200,
+  quality = 0.75
 ): Promise<{ base64: string; mimeType: "image/jpeg" | "image/png" | "image/webp" | "image/svg+xml" }> {
   // If SVG, don't canvas compress
   if (file.type.includes("svg")) {

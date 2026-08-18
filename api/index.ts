@@ -59,6 +59,10 @@ app.use((err: any, _req: any, res: any, _next: any) => {
   }
 });
 
+export const config = {
+  maxDuration: 60,
+};
+
 export default function handler(req: VercelRequest, res: VercelResponse) {
   return app(req as any, res as any);
 }
