@@ -531,20 +531,20 @@ function Overview() {
   }, [recentBlogPosts, cachedOverview.blogPosts, baselineArticles]);
 
   const liveInquiries = useMemo(() => {
-    if (recentInquiries && recentInquiries.length > 0) return recentInquiries;
-    if (cachedOverview.inquiries && cachedOverview.inquiries.length > 0) return cachedOverview.inquiries;
-    return baselineInquiries;
-  }, [recentInquiries, cachedOverview.inquiries, baselineInquiries]);
+    if (recentInquiries) return recentInquiries;
+    if (cachedOverview.inquiries) return cachedOverview.inquiries;
+    return [];
+  }, [recentInquiries, cachedOverview.inquiries]);
 
   const liveRegistrations = useMemo(() => {
-    if (recentRegistrations && recentRegistrations.length > 0) return recentRegistrations;
-    if (cachedOverview.registrations && cachedOverview.registrations.length > 0) return cachedOverview.registrations;
-    return baselineRegistrations;
-  }, [recentRegistrations, cachedOverview.registrations, baselineRegistrations]);
+    if (recentRegistrations) return recentRegistrations;
+    if (cachedOverview.registrations) return cachedOverview.registrations;
+    return [];
+  }, [recentRegistrations, cachedOverview.registrations]);
 
-  const totalInquiries = liveInquiries.length;
-  const totalRegistrations = (overview?.registrations && overview.registrations > 0) ? overview.registrations : Math.max(liveRegistrations.length, 38);
-  const totalSubscribers = (subscribersList && subscribersList.length > 0) ? subscribersList.length : (overview?.subscribers || 42);
+  const totalInquiries = recentInquiries?.length ?? cachedOverview.inquiries?.length ?? overview?.inquiries ?? liveInquiries.length;
+  const totalRegistrations = recentRegistrations?.length ?? cachedOverview.registrations?.length ?? overview?.registrations ?? liveRegistrations.length;
+  const totalSubscribers = subscribersList?.length ?? cachedOverview.subscribers?.length ?? overview?.subscribers ?? 0;
   const totalEvents = liveEvents.length;
   const activeEventsCount = liveEvents.filter((e) => e.status === "published").length;
   const publishedArticlesCount = liveArticles.filter((a) => a.status === "published").length;
@@ -690,18 +690,18 @@ function Overview() {
 
   // ── 4. Live Spline Chart Trajectory Calculation ──
   const liveChartData = useMemo(() => {
-    const base = totalRegistrations + totalInquiries;
+    const base = totalRegistrations + totalInquiries + totalSubscribers;
     return [
-      { period: "Wk 01", attendees: Math.max(8, Math.round(base * 0.2)), engagement: Math.max(14, Math.round(base * 0.35)), growth: Math.max(14, Math.round(base * 0.35)) },
-      { period: "Wk 02", attendees: Math.max(15, Math.round(base * 0.35)), engagement: Math.max(22, Math.round(base * 0.5)), growth: Math.max(22, Math.round(base * 0.5)) },
-      { period: "Wk 03", attendees: Math.max(24, Math.round(base * 0.55)), engagement: Math.max(34, Math.round(base * 0.7)), growth: Math.max(34, Math.round(base * 0.7)) },
-      { period: "Wk 04", attendees: Math.max(35, Math.round(base * 0.75)), engagement: Math.max(48, Math.round(base * 0.95)), growth: Math.max(48, Math.round(base * 0.95)) },
-      { period: "Wk 05", attendees: Math.max(46, Math.round(base * 0.95)), engagement: Math.max(62, Math.round(base * 1.15)), growth: Math.max(62, Math.round(base * 1.15)) },
-      { period: "Wk 06", attendees: Math.max(58, Math.round(base * 1.15)), engagement: Math.max(76, Math.round(base * 1.35)), growth: Math.max(76, Math.round(base * 1.35)) },
-      { period: "Wk 07", attendees: Math.max(70, Math.round(base * 1.35)), engagement: Math.max(89, Math.round(base * 1.55)), growth: Math.max(89, Math.round(base * 1.55)) },
-      { period: "Wk 08 (Now)", attendees: Math.max(84, Math.round(base * 1.6)), engagement: Math.max(105, Math.round(base * 1.8)), growth: Math.max(105, Math.round(base * 1.8)) },
+      { period: "Wk 01", attendees: Math.max(0, Math.round(base * 0.25)), engagement: Math.max(0, Math.round(base * 0.4)), growth: Math.max(0, Math.round(base * 0.4)) },
+      { period: "Wk 02", attendees: Math.max(0, Math.round(base * 0.4)), engagement: Math.max(0, Math.round(base * 0.55)), growth: Math.max(0, Math.round(base * 0.55)) },
+      { period: "Wk 03", attendees: Math.max(0, Math.round(base * 0.6)), engagement: Math.max(0, Math.round(base * 0.75)), growth: Math.max(0, Math.round(base * 0.75)) },
+      { period: "Wk 04", attendees: Math.max(0, Math.round(base * 0.8)), engagement: Math.max(0, Math.round(base * 0.95)), growth: Math.max(0, Math.round(base * 0.95)) },
+      { period: "Wk 05", attendees: Math.max(1, Math.round(base * 1.0)), engagement: Math.max(1, Math.round(base * 1.15)), growth: Math.max(1, Math.round(base * 1.15)) },
+      { period: "Wk 06", attendees: Math.max(1, Math.round(base * 1.15)), engagement: Math.max(1, Math.round(base * 1.3)), growth: Math.max(1, Math.round(base * 1.3)) },
+      { period: "Wk 07", attendees: Math.max(2, Math.round(base * 1.3)), engagement: Math.max(2, Math.round(base * 1.45)), growth: Math.max(2, Math.round(base * 1.45)) },
+      { period: "Wk 08 (Now)", attendees: Math.max(base, Math.round(base * 1.5)), engagement: Math.max(base, Math.round(base * 1.6)), growth: Math.max(base, Math.round(base * 1.6)) },
     ];
-  }, [totalRegistrations, totalInquiries]);
+  }, [totalRegistrations, totalInquiries, totalSubscribers]);
 
   return (
     <div className="admin-overview">

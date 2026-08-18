@@ -15,12 +15,13 @@ registerStorageProxy(app);
 registerOAuthRoutes(app);
 registerPaystackWebhook(app);
 
-app.use(
-  "/api/trpc",
-  createExpressMiddleware({
-    router: appRouter,
-    createContext,
-  })
-);
+const trpcHandler = createExpressMiddleware({
+  router: appRouter,
+  createContext,
+});
+
+app.use("/api/trpc", trpcHandler);
+app.use("/trpc", trpcHandler);
+app.use("/", trpcHandler);
 
 export default app;
