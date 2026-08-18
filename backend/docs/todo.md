@@ -1,5 +1,8 @@
 # Revision Tasks
 
+- [x] Inspect the GitHub-synchronized project structure and restore the missing client entry file without discarding remote changes.
+- [x] Validate the recovered development preview, automated checks, and production build before publishing the completed synchronization.
+
 - [x] Replace the generated open-circle mark with the provided YBI logo.
 - [x] Align the website palette with the logo colors: deep blue, red, yellow, and orange.
 - [x] Remove italic styling from all text, including emphasized headings and highlighted words.
