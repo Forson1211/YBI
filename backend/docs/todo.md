@@ -1,5 +1,10 @@
 # Revision Tasks
 
+- [x] Audit the footer’s deep-blue token and identify inconsistent deep-blue surfaces across donation, About, Contact, and other public pages.
+- [x] Apply the shared footer-blue token to relevant public-page panels while preserving text contrast, yellow accents, and responsive layouts.
+- [x] Add regression coverage, validate shared blue consistency on representative public pages, and publish the verified refinement.
+- [x] Visually re-check About, Contact, and Get Involved/Donation hero surfaces after the final footer-blue patch at desktop and mobile breakpoints.
+- [x] Save a checkpoint and publish the verified footer-blue consistency refinement after the post-fix visual check passes.
 - [x] Inspect the donation page at a phone viewport and identify responsiveness issues in its form, payment options, and supporting content.
 - [x] Refine the donation page for touch-friendly mobile layout, readable hierarchy, and accessible controls without regressing desktop.
 - [x] Add regression coverage, validate the donation flow at mobile and desktop breakpoints, and publish the verified update.

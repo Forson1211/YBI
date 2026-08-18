@@ -5,7 +5,7 @@
 @import "./ybi-assistant-mobile.css";
 @import "./ybi-visitor-enhancements.css";
 
-:root { --cream: #fffaf0; --white: #ffffff; --blue: #0b5d7b; --blue-deep: #073c52; --red: #ef2b1f; --yellow: #ffd000; --orange: #ff9f0a; --ink: #183541; --muted: #687780; --line: rgba(7,60,82,.14); --ease: cubic-bezier(.23,1,.32,1); --ease-out: cubic-bezier(.23,1,.32,1); --ease-in-out: cubic-bezier(.77,0,.175,1); --site-max: 1320px; --site-gutter: 50px; --header-height: 75px; }
+:root { --cream: #fffaf0; --white: #ffffff; --blue: #0b5d7b; --blue-deep: #073c52; --footer-blue: var(--blue-deep); --red: #ef2b1f; --yellow: #ffd000; --orange: #ff9f0a; --ink: #183541; --muted: #687780; --line: rgba(7,60,82,.14); --ease: cubic-bezier(.23,1,.32,1); --ease-out: cubic-bezier(.23,1,.32,1); --ease-in-out: cubic-bezier(.77,0,.175,1); --site-max: 1320px; --site-gutter: 50px; --header-height: 75px; }
 
 /* Global Sharp Architectural Edge Constraint: No cards, shapes, images, or controls have rounded edges */
 *, *::before, *::after {
@@ -127,7 +127,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 .initiative-copy h3 { margin-bottom: 11px; color: var(--blue-deep); font-size: 31px; line-height: 1; }
 .initiative-copy > p:not(.initiative-kicker) { min-height: 67px; margin-bottom: 11px; color: var(--muted); font-size: 13px; }
 .section-blue {
-  background: radial-gradient(circle at 10% 20%, #0d465c 0%, #073c52 50%, #052635 100%);
+  background: var(--footer-blue);
   color: white;
 }
 
@@ -138,7 +138,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 .why-reference {
   padding: clamp(4.5rem, 6.5vw, 6.5rem) 0;
   position: relative;
-  background: radial-gradient(circle at 10% 20%, #0d465c 0%, #073c52 50%, #052635 100%) !important;
+  background: var(--footer-blue) !important;
 }
 
 .light-heading h2 {
@@ -440,7 +440,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 .image-wall-card img { display: block; width: 100%; height: 100%; object-fit: cover; }
 @keyframes image-wall-left { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
 @keyframes image-wall-right { from { transform: translate3d(-50%, 0, 0); } to { transform: translate3d(0, 0, 0); } }
-.reference-footer { padding: 56px 0 28px; background: var(--blue-deep); color: white; border-top: 1px solid rgba(255,255,255,.08); }
+.reference-footer { padding: 56px 0 28px; background: var(--footer-blue); color: white; border-top: 1px solid rgba(255,255,255,.08); }
 .footer-container { display: flex; flex-direction: column; gap: 32px; }
 .footer-top-bar { display: flex; align-items: center; justify-content: space-between; padding-bottom: 22px; border-bottom: 1px solid rgba(255,255,255,.12); }
 .footer-brand { display: inline-flex; align-items: center; gap: 12px; color: white; text-decoration: none; }
@@ -3186,7 +3186,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 }
 
 .events-partner-card {
-  background: radial-gradient(circle at 10% 20%, #0d465c 0%, #072a3a 100%);
+  background: var(--footer-blue);
   border: 1px solid rgba(255, 208, 0, 0.25);
   border-radius: 4px;
   padding: clamp(2rem, 4vw, 3rem);
@@ -3225,8 +3225,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 
 .page-hero {
   padding: clamp(3.5rem, 6vw, 5.5rem) 0 3rem;
-  background: radial-gradient(circle at 85% 20%, rgba(255, 208, 0, 0.1) 0%, transparent 60%),
-    linear-gradient(180deg, #073c52 0%, #052635 100%);
+  background: var(--footer-blue);
   color: #ffffff;
   position: relative;
   overflow: hidden;
@@ -3415,7 +3414,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 
 .page-quote-band {
   padding: clamp(3.5rem, 5vw, 5rem) 0;
-  background: radial-gradient(circle at 10% 20%, #0d465c 0%, #072a3a 100%);
+  background: var(--footer-blue);
   color: #ffffff;
 }
 
@@ -3991,8 +3990,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 
 .get-involved-hero {
   padding: clamp(3.5rem, 6vw, 5.5rem) 0 3rem;
-  background: radial-gradient(circle at 85% 20%, rgba(255, 208, 0, 0.12) 0%, transparent 60%),
-    linear-gradient(180deg, #073c52 0%, #052635 100%);
+  background: var(--footer-blue);
   color: #ffffff;
   text-align: left;
 }
@@ -4210,7 +4208,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 
 /* Dynamic Impact Box */
 .donation-impact-box {
-  background: radial-gradient(circle at 10% 20%, #0d465c 0%, #072a3a 100%);
+  background: var(--footer-blue);
   border: 1px solid rgba(255, 208, 0, 0.35);
   border-radius: 0 !important;
   padding: 1.25rem 1.5rem;
@@ -4322,7 +4320,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 
 /* Right: Why Donate to YBI */
 .donation-why-card {
-  background: radial-gradient(circle at 10% 20%, #0d465c 0%, #072a3a 50%, #051c27 100%);
+  background: var(--footer-blue);
   border: 1px solid rgba(255, 208, 0, 0.25);
   border-radius: 0 !important;
   padding: clamp(2rem, 3.5vw, 2.75rem);
@@ -4437,7 +4435,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 
 .volunteer-roles-column,
 .partner-intro-card {
-  background: radial-gradient(circle at 10% 20%, #0d465c 0%, #072a3a 50%, #051c27 100%);
+  background: var(--footer-blue);
   border: 1px solid rgba(255, 208, 0, 0.25);
   border-radius: 0 !important;
   padding: clamp(2rem, 3.5vw, 2.5rem);
@@ -5228,7 +5226,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 
 .genesis-quote-card {
   position: relative;
-  background: radial-gradient(circle at 10% 20%, #0d465c 0%, #072a3a 100%);
+  background: var(--footer-blue);
   border: 1px solid rgba(255, 208, 0, 0.25);
   border-radius: 4px;
   padding: 1.75rem 2rem;
@@ -5501,7 +5499,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 /* Invitation Band */
 .about-invitation-band {
   padding: clamp(4rem, 6vw, 6rem) 0;
-  background: radial-gradient(circle at 10% 20%, #0d465c 0%, #072a3a 50%, #051c27 100%);
+  background: var(--footer-blue);
   color: #ffffff;
 }
 
@@ -5583,7 +5581,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 
 /* Volunteer Roles Column */
 .volunteer-roles-column {
-  background: radial-gradient(circle at 10% 20%, #0d465c 0%, #072a3a 50%, #051c27 100%);
+  background: var(--footer-blue);
   border: 1px solid rgba(255, 208, 0, 0.25);
   border-radius: 0 !important;
   padding: clamp(2rem, 3.5vw, 2.5rem);
@@ -5729,7 +5727,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 
 /* Partner Intro Card */
 .partner-intro-card {
-  background: radial-gradient(circle at 10% 20%, #0d465c 0%, #072a3a 50%, #051c27 100%);
+  background: var(--footer-blue);
   border: 1px solid rgba(255, 208, 0, 0.25);
   border-radius: 0 !important;
   padding: clamp(2rem, 3.5vw, 2.5rem);
@@ -6274,7 +6272,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 
 .page-hero-contact {
   padding: clamp(4.5rem, 7vw, 6.5rem) 0 clamp(3.5rem, 5vw, 5rem);
-  background: radial-gradient(circle at 10% 20%, #0d465c 0%, #072a3a 50%, #051c27 100%);
+  background: var(--footer-blue);
   color: #ffffff;
 }
 
@@ -6558,7 +6556,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 /* Editorial Hero Header */
 .blog-hero-header {
   padding: clamp(4.5rem, 7vw, 6.5rem) 0 clamp(3.5rem, 5vw, 5rem);
-  background: radial-gradient(circle at 10% 20%, #0d465c 0%, #072a3a 50%, #051c27 100%);
+  background: var(--footer-blue);
   color: #ffffff;
 }
 
@@ -7003,7 +7001,7 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
 /* Newsletter Band */
 .blog-newsletter-section {
   padding: clamp(3.5rem, 6vw, 5rem) 0;
-  background: radial-gradient(circle at 10% 20%, #0d465c 0%, #072a3a 50%, #051c27 100%);
+  background: var(--footer-blue);
   color: #ffffff;
 }
 
@@ -7213,8 +7211,6 @@ h2 { margin-bottom: 18px; color: var(--blue-deep); font-size: clamp(26px, 3.2vw,
     font-size: 0.68rem;
   }
 }
-
-
 
 
 
