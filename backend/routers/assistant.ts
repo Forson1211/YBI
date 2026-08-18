@@ -3,8 +3,8 @@ import { z } from "zod";
 import { getSiteContent } from "../db";
 import { invokeLLM } from "../_core/llm";
 import { publicProcedure, router } from "../_core/trpc";
-import { getAssistantProgramLinks } from "@shared/assistantProgramLinks";
-import { getYbiKnowledgeResponse } from "@shared/assistantKnowledge";
+import { getAssistantProgramLinks } from "../shared/assistantProgramLinks";
+import { getYbiKnowledgeResponse } from "../shared/assistantKnowledge";
 
 const visitorMessage = z.object({
   role: z.enum(["user", "assistant"]),

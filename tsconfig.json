@@ -1,5 +1,5 @@
 {
-  "include": ["frontend/src/**/*", "backend/**/*"],
+  "include": ["frontend/src/**/*", "backend/**/*", "api/**/*"],
   "exclude": ["node_modules", "build", "dist"],
   "compilerOptions": {
     "incremental": true,

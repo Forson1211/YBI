@@ -4,7 +4,7 @@ import {
   SITE_IMAGE_SLOTS,
   extractSlotKeyFromContentKey,
   formatImageContentKey,
-} from "@shared/siteImages";
+} from "../shared/siteImages";
 import {
   createCommunityInquiry,
   getDashboardOverview,
