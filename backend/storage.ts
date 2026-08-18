@@ -69,53 +69,40 @@ export async function storagePut(
     }
   }
 
-  // In serverless / Vercel environment or without cloud storage, use base64 data URL
-  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
-    const b64 =
-      typeof data === "string"
-        ? (data.startsWith("data:") ? data : Buffer.from(data).toString("base64"))
-        : Buffer.isBuffer(data)
-        ? data.toString("base64")
-        : Buffer.from(data).toString("base64");
-    const url = b64.startsWith("data:") ? b64 : `data:${contentType};base64,${b64}`;
-    return { key, url };
-  }
+  // Calculate base64 data URL for 100% cross-environment persistence
+  const b64 =
+    typeof data === "string"
+      ? (data.startsWith("data:") ? data : Buffer.from(data).toString("base64"))
+      : Buffer.isBuffer(data)
+      ? data.toString("base64")
+      : Buffer.from(data).toString("base64");
+  const dataUrl = b64.startsWith("data:") ? b64 : `data:${contentType};base64,${b64}`;
 
-  // Fallback: Local file storage for local development
-  try {
-    const buffer =
-      typeof data === "string"
-        ? Buffer.from(data)
-        : Buffer.isBuffer(data)
-        ? data
-        : Buffer.from(data);
-
-    // Save to backend/uploads and frontend/public/uploads if possible
-    const localUploadsDir = path.resolve(process.cwd(), "uploads");
-    const targetPath = path.join(localUploadsDir, key);
-    fs.mkdirSync(path.dirname(targetPath), { recursive: true });
-    fs.writeFileSync(targetPath, buffer);
-
-    // Also copy to frontend public directory if it exists
-    const frontendPublicUploads = path.resolve(process.cwd(), "frontend", "public", "uploads");
+  // If local development, also write to disk as backup
+  if (!process.env.VERCEL && !process.env.AWS_LAMBDA_FUNCTION_NAME) {
     try {
-      const fePath = path.join(frontendPublicUploads, key);
-      fs.mkdirSync(path.dirname(fePath), { recursive: true });
-      fs.writeFileSync(fePath, buffer);
-    } catch (e) {}
+      const buffer =
+        typeof data === "string"
+          ? Buffer.from(data)
+          : Buffer.isBuffer(data)
+          ? data
+          : Buffer.from(data);
 
-    return { key, url: `/uploads/${key}` };
-  } catch (err) {
-    // Ultimate fallback: data URL
-    const b64 =
-      typeof data === "string"
-        ? (data.startsWith("data:") ? data : Buffer.from(data).toString("base64"))
-        : Buffer.isBuffer(data)
-        ? data.toString("base64")
-        : Buffer.from(data).toString("base64");
-    const url = b64.startsWith("data:") ? b64 : `data:${contentType};base64,${b64}`;
-    return { key, url };
+      const localUploadsDir = path.resolve(process.cwd(), "uploads");
+      const targetPath = path.join(localUploadsDir, key);
+      fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+      fs.writeFileSync(targetPath, buffer);
+
+      const frontendPublicUploads = path.resolve(process.cwd(), "frontend", "public", "uploads");
+      try {
+        const fePath = path.join(frontendPublicUploads, key);
+        fs.mkdirSync(path.dirname(fePath), { recursive: true });
+        fs.writeFileSync(fePath, buffer);
+      } catch (e) {}
+    } catch (e) {}
   }
+
+  return { key, url: dataUrl };
 }
 
 export async function storageGet(relKey: string): Promise<{ key: string; url: string }> {
