@@ -23,6 +23,17 @@ app.use((req, res, next) => {
   next();
 });
 
+// URL Normalizer: Ensure tRPC procedure path is always reachable under /api/trpc
+app.use((req, _res, next) => {
+  const url = req.url || "/";
+  if (!url.startsWith("/api/trpc") && !url.startsWith("/trpc") && !url.startsWith("/api/")) {
+    if (url.includes(".")) {
+      req.url = `/api/trpc${url.startsWith("/") ? "" : "/"}${url}`;
+    }
+  }
+  next();
+});
+
 // 2. Safe body parsing for Vercel serverless environment (handles both pre-parsed and unparsed bodies)
 app.use((req, res, next) => {
   if (req.body && typeof req.body === "object") {
