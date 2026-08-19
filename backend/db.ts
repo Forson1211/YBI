@@ -502,6 +502,13 @@ export async function createCommunityInquiry(input: {
 }
 
 export async function listCommunityInquiries() {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from("communityInquiries").select("*").order("createdAt", { ascending: false });
+      if (!error && data) return data;
+    } catch {}
+  }
   const db = await getDb();
   if (!db) return memoryStore.communityInquiries;
   return db.select().from(communityInquiries).orderBy(desc(communityInquiries.createdAt));
@@ -512,6 +519,16 @@ export async function updateCommunityInquiry(input: {
   status: "new" | "in_progress" | "responded" | "closed";
   adminNotes?: string | null;
 }) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      await supabase.from("communityInquiries").update({
+        status: input.status,
+        adminNotes: input.adminNotes ?? null,
+        updatedAt: new Date().toISOString(),
+      }).eq("id", input.id);
+    } catch {}
+  }
   const db = await getDb();
   if (!db) {
     const item = memoryStore.communityInquiries.find(i => i.id === input.id);
@@ -530,6 +547,12 @@ export async function updateCommunityInquiry(input: {
 }
 
 export async function removeCommunityInquiry(id: number) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      await supabase.from("communityInquiries").delete().eq("id", id);
+    } catch {}
+  }
   const db = await getDb();
   if (!db) {
     const index = memoryStore.communityInquiries.findIndex(i => i.id === id);
@@ -540,6 +563,13 @@ export async function removeCommunityInquiry(id: number) {
 }
 
 export async function listProgramSessions() {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from("programSessions").select("*").order("scheduledFor", { ascending: true });
+      if (!error && data) return data;
+    } catch {}
+  }
   const db = await getDb();
   if (!db) return memoryStore.programSessions;
   return db.select().from(programSessions).orderBy(programSessions.scheduledFor, desc(programSessions.createdAt));
@@ -555,6 +585,34 @@ export async function saveProgramSession(input: {
   capacity?: number | null;
   status: "draft" | "published" | "complete";
 }) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      if (input.id) {
+        await supabase.from("programSessions").update({
+          title: input.title,
+          focusArea: input.focusArea,
+          details: input.details,
+          scheduledFor: input.scheduledFor.toISOString(),
+          venue: input.venue,
+          capacity: input.capacity ?? null,
+          status: input.status,
+          updatedAt: new Date().toISOString(),
+        }).eq("id", input.id);
+        return input.id;
+      }
+      const { data, error } = await supabase.from("programSessions").insert({
+        title: input.title,
+        focusArea: input.focusArea,
+        details: input.details,
+        scheduledFor: input.scheduledFor.toISOString(),
+        venue: input.venue,
+        capacity: input.capacity ?? null,
+        status: input.status,
+      }).select("id").single();
+      if (!error && data) return Number(data.id);
+    } catch {}
+  }
   const db = await getDb();
   if (!db) {
     if (input.id) {
@@ -580,6 +638,12 @@ export async function saveProgramSession(input: {
 }
 
 export async function removeProgramSession(id: number) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      await supabase.from("programSessions").delete().eq("id", id);
+    } catch {}
+  }
   const db = await getDb();
   if (!db) {
     const index = memoryStore.programSessions.findIndex(s => s.id === id);
@@ -590,6 +654,13 @@ export async function removeProgramSession(id: number) {
 }
 
 export async function listOpportunities() {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from("opportunities").select("*").order("sortOrder", { ascending: true });
+      if (!error && data) return data;
+    } catch {}
+  }
   const db = await getDb();
   if (!db) return memoryStore.opportunities;
   return db.select().from(opportunities).orderBy(opportunities.sortOrder, desc(opportunities.createdAt));
@@ -604,6 +675,32 @@ export async function saveOpportunity(input: {
   status: "draft" | "published" | "closed";
   sortOrder: number;
 }) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      if (input.id) {
+        await supabase.from("opportunities").update({
+          title: input.title,
+          category: input.category,
+          summary: input.summary,
+          commitment: input.commitment,
+          status: input.status,
+          sortOrder: input.sortOrder,
+          updatedAt: new Date().toISOString(),
+        }).eq("id", input.id);
+        return input.id;
+      }
+      const { data, error } = await supabase.from("opportunities").insert({
+        title: input.title,
+        category: input.category,
+        summary: input.summary,
+        commitment: input.commitment,
+        status: input.status,
+        sortOrder: input.sortOrder,
+      }).select("id").single();
+      if (!error && data) return Number(data.id);
+    } catch {}
+  }
   const db = await getDb();
   if (!db) {
     if (input.id) {
@@ -629,6 +726,12 @@ export async function saveOpportunity(input: {
 }
 
 export async function removeOpportunity(id: number) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      await supabase.from("opportunities").delete().eq("id", id);
+    } catch {}
+  }
   const db = await getDb();
   if (!db) {
     const index = memoryStore.opportunities.findIndex(o => o.id === id);
@@ -639,6 +742,13 @@ export async function removeOpportunity(id: number) {
 }
 
 export async function listImpactMetrics() {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from("impactMetrics").select("*").order("id", { ascending: true });
+      if (!error && data && data.length > 0) return data;
+    } catch {}
+  }
   const db = await getDb();
   if (!db) return memoryStore.impactMetrics;
   return db.select().from(impactMetrics).orderBy(impactMetrics.status, impactMetrics.focusArea, impactMetrics.title);
@@ -655,6 +765,36 @@ export async function saveImpactMetric(input: {
   period: string;
   status: "active" | "archived";
 }) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      if (input.id) {
+        await supabase.from("impactMetrics").update({
+          title: input.title,
+          focusArea: input.focusArea,
+          description: input.description,
+          currentValue: input.currentValue,
+          targetValue: input.targetValue ?? null,
+          unit: input.unit,
+          period: input.period,
+          status: input.status,
+          updatedAt: new Date().toISOString(),
+        }).eq("id", input.id);
+        return input.id;
+      }
+      const { data, error } = await supabase.from("impactMetrics").insert({
+        title: input.title,
+        focusArea: input.focusArea,
+        description: input.description,
+        currentValue: input.currentValue,
+        targetValue: input.targetValue ?? null,
+        unit: input.unit,
+        period: input.period,
+        status: input.status,
+      }).select("id").single();
+      if (!error && data) return Number(data.id);
+    } catch {}
+  }
   const db = await getDb();
   if (!db) {
     if (input.id) {
@@ -680,6 +820,12 @@ export async function saveImpactMetric(input: {
 }
 
 export async function removeImpactMetric(id: number) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      await supabase.from("impactMetrics").delete().eq("id", id);
+    } catch {}
+  }
   const db = await getDb();
   if (!db) {
     const index = memoryStore.impactMetrics.findIndex(m => m.id === id);
@@ -825,6 +971,17 @@ export async function removeGalleryPhoto(id: number) {
 }
 
 export async function listPrograms(includeDrafts = true) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      let query = supabase.from("programs").select("*").order("sortOrder", { ascending: true });
+      if (!includeDrafts) {
+        query = query.eq("status", "published");
+      }
+      const { data, error } = await query;
+      if (!error && data && data.length > 0) return data;
+    } catch {}
+  }
   const db = await getDb();
   if (!db) return includeDrafts ? memoryStore.programs : memoryStore.programs.filter(p => p.status === "published");
   const rows = await db.select().from(programs).orderBy(programs.sortOrder, desc(programs.createdAt));
@@ -839,6 +996,30 @@ export async function saveProgram(input: {
   status: "draft" | "published";
   sortOrder: number;
 }) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      if (input.id) {
+        await supabase.from("programs").update({
+          title: input.title,
+          category: input.category,
+          summary: input.summary,
+          status: input.status,
+          sortOrder: input.sortOrder,
+          updatedAt: new Date().toISOString(),
+        }).eq("id", input.id);
+        return input.id;
+      }
+      const { data, error } = await supabase.from("programs").insert({
+        title: input.title,
+        category: input.category,
+        summary: input.summary,
+        status: input.status,
+        sortOrder: input.sortOrder,
+      }).select("id").single();
+      if (!error && data) return Number(data.id);
+    } catch {}
+  }
   const db = await getDb();
   if (!db) {
     if (input.id) {
@@ -862,6 +1043,12 @@ export async function saveProgram(input: {
 }
 
 export async function removeProgram(id: number) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      await supabase.from("programs").delete().eq("id", id);
+    } catch {}
+  }
   const db = await getDb();
   if (!db) {
     const index = memoryStore.programs.findIndex(p => p.id === id);
@@ -872,6 +1059,17 @@ export async function removeProgram(id: number) {
 }
 
 export async function listUpdates(includeDrafts = true) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      let query = supabase.from("updates").select("*").order("createdAt", { ascending: false });
+      if (!includeDrafts) {
+        query = query.eq("status", "published");
+      }
+      const { data, error } = await query;
+      if (!error && data && data.length > 0) return data;
+    } catch {}
+  }
   const db = await getDb();
   if (!db) return includeDrafts ? memoryStore.updates : memoryStore.updates.filter(u => u.status === "published");
   const rows = await db.select().from(updates).orderBy(desc(updates.createdAt));
@@ -885,6 +1083,30 @@ export async function saveUpdate(input: {
   body: string;
   status: "draft" | "published";
 }) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      if (input.id) {
+        await supabase.from("updates").update({
+          title: input.title,
+          excerpt: input.excerpt,
+          body: input.body,
+          status: input.status,
+          publishedAt: input.status === "published" ? new Date().toISOString() : null,
+          updatedAt: new Date().toISOString(),
+        }).eq("id", input.id);
+        return input.id;
+      }
+      const { data, error } = await supabase.from("updates").insert({
+        title: input.title,
+        excerpt: input.excerpt,
+        body: input.body,
+        status: input.status,
+        publishedAt: input.status === "published" ? new Date().toISOString() : null,
+      }).select("id").single();
+      if (!error && data) return Number(data.id);
+    } catch {}
+  }
   const db = await getDb();
   if (!db) {
     if (input.id) {
@@ -915,6 +1137,12 @@ export async function saveUpdate(input: {
 }
 
 export async function removeUpdate(id: number) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      await supabase.from("updates").delete().eq("id", id);
+    } catch {}
+  }
   const db = await getDb();
   if (!db) {
     const index = memoryStore.updates.findIndex(u => u.id === id);
@@ -1910,6 +2138,17 @@ export async function updateDonationPayment(
 // ─── Phase 2: FAQ Items ────────────────────────────────────────────────────
 
 export async function listFaqItems(includeUnpublished = true) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      let query = supabase.from("faqItems").select("*").order("sortOrder", { ascending: true });
+      if (!includeUnpublished) {
+        query = query.eq("isPublished", true);
+      }
+      const { data, error } = await query;
+      if (!error && data && data.length > 0) return data;
+    } catch {}
+  }
   const db = await getDb();
   if (!db) {
     const items = includeUnpublished
@@ -1936,6 +2175,25 @@ export async function saveFaqItem(input: {
   sortOrder: number;
   isPublished: boolean;
 }) {
+  const values = {
+    question: input.question,
+    answer: input.answer,
+    category: input.category,
+    sortOrder: input.sortOrder,
+    isPublished: input.isPublished,
+    updatedAt: new Date().toISOString(),
+  };
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      if (input.id) {
+        await supabase.from("faqItems").update(values).eq("id", input.id);
+        return input.id;
+      }
+      const { data, error } = await supabase.from("faqItems").insert(values).select("id").single();
+      if (!error && data) return Number(data.id);
+    } catch {}
+  }
   const db = await getDb();
   if (!db) {
     if (input.id) {
@@ -1949,20 +2207,12 @@ export async function saveFaqItem(input: {
     memoryStore.faqItems.push({ id, ...input, createdAt: new Date(), updatedAt: new Date() });
     return id;
   }
-  const values = {
-    question: input.question,
-    answer: input.answer,
-    category: input.category,
-    sortOrder: input.sortOrder,
-    isPublished: input.isPublished,
-    updatedAt: new Date(),
-  };
   try {
     if (input.id) {
-      await db.update(faqItems).set(values).where(eq(faqItems.id, input.id));
+      await db.update(faqItems).set(values as any).where(eq(faqItems.id, input.id));
       return input.id;
     }
-    const result = await db.insert(faqItems).values(values).returning({ id: faqItems.id });
+    const result = await db.insert(faqItems).values(values as any).returning({ id: faqItems.id });
     return Number(result[0].id);
   } catch {
     if (input.id) {
@@ -1979,6 +2229,12 @@ export async function saveFaqItem(input: {
 }
 
 export async function removeFaqItem(id: number) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      await supabase.from("faqItems").delete().eq("id", id);
+    } catch {}
+  }
   const db = await getDb();
   if (!db) {
     const index = memoryStore.faqItems.findIndex(f => f.id === id);
