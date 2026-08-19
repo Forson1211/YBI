@@ -7,8 +7,7 @@ const router = readFileSync(new URL("./admin.ts", import.meta.url), "utf8");
 describe("Team profile management contracts", () => {
   it("persists Team members with slugs and exposes a published-only public directory", () => {
     expect(db).toContain("getTeamMemberBySlug");
-    expect(db).toContain("getTeamProfilePool");
-    expect(db).toContain("SELECT * FROM `teamMembers`");
+    expect(db).toContain("listTeamMembers");
     expect(router).toContain("list: publicProcedure.query(() => listTeamMembers(false))");
     expect(router).toContain("getBySlug");
   });

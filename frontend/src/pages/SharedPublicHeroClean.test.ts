@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const stylesheet = readFileSync(new URL("../index.css", import.meta.url), "utf8");
+const stylesheet = readFileSync(new URL("../index.css", import.meta.url), "utf8").replace(/\r\n/g, "\n");
 
 describe("shared public-page hero styling", () => {
   it("suppresses the legacy overlay decorations for every page using page-hero", () => {

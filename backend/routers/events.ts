@@ -175,11 +175,14 @@ export const eventsPublicRouter = router({
         isWaitlist: false,
       });
 
+      const baseUrl =
+        process.env.APP_URL ||
+        (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
+        "http://localhost:3000";
+
       const callbackUrl =
         input.callbackUrl ||
-        (process.env.APP_URL
-          ? `${process.env.APP_URL}/events/${event.slug}?ref=${paystackRef}`
-          : `http://localhost:3000/events/${event.slug}?ref=${paystackRef}`);
+        `${baseUrl}/events/${event.slug}?ref=${paystackRef}`;
 
       const paystackRes = await initiatePaystackPayment({
         email: input.email,

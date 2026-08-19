@@ -71,11 +71,14 @@ export const donationsPublicRouter = router({
         paymentStatus: "pending",
       });
 
+      const baseUrl =
+        process.env.APP_URL ||
+        (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
+        "http://localhost:3000";
+
       const callbackUrl =
         input.callbackUrl ||
-        (process.env.APP_URL
-          ? `${process.env.APP_URL}/get-involved?don_ref=${paystackRef}`
-          : `http://localhost:3000/get-involved?don_ref=${paystackRef}`);
+        `${baseUrl}/get-involved?don_ref=${paystackRef}`;
 
       const paystackRes = await initiatePaystackPayment({
         email: input.email,

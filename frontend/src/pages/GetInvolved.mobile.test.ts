@@ -2,8 +2,8 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 describe("Get Involved donation flow on mobile", () => {
-  const appSource = readFileSync(new URL("../App.tsx", import.meta.url), "utf8");
-  const styles = readFileSync(new URL("../index.css", import.meta.url), "utf8");
+  const appSource = readFileSync(new URL("../App.tsx", import.meta.url), "utf8").replace(/\r\n/g, "\n");
+  const styles = readFileSync(new URL("../index.css", import.meta.url), "utf8").replace(/\r\n/g, "\n");
 
   it("keeps the donation path available from the dedicated donate route", () => {
     expect(appSource).toContain('path={"/donate"} component={GetInvolved}');
