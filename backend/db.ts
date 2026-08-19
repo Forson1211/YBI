@@ -415,6 +415,63 @@ export async function getUserByOpenId(openId: string) {
 }
 
 export async function getDashboardOverview() {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      const [
+        { count: galleryCount },
+        { count: programCount },
+        { count: inquiryCount },
+        { count: sessionCount },
+        { count: opportunityCount },
+        { count: metricCount },
+        { count: eventCount },
+        { count: blogCount },
+        { count: donationCount },
+        { count: regCount },
+        { count: faqCount },
+        { count: subCount },
+        { count: teamCount },
+        { count: contentCount },
+      ] = await Promise.all([
+        supabase.from("galleryPhotos").select("*", { count: "exact", head: true }),
+        supabase.from("programs").select("*", { count: "exact", head: true }),
+        supabase.from("communityInquiries").select("*", { count: "exact", head: true }),
+        supabase.from("programSessions").select("*", { count: "exact", head: true }),
+        supabase.from("opportunities").select("*", { count: "exact", head: true }),
+        supabase.from("impactMetrics").select("*", { count: "exact", head: true }),
+        supabase.from("events").select("*", { count: "exact", head: true }),
+        supabase.from("blogPosts").select("*", { count: "exact", head: true }),
+        supabase.from("donations").select("*", { count: "exact", head: true }),
+        supabase.from("eventRegistrations").select("*", { count: "exact", head: true }),
+        supabase.from("faqItems").select("*", { count: "exact", head: true }),
+        supabase.from("newsletterSubscribers").select("*", { count: "exact", head: true }),
+        supabase.from("teamMembers").select("*", { count: "exact", head: true }),
+        supabase.from("siteContent").select("*", { count: "exact", head: true }),
+      ]);
+
+      return {
+        gallery: galleryCount ?? 0,
+        programs: programCount ?? 0,
+        updates: 0,
+        content: contentCount ?? 0,
+        inquiries: inquiryCount ?? 0,
+        sessions: sessionCount ?? 0,
+        opportunities: opportunityCount ?? 0,
+        impactMetrics: metricCount ?? 0,
+        teamMembers: teamCount ?? 0,
+        subscribers: subCount ?? 0,
+        events: eventCount ?? 0,
+        blogPosts: blogCount ?? 0,
+        donations: donationCount ?? 0,
+        registrations: regCount ?? 0,
+        faqItems: faqCount ?? 0,
+      };
+    } catch (e) {
+      console.warn("[Database] getDashboardOverview Supabase error:", e);
+    }
+  }
+
   const db = await getDb();
   if (!db) {
     return {
@@ -1157,7 +1214,7 @@ export async function listSiteContent() {
   if (supabase) {
     try {
       const { data, error } = await supabase.from("siteContent").select("*").order("contentKey");
-      if (!error && data && data.length > 0) {
+      if (!error && data) {
         data.forEach(item => memoryStore.siteContent.set(item.contentKey, item));
         return data;
       }
@@ -1294,7 +1351,7 @@ export async function listTeamMembers(includeUnpublished = true) {
         query = query.eq("isPublished", true);
       }
       const { data, error } = await query;
-      if (!error && data && data.length > 0) {
+      if (!error && data) {
         return data;
       }
     } catch (e) {}
@@ -1545,6 +1602,13 @@ export async function addNewsletterSubscriber(input: {
 }
 
 export async function listNewsletterSubscribers() {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from("newsletterSubscribers").select("*").order("subscribedAt", { ascending: false });
+      if (!error && data) return data;
+    } catch {}
+  }
   const db = await getDb();
   if (!db) return memoryStore.newsletterSubscribers;
   try {
@@ -1555,6 +1619,12 @@ export async function listNewsletterSubscribers() {
 }
 
 export async function removeNewsletterSubscriber(id: number) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      await supabase.from("newsletterSubscribers").delete().eq("id", id);
+    } catch {}
+  }
   const db = await getDb();
   if (!db) {
     const index = memoryStore.newsletterSubscribers.findIndex(s => s.id === id);
@@ -1580,7 +1650,7 @@ export async function listEvents(includeDrafts = true) {
         query = query.eq("status", "published");
       }
       const { data, error } = await query;
-      if (!error && data && data.length > 0) {
+      if (!error && data) {
         return data;
       }
     } catch (e) {}
@@ -1643,11 +1713,11 @@ export async function saveEvent(input: {
   title: string;
   description: string;
   imageUrl?: string | null;
-  scheduledFor: Date;
+  scheduledFor: string;
   location: string;
   capacity?: number | null;
-  isFree: boolean;
-  priceGhs: number;
+  isFree?: boolean;
+  priceGhs?: number;
   status: "draft" | "published" | "cancelled";
 }) {
   const values = {
@@ -1655,11 +1725,11 @@ export async function saveEvent(input: {
     title: input.title,
     description: input.description,
     imageUrl: input.imageUrl ?? null,
-    scheduledFor: input.scheduledFor instanceof Date ? input.scheduledFor.toISOString() : input.scheduledFor,
+    scheduledFor: input.scheduledFor,
     location: input.location,
     capacity: input.capacity ?? null,
-    isFree: input.isFree,
-    priceGhs: input.priceGhs,
+    isFree: input.isFree ?? true,
+    priceGhs: input.priceGhs ?? 0,
     status: input.status,
     updatedAt: new Date().toISOString(),
   };
@@ -1677,7 +1747,6 @@ export async function saveEvent(input: {
         if (!error && data?.id) {
           const idx = memoryStore.events.findIndex(e => e.id === input.id);
           if (idx !== -1) memoryStore.events[idx] = { ...memoryStore.events[idx], ...data };
-          else memoryStore.events.push(data);
           return data.id;
         }
       } else {
@@ -1704,36 +1773,31 @@ export async function saveEvent(input: {
     if (input.id) {
       const index = memoryStore.events.findIndex(e => e.id === input.id);
       if (index !== -1) {
-        memoryStore.events[index] = { ...memoryStore.events[index], ...input, updatedAt: new Date() };
+        memoryStore.events[index] = { ...memoryStore.events[index], ...input, scheduledFor: new Date(input.scheduledFor), updatedAt: new Date() };
         return input.id;
       }
     }
     const id = ++memoryStore.autoId;
-    memoryStore.events.push({ id, ...input, createdAt: new Date(), updatedAt: new Date() });
+    memoryStore.events.push({ id, ...input, scheduledFor: new Date(input.scheduledFor), createdAt: new Date(), updatedAt: new Date() });
     return id;
   }
-
   try {
     if (input.id) {
-      await db.update(events).set({ ...values, scheduledFor: input.scheduledFor } as any).where(eq(events.id, input.id));
-      const idx = memoryStore.events.findIndex(e => e.id === input.id);
-      if (idx !== -1) memoryStore.events[idx] = { ...memoryStore.events[idx], ...values, id: input.id };
+      await db.update(events).set({ ...values, scheduledFor: new Date(input.scheduledFor) } as any).where(eq(events.id, input.id));
       return input.id;
     }
-    const result = await db.insert(events).values({ ...values, scheduledFor: input.scheduledFor } as any).returning({ id: events.id });
-    const newId = Number(result[0].id);
-    memoryStore.events.push({ id: newId, ...values });
-    return newId;
+    const result = await db.insert(events).values({ ...values, scheduledFor: new Date(input.scheduledFor) } as any).returning({ id: events.id });
+    return Number(result[0].id);
   } catch {
     if (input.id) {
       const index = memoryStore.events.findIndex(e => e.id === input.id);
       if (index !== -1) {
-        memoryStore.events[index] = { ...memoryStore.events[index], ...input, updatedAt: new Date() };
+        memoryStore.events[index] = { ...memoryStore.events[index], ...input, scheduledFor: new Date(input.scheduledFor), updatedAt: new Date() };
         return input.id;
       }
     }
     const id = ++memoryStore.autoId;
-    memoryStore.events.push({ id, ...input, createdAt: new Date(), updatedAt: new Date() });
+    memoryStore.events.push({ id, ...input, scheduledFor: new Date(input.scheduledFor), createdAt: new Date(), updatedAt: new Date() });
     return id;
   }
 }
@@ -1824,7 +1888,7 @@ export async function listEventRegistrations(eventId?: number) {
       let query = supabase.from("eventRegistrations").select("*").order("createdAt", { ascending: false });
       if (eventId) query = query.eq("eventId", eventId);
       const { data, error } = await query;
-      if (!error && data && data.length > 0) return data;
+      if (!error && data) return data;
     } catch (e) {}
   }
   const db = await getDb();
@@ -1837,7 +1901,7 @@ export async function listEventRegistrations(eventId?: number) {
     const rows = eventId
       ? await db.select().from(eventRegistrations).where(eq(eventRegistrations.eventId, eventId)).orderBy(desc(eventRegistrations.createdAt))
       : await db.select().from(eventRegistrations).orderBy(desc(eventRegistrations.createdAt));
-    if (rows && rows.length > 0) return rows;
+    if (rows) return rows;
     return eventId
       ? memoryStore.eventRegistrations.filter(r => r.eventId === eventId)
       : memoryStore.eventRegistrations;
@@ -1892,7 +1956,7 @@ export async function listBlogPosts(includeDrafts = true) {
       let query = supabase.from("blogPosts").select("*").order("publishedAt", { ascending: false });
       if (!includeDrafts) query = query.eq("status", "published");
       const { data, error } = await query;
-      if (!error && data && data.length > 0) return data;
+      if (!error && data) return data;
     } catch (e) {}
   }
   const db = await getDb();

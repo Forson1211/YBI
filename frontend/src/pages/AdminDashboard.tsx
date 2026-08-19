@@ -580,37 +580,18 @@ function Overview() {
   const [chartPeriod, setChartPeriod] = useState<"weekly" | "monthly">("weekly");
   const [searchFilter, setSearchFilter] = useState("");
 
-  // ── 1. Pure Live Dynamic Counters (Instant with background sync) ──
-  const liveEvents = useMemo(() => {
-    if (recentEvents && recentEvents.length > 0) return recentEvents;
-    if (cachedOverview.events && cachedOverview.events.length > 0) return cachedOverview.events;
-    return baselineEvents;
-  }, [recentEvents, cachedOverview.events, baselineEvents]);
+  // ── 1. Pure Live Dynamic Counters from Supabase ──
+  const liveEvents = recentEvents ?? [];
+  const liveArticles = recentBlogPosts ?? [];
+  const liveInquiries = recentInquiries ?? [];
+  const liveRegistrations = recentRegistrations ?? [];
 
-  const liveArticles = useMemo(() => {
-    if (recentBlogPosts && recentBlogPosts.length > 0) return recentBlogPosts;
-    if (cachedOverview.blogPosts && cachedOverview.blogPosts.length > 0) return cachedOverview.blogPosts;
-    return baselineArticles;
-  }, [recentBlogPosts, cachedOverview.blogPosts, baselineArticles]);
-
-  const liveInquiries = useMemo(() => {
-    if (recentInquiries) return recentInquiries;
-    if (cachedOverview.inquiries) return cachedOverview.inquiries;
-    return [];
-  }, [recentInquiries, cachedOverview.inquiries]);
-
-  const liveRegistrations = useMemo(() => {
-    if (recentRegistrations) return recentRegistrations;
-    if (cachedOverview.registrations) return cachedOverview.registrations;
-    return [];
-  }, [recentRegistrations, cachedOverview.registrations]);
-
-  const totalInquiries = recentInquiries?.length ?? cachedOverview.inquiries?.length ?? overview?.inquiries ?? liveInquiries.length;
-  const totalRegistrations = recentRegistrations?.length ?? cachedOverview.registrations?.length ?? overview?.registrations ?? liveRegistrations.length;
-  const totalSubscribers = subscribersList?.length ?? cachedOverview.subscribers?.length ?? overview?.subscribers ?? 0;
-  const totalEvents = liveEvents.length;
-  const activeEventsCount = liveEvents.filter((e) => e.status === "published").length;
-  const publishedArticlesCount = liveArticles.filter((a) => a.status === "published").length;
+  const totalInquiries = overview?.inquiries ?? liveInquiries.length;
+  const totalRegistrations = overview?.registrations ?? liveRegistrations.length;
+  const totalSubscribers = overview?.subscribers ?? subscribersList?.length ?? 0;
+  const totalEvents = overview?.events ?? liveEvents.length;
+  const activeEventsCount = liveEvents.filter((e) => e.status === "published").length || overview?.events || 0;
+  const publishedArticlesCount = liveArticles.filter((a) => a.status === "published").length || overview?.blogPosts || 0;
 
   // Real live total community reach
   const liveTotalReach = totalRegistrations + totalSubscribers + totalInquiries;
