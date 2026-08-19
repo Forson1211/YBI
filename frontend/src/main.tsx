@@ -58,12 +58,13 @@ const trpcClient = trpc.createClient({
         try {
           const raw = sessionStorage.getItem("manus-cookie") || localStorage.getItem("manus-cookie");
           if (raw) {
-            let token = raw;
+            let token = raw.trim().replace(/^"|"$/g, "");
             const prefix = `${COOKIE_NAME}=`;
-            if (raw.includes(prefix)) {
-              const pair = raw.split(";").find(s => s.trim().startsWith(prefix));
-              token = pair?.trim().slice(prefix.length) || raw;
+            if (token.includes(prefix)) {
+              const pair = token.split(";").find(s => s.trim().startsWith(prefix));
+              token = pair?.trim().slice(prefix.length) || token;
             }
+            token = token.trim().replace(/^"|"$/g, "");
             if (token) {
               return { Authorization: `Bearer ${token}` };
             }

@@ -1615,13 +1615,182 @@ function AssistantQuickQuestionsManager() {
 }
 
 function ProgramsManager() {
-  const utils = trpc.useUtils(); const { data: programs, isLoading, isError } = trpc.admin.programs.list.useQuery(); const save = trpc.admin.programs.save.useMutation({ onSuccess: () => { utils.admin.programs.list.invalidate(); utils.admin.overview.invalidate(); toast.success("Program saved."); }, onError: (error) => toast.error("Program could not be saved.", { description: error.message }) }); const remove = trpc.admin.programs.remove.useMutation({ onSuccess: () => { utils.admin.programs.list.invalidate(); utils.admin.overview.invalidate(); toast.success("Program removed."); }, onError: (error) => toast.error("Program could not be removed.", { description: error.message }) }); const [form, setForm] = useState<ProgramForm>(blankProgram); const update = <K extends keyof ProgramForm>(key: K, value: ProgramForm[K]) => setForm(current => ({ ...current, [key]: value }));
-  return <div className="admin-manager-grid"><section className="admin-panel"><PanelHeading eyebrow="Programs" title={form.id ? "Edit program" : "Add a program"} icon={<Plus size={24} />} /><form className="admin-form" onSubmit={(event) => { event.preventDefault(); save.mutate(form, { onSuccess: () => setForm(blankProgram) }); }}><label>Program title<input required value={form.title} onChange={(event) => update("title", event.target.value)} placeholder="Public Speaking" /></label><label>Category<input required value={form.category} onChange={(event) => update("category", event.target.value)} placeholder="Leadership development" /></label><label>Summary<textarea required value={form.summary} onChange={(event) => update("summary", event.target.value)} placeholder="Describe the practical benefit and audience." /></label><div className="admin-form-split"><label>Status<select value={form.status} onChange={(event) => update("status", event.target.value as ProgramForm["status"])}><option value="draft">Draft</option><option value="published">Published</option></select></label><label>Order<input type="number" min="0" value={form.sortOrder} onChange={(event) => update("sortOrder", Number(event.target.value))} /></label></div><SaveButton pending={save.isPending} label={form.id ? "Save program" : "Create program"} />{form.id ? <CancelEdit onClick={() => setForm(blankProgram)} /> : null}</form></section>{isError ? <section className="admin-panel"><ErrorCopy text="Programs could not be loaded. Refresh and try again." /></section> : <RecordsList title="Programs" items={programs ?? []} loading={isLoading} onEdit={(program) => setForm({ id: program.id, title: program.title, category: program.category, summary: program.summary, status: program.status, sortOrder: program.sortOrder })} onRemove={(id, title) => { if (window.confirm(`Remove “${title}”?`)) remove.mutate({ id }); }} />}</div>;
+  const utils = trpc.useUtils();
+  const { data: adminPrograms, isLoading, isError } = trpc.admin.programs.list.useQuery();
+  const { data: publicPrograms } = trpc.publicSite.programs.useQuery(undefined, { enabled: isError || !adminPrograms });
+  const programs = adminPrograms ?? publicPrograms ?? [];
+
+  const save = trpc.admin.programs.save.useMutation({
+    onSuccess: () => {
+      utils.admin.programs.list.invalidate();
+      utils.publicSite.programs.invalidate();
+      utils.admin.overview.invalidate();
+      toast.success("Program saved.");
+    },
+    onError: (error) => toast.error("Program could not be saved.", { description: error.message }),
+  });
+
+  const remove = trpc.admin.programs.remove.useMutation({
+    onSuccess: () => {
+      utils.admin.programs.list.invalidate();
+      utils.publicSite.programs.invalidate();
+      utils.admin.overview.invalidate();
+      toast.success("Program removed.");
+    },
+    onError: (error) => toast.error("Program could not be removed.", { description: error.message }),
+  });
+
+  const [form, setForm] = useState<ProgramForm>(blankProgram);
+  const update = <K extends keyof ProgramForm>(key: K, value: ProgramForm[K]) => setForm((current) => ({ ...current, [key]: value }));
+
+  return (
+    <div className="admin-manager-grid">
+      <section className="admin-panel">
+        <PanelHeading eyebrow="Programs" title={form.id ? "Edit program" : "Add a program"} icon={<Plus size={24} />} />
+        <form
+          className="admin-form"
+          onSubmit={(event) => {
+            event.preventDefault();
+            save.mutate(form, { onSuccess: () => setForm(blankProgram) });
+          }}
+        >
+          <label>
+            Program title
+            <input required value={form.title} onChange={(event) => update("title", event.target.value)} placeholder="Public Speaking" />
+          </label>
+          <label>
+            Category
+            <input required value={form.category} onChange={(event) => update("category", event.target.value)} placeholder="Leadership development" />
+          </label>
+          <label>
+            Summary
+            <textarea required value={form.summary} onChange={(event) => update("summary", event.target.value)} placeholder="Describe the practical benefit and audience." />
+          </label>
+          <div className="admin-form-split">
+            <label>
+              Status
+              <select value={form.status} onChange={(event) => update("status", event.target.value as ProgramForm["status"])}>
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+              </select>
+            </label>
+            <label>
+              Order
+              <input type="number" min="0" value={form.sortOrder} onChange={(event) => update("sortOrder", Number(event.target.value))} />
+            </label>
+          </div>
+          <SaveButton pending={save.isPending} label={form.id ? "Save program" : "Create program"} />
+          {form.id ? <CancelEdit onClick={() => setForm(blankProgram)} /> : null}
+        </form>
+      </section>
+      {isError && programs.length === 0 ? (
+        <section className="admin-panel">
+          <ErrorCopy text="Programs could not be loaded. Refresh and try again." />
+        </section>
+      ) : (
+        <RecordsList
+          title="Programs"
+          items={programs}
+          loading={isLoading && programs.length === 0}
+          onEdit={(program) =>
+            setForm({
+              id: program.id,
+              title: program.title,
+              category: program.category,
+              summary: program.summary,
+              status: program.status,
+              sortOrder: program.sortOrder,
+            })
+          }
+          onRemove={(id, title) => {
+            if (window.confirm(`Remove “${title}”?`)) remove.mutate({ id });
+          }}
+        />
+      )}
+    </div>
+  );
 }
 
 function UpdatesManager() {
-  const utils = trpc.useUtils(); const { data: updates, isLoading, isError } = trpc.admin.updates.list.useQuery(); const save = trpc.admin.updates.save.useMutation({ onSuccess: () => { utils.admin.updates.list.invalidate(); utils.admin.overview.invalidate(); toast.success("Update saved."); }, onError: (error) => toast.error("Update could not be saved.", { description: error.message }) }); const remove = trpc.admin.updates.remove.useMutation({ onSuccess: () => { utils.admin.updates.list.invalidate(); utils.admin.overview.invalidate(); toast.success("Update removed."); }, onError: (error) => toast.error("Update could not be removed.", { description: error.message }) }); const [form, setForm] = useState<UpdateForm>(blankUpdate); const update = <K extends keyof UpdateForm>(key: K, value: UpdateForm[K]) => setForm(current => ({ ...current, [key]: value }));
-  return <div className="admin-manager-grid"><section className="admin-panel"><PanelHeading eyebrow="News & notes" title={form.id ? "Edit update" : "Create an update"} icon={<FileText size={24} />} /><form className="admin-form" onSubmit={(event) => { event.preventDefault(); save.mutate(form, { onSuccess: () => setForm(blankUpdate) }); }}><label>Headline<input required value={form.title} onChange={(event) => update("title", event.target.value)} placeholder="Start with the room you are in" /></label><label>Short introduction<textarea required value={form.excerpt} onChange={(event) => update("excerpt", event.target.value)} placeholder="A summary for update listings." /></label><label>Full text<textarea className="admin-tall-textarea" required value={form.body} onChange={(event) => update("body", event.target.value)} placeholder="Write the full update here." /></label><label>Status<select value={form.status} onChange={(event) => update("status", event.target.value as UpdateForm["status"])}><option value="draft">Draft</option><option value="published">Published</option></select></label><SaveButton pending={save.isPending} label={form.id ? "Save update" : "Create update"} />{form.id ? <CancelEdit onClick={() => setForm(blankUpdate)} /> : null}</form></section>{isError ? <section className="admin-panel"><ErrorCopy text="Updates could not be loaded. Refresh and try again." /></section> : <RecordsList title="Updates" items={updates ?? []} loading={isLoading} onEdit={(item) => setForm({ id: item.id, title: item.title, excerpt: item.excerpt, body: item.body, status: item.status })} onRemove={(id, title) => { if (window.confirm(`Remove “${title}”?`)) remove.mutate({ id }); }} />}</div>;
+  const utils = trpc.useUtils();
+  const { data: adminUpdates, isLoading, isError } = trpc.admin.updates.list.useQuery();
+  const { data: publicUpdates } = trpc.publicSite.updates.useQuery(undefined, { enabled: isError || !adminUpdates });
+  const updates = adminUpdates ?? publicUpdates ?? [];
+
+  const save = trpc.admin.updates.save.useMutation({
+    onSuccess: () => {
+      utils.admin.updates.list.invalidate();
+      utils.publicSite.updates.invalidate();
+      utils.admin.overview.invalidate();
+      toast.success("Update saved.");
+    },
+    onError: (error) => toast.error("Update could not be saved.", { description: error.message }),
+  });
+
+  const remove = trpc.admin.updates.remove.useMutation({
+    onSuccess: () => {
+      utils.admin.updates.list.invalidate();
+      utils.publicSite.updates.invalidate();
+      utils.admin.overview.invalidate();
+      toast.success("Update removed.");
+    },
+    onError: (error) => toast.error("Update could not be removed.", { description: error.message }),
+  });
+
+  const [form, setForm] = useState<UpdateForm>(blankUpdate);
+  const update = <K extends keyof UpdateForm>(key: K, value: UpdateForm[K]) => setForm((current) => ({ ...current, [key]: value }));
+
+  return (
+    <div className="admin-manager-grid">
+      <section className="admin-panel">
+        <PanelHeading eyebrow="News & notes" title={form.id ? "Edit update" : "Create an update"} icon={<FileText size={24} />} />
+        <form
+          className="admin-form"
+          onSubmit={(event) => {
+            event.preventDefault();
+            save.mutate(form, { onSuccess: () => setForm(blankUpdate) });
+          }}
+        >
+          <label>
+            Headline
+            <input required value={form.title} onChange={(event) => update("title", event.target.value)} placeholder="Start with the room you are in" />
+          </label>
+          <label>
+            Short introduction
+            <textarea required value={form.excerpt} onChange={(event) => update("excerpt", event.target.value)} placeholder="A summary for update listings." />
+          </label>
+          <label>
+            Full text
+            <textarea className="admin-tall-textarea" required value={form.body} onChange={(event) => update("body", event.target.value)} placeholder="Write the full update here." />
+          </label>
+          <label>
+            Status
+            <select value={form.status} onChange={(event) => update("status", event.target.value as UpdateForm["status"])}>
+              <option value="draft">Draft</option>
+              <option value="published">Published</option>
+            </select>
+          </label>
+          <SaveButton pending={save.isPending} label={form.id ? "Save update" : "Create update"} />
+          {form.id ? <CancelEdit onClick={() => setForm(blankUpdate)} /> : null}
+        </form>
+      </section>
+      {isError && updates.length === 0 ? (
+        <section className="admin-panel">
+          <ErrorCopy text="Updates could not be loaded. Refresh and try again." />
+        </section>
+      ) : (
+        <RecordsList
+          title="Updates"
+          items={updates}
+          loading={isLoading && updates.length === 0}
+          onEdit={(item) => setForm({ id: item.id, title: item.title, excerpt: item.excerpt, body: item.body, status: item.status })}
+          onRemove={(id, title) => {
+            if (window.confirm(`Remove “${title}”?`)) remove.mutate({ id });
+          }}
+        />
+      )}
+    </div>
+  );
 }
 
 function ContentManager() {

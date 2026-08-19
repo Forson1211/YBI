@@ -260,12 +260,12 @@ class SDKServer {
 
   async authenticateRequest(req: Request): Promise<AuthenticatedUser> {
     const cookies = this.parseCookies(req.headers.cookie);
-    const cookieToken = cookies.get(COOKIE_NAME);
+    const cookieToken = (cookies.get(COOKIE_NAME) || "").trim().replace(/^"|"$/g, "");
 
     let headerToken: string | undefined;
     const authHeader = req.headers.authorization;
     if (typeof authHeader === "string" && authHeader.startsWith("Bearer ")) {
-      headerToken = authHeader.slice(7).trim();
+      headerToken = authHeader.slice(7).trim().replace(/^"|"$/g, "");
     }
 
     // Try both headerToken and cookieToken
@@ -283,17 +283,17 @@ class SDKServer {
     }
 
     // Support direct admin tokens (e.g. offline admin login)
-    const tokenCandidate = headerToken || cookieToken;
+    const tokenCandidate = (headerToken || cookieToken || "").trim().replace(/^"|"$/g, "");
     if (
       tokenCandidate === "offline_admin_token" ||
       tokenCandidate === "admin-user" ||
       tokenCandidate === "admin" ||
-      (tokenCandidate && tokenCandidate.startsWith("admin_"))
+      tokenCandidate.startsWith("admin_")
     ) {
       const now = new Date();
       return {
         id: 1,
-        openId: "admin-user",
+        openId: "admin_ybi_owner",
         name: "YBI Administrator",
         email: "admin@ybi.org",
         role: "admin",

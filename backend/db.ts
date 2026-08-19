@@ -901,7 +901,7 @@ export async function listGalleryPhotos(includeUnpublished = true) {
         query = query.eq("isPublished", true);
       }
       const { data, error } = await query;
-      if (!error && data && data.length > 0) {
+      if (!error && data) {
         return data;
       }
     } catch (e) {}
@@ -912,8 +912,12 @@ export async function listGalleryPhotos(includeUnpublished = true) {
     const rows = await db.select().from(galleryPhotos).orderBy(galleryPhotos.sortOrder, desc(galleryPhotos.createdAt));
     return includeUnpublished ? rows : rows.filter(photo => photo.isPublished);
   } catch {
-    return includeUnpublished ? memoryStore.galleryPhotos : memoryStore.galleryPhotos.filter(p => p.isPublished);
+    return includeDraftsGallery(includeUnpublished);
   }
+}
+
+function includeDraftsGallery(includeUnpublished: boolean) {
+  return includeUnpublished ? memoryStore.galleryPhotos : memoryStore.galleryPhotos.filter(p => p.isPublished);
 }
 
 export async function saveGalleryPhoto(input: {
@@ -960,7 +964,7 @@ export async function saveGalleryPhoto(input: {
           .select()
           .single();
         if (!error && data?.id) {
-          memoryStore.galleryPhotos.unshift(data);
+          memoryStore.galleryPhotos.push(data);
           return data.id;
         }
       }
@@ -1036,13 +1040,17 @@ export async function listPrograms(includeDrafts = true) {
         query = query.eq("status", "published");
       }
       const { data, error } = await query;
-      if (!error && data && data.length > 0) return data;
+      if (!error && data) return data;
     } catch {}
   }
   const db = await getDb();
   if (!db) return includeDrafts ? memoryStore.programs : memoryStore.programs.filter(p => p.status === "published");
-  const rows = await db.select().from(programs).orderBy(programs.sortOrder, desc(programs.createdAt));
-  return includeDrafts ? rows : rows.filter(program => program.status === "published");
+  try {
+    const rows = await db.select().from(programs).orderBy(programs.sortOrder, desc(programs.createdAt));
+    return includeDrafts ? rows : rows.filter(program => program.status === "published");
+  } catch {
+    return includeDrafts ? memoryStore.programs : memoryStore.programs.filter(p => p.status === "published");
+  }
 }
 
 export async function saveProgram(input: {
@@ -1124,13 +1132,17 @@ export async function listUpdates(includeDrafts = true) {
         query = query.eq("status", "published");
       }
       const { data, error } = await query;
-      if (!error && data && data.length > 0) return data;
+      if (!error && data) return data;
     } catch {}
   }
   const db = await getDb();
   if (!db) return includeDrafts ? memoryStore.updates : memoryStore.updates.filter(u => u.status === "published");
-  const rows = await db.select().from(updates).orderBy(desc(updates.createdAt));
-  return includeDrafts ? rows : rows.filter(update => update.status === "published");
+  try {
+    const rows = await db.select().from(updates).orderBy(desc(updates.createdAt));
+    return includeDrafts ? rows : rows.filter(update => update.status === "published");
+  } catch {
+    return includeDrafts ? memoryStore.updates : memoryStore.updates.filter(u => u.status === "published");
+  }
 }
 
 export async function saveUpdate(input: {
@@ -2167,7 +2179,7 @@ export async function listDonations() {
   if (supabase) {
     try {
       const { data, error } = await supabase.from("donations").select("*").order("createdAt", { ascending: false });
-      if (!error && data && data.length > 0) return data;
+      if (!error && data) return data;
     } catch (e) {}
   }
   const db = await getDb();
@@ -2210,7 +2222,7 @@ export async function listFaqItems(includeUnpublished = true) {
         query = query.eq("isPublished", true);
       }
       const { data, error } = await query;
-      if (!error && data && data.length > 0) return data;
+      if (!error && data) return data;
     } catch {}
   }
   const db = await getDb();
