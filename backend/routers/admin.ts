@@ -254,31 +254,36 @@ export const adminRouter = router({
     }),
     save: adminProcedure.input(siteImageInput).mutation(async ({ input }) => {
       const slot = SITE_IMAGE_SLOTS.find(s => s.key === input.slotKey);
+      let imageUrl = input.imageUrl;
+      if (imageUrl && imageUrl.startsWith("data:")) {
+        try {
+          const match = imageUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,/);
+          const ext = match ? (match[1] === "jpeg" ? "jpg" : match[1].replace(/\+xml/, "")) : "png";
+          const uploaded = await storagePut(`site-images/${input.slotKey}.${ext}`, imageUrl);
+          imageUrl = uploaded.url;
+        } catch (err) {
+          console.warn("[SiteImages] Storage upload fallback:", err);
+        }
+      }
       await upsertSiteContent({
         contentKey: formatImageContentKey(input.slotKey),
         label: slot?.label || "Site Image",
         title: input.altText || slot?.defaultAlt || "",
-        body: input.imageUrl,
+        body: imageUrl,
       });
-      return { success: true };
+      return { success: true, imageUrl };
     }),
     upload: adminProcedure.input(siteImageUploadInput).mutation(async ({ input }) => {
-      const file = Buffer.from(input.base64, "base64");
-      if (file.length > 8 * 1024 * 1024) {
+      // Validate approximate raw size from base64 length (base64 is ~33% larger than raw bytes)
+      const approxBytes = Math.ceil(input.base64.length * 0.75);
+      if (approxBytes > 8 * 1024 * 1024) {
         throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "Images must be 8 MB or smaller." });
       }
-      let imageUrl = "";
-      try {
-        const { url } = await storagePut(`site-images/${input.slotKey}-${Date.now()}-${input.fileName}`, file, input.mimeType);
-        // If storagePut returned a local /uploads/ path, it won't work on Vercel — use data URL instead
-        if (url.startsWith("/uploads/") || url.startsWith("/manus-storage/")) {
-          imageUrl = `data:${input.mimeType};base64,${input.base64}`;
-        } else {
-          imageUrl = url;
-        }
-      } catch {
-        imageUrl = `data:${input.mimeType};base64,${input.base64}`;
-      }
+      const { url: imageUrl } = await storagePut(
+        `site-images/${input.slotKey}-${input.fileName}`,
+        input.base64,
+        input.mimeType
+      );
       const slot = SITE_IMAGE_SLOTS.find(s => s.key === input.slotKey);
       await upsertSiteContent({
         contentKey: formatImageContentKey(input.slotKey),
@@ -296,16 +301,16 @@ export const adminRouter = router({
   gallery: router({
     list: adminProcedure.query(() => listGalleryPhotos(true)),
     upload: adminProcedure.input(imageInput).mutation(async ({ input }) => {
-      const file = Buffer.from(input.base64, "base64");
-      if (file.length > 5 * 1024 * 1024) {
-        throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "Images must be 5 MB or smaller." });
+      const approxBytes = Math.ceil(input.base64.length * 0.75);
+      if (approxBytes > 8 * 1024 * 1024) {
+        throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "Images must be 8 MB or smaller." });
       }
-      const { key, url } = await storagePut(`gallery/${Date.now()}-${input.fileName}`, file, input.mimeType);
-      // Use base64 data URL if path is local-only (won't work on Vercel)
-      const imageUrl = (url.startsWith("/uploads/") || url.startsWith("/manus-storage/"))
-        ? `data:${input.mimeType};base64,${input.base64}`
-        : url;
-      return saveGalleryPhoto({ ...input, imageUrl, storageKey: key });
+      const { key: storageKey, url: imageUrl } = await storagePut(
+        `gallery/${input.fileName}`,
+        input.base64,
+        input.mimeType
+      );
+      return saveGalleryPhoto({ ...input, imageUrl, storageKey });
     }),
     save: adminProcedure.input(z.object({
       id: z.number().int().positive(),
@@ -367,18 +372,29 @@ export const adminRouter = router({
   }),
   team: router({
     list: adminProcedure.query(() => listTeamMembers()),
-    save: adminProcedure.input(teamMemberInput).mutation(({ input }) => saveTeamMember(input as any)),
+    save: adminProcedure.input(teamMemberInput).mutation(async ({ input }) => {
+      let imageUrl = input.imageUrl;
+      if (imageUrl && imageUrl.startsWith("data:")) {
+        try {
+          const slug = input.name.toLowerCase().replace(/[^a-z0-9]/g, "-");
+          const uploaded = await storagePut(`team-members/${slug || Date.now()}`, imageUrl);
+          imageUrl = uploaded.url;
+        } catch (err) {
+          console.warn("[Team] Storage upload fallback:", err);
+        }
+      }
+      return saveTeamMember({ ...input, imageUrl } as any);
+    }),
     uploadPortrait: adminProcedure.input(teamPortraitUploadInput).mutation(async ({ input }) => {
-      const file = Buffer.from(input.base64, "base64");
-      if (file.length > 5 * 1024 * 1024) {
+      const approxBytes = Math.ceil(input.base64.length * 0.75);
+      if (approxBytes > 5 * 1024 * 1024) {
         throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "Portrait images must be 5 MB or smaller." });
       }
-      const safeFileName = input.fileName.replace(/[^a-zA-Z0-9._-]+/g, "-");
-      const { url } = await storagePut(`team-members/${Date.now()}-${safeFileName}`, file, input.mimeType);
-      // Use base64 data URL if path is local-only (won't work on Vercel)
-      const imageUrl = (url.startsWith("/uploads/") || url.startsWith("/manus-storage/"))
-        ? `data:${input.mimeType};base64,${input.base64}`
-        : url;
+      const { url: imageUrl } = await storagePut(
+        `team-members/${input.fileName}`,
+        input.base64,
+        input.mimeType
+      );
       return { imageUrl };
     }),
     remove: adminProcedure.input(z.object({ id: z.number().int().positive() })).mutation(({ input }) => removeTeamMember(input.id)),

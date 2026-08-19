@@ -24,14 +24,36 @@ import {
   users,
 } from "./drizzle/schema";
 import * as schema from "./drizzle/schema";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { ENV } from './_core/env';
 
 // Load .env for local development
 dotenv.config();
 
 let _db: ReturnType<typeof drizzle<typeof schema>> | null = null;
+let _supabase: SupabaseClient | null = null;
 let _teamProfilePool: import("mysql2/promise").Pool | null = null;
 let teamProfilePoolUnavailable = false;
+
+export function getSupabase(): SupabaseClient | null {
+  if (_supabase) return _supabase;
+  const url = process.env.SUPABASE_URL || ENV.supabaseUrl;
+  const key =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.SUPABASE_ANON_KEY ||
+    ENV.supabaseServiceRoleKey ||
+    ENV.supabaseAnonKey;
+  if (url && key) {
+    try {
+      _supabase = createClient(url, key, {
+        auth: { persistSession: false, autoRefreshToken: false },
+      });
+    } catch (e) {
+      console.warn("[Database] Failed to initialize Supabase client:", e);
+    }
+  }
+  return _supabase;
+}
 
 // Lazily create the drizzle (postgres) instance — falls back to in-memory if no DATABASE_URL.
 export async function getDb() {
@@ -54,9 +76,11 @@ export async function getDb() {
       _db = drizzle(client, { schema });
       console.log("[Database] Connected to Supabase PostgreSQL ✓");
     } catch (error) {
-      console.warn("[Database] Failed to connect to Supabase:", error);
+      console.error("[Database] Failed to connect to Supabase:", error);
       _db = null;
     }
+  } else if (!process.env.DATABASE_URL) {
+    console.warn("[Database] DATABASE_URL not set — using in-memory store");
   }
   return _db;
 }
@@ -666,10 +690,27 @@ export async function removeImpactMetric(id: number) {
 }
 
 export async function listGalleryPhotos(includeUnpublished = true) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      let query = supabase.from("galleryPhotos").select("*").order("sortOrder", { ascending: true });
+      if (!includeUnpublished) {
+        query = query.eq("isPublished", true);
+      }
+      const { data, error } = await query;
+      if (!error && data && data.length > 0) {
+        return data;
+      }
+    } catch (e) {}
+  }
   const db = await getDb();
   if (!db) return includeUnpublished ? memoryStore.galleryPhotos : memoryStore.galleryPhotos.filter(p => p.isPublished);
-  const rows = await db.select().from(galleryPhotos).orderBy(galleryPhotos.sortOrder, desc(galleryPhotos.createdAt));
-  return includeUnpublished ? rows : rows.filter(photo => photo.isPublished);
+  try {
+    const rows = await db.select().from(galleryPhotos).orderBy(galleryPhotos.sortOrder, desc(galleryPhotos.createdAt));
+    return includeUnpublished ? rows : rows.filter(photo => photo.isPublished);
+  } catch {
+    return includeUnpublished ? memoryStore.galleryPhotos : memoryStore.galleryPhotos.filter(p => p.isPublished);
+  }
 }
 
 export async function saveGalleryPhoto(input: {
@@ -681,6 +722,51 @@ export async function saveGalleryPhoto(input: {
   isPublished: boolean;
   sortOrder: number;
 }) {
+  const photoRecord = {
+    title: input.title,
+    altText: input.altText,
+    imageUrl: input.imageUrl || "/ybi-assets/gallery/workshop-1.jpg",
+    storageKey: input.storageKey || "sample.jpg",
+    isPublished: input.isPublished,
+    sortOrder: input.sortOrder,
+    updatedAt: new Date().toISOString(),
+  };
+
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      if (input.id) {
+        const { data, error } = await supabase
+          .from("galleryPhotos")
+          .update(photoRecord)
+          .eq("id", input.id)
+          .select()
+          .single();
+        if (!error && data?.id) {
+          const idx = memoryStore.galleryPhotos.findIndex(p => p.id === input.id);
+          if (idx !== -1) memoryStore.galleryPhotos[idx] = { ...memoryStore.galleryPhotos[idx], ...data };
+          return data.id;
+        }
+      } else {
+        const { data, error } = await supabase
+          .from("galleryPhotos")
+          .insert({
+            ...photoRecord,
+            createdAt: new Date().toISOString(),
+          })
+          .select()
+          .single();
+        if (!error && data?.id) {
+          memoryStore.galleryPhotos.unshift(data);
+          return data.id;
+        }
+      }
+    } catch (err) {
+      console.warn("[Supabase] saveGalleryPhoto error:", err);
+    }
+  }
+
+  // Fallback to local memoryStore / Drizzle
   const db = await getDb();
   if (!db) {
     if (input.id) {
@@ -693,12 +779,7 @@ export async function saveGalleryPhoto(input: {
     const id = ++memoryStore.autoId;
     memoryStore.galleryPhotos.push({
       id,
-      title: input.title,
-      altText: input.altText,
-      imageUrl: input.imageUrl || "/ybi-assets/gallery/workshop-1.jpg",
-      storageKey: input.storageKey || "sample.jpg",
-      isPublished: input.isPublished,
-      sortOrder: input.sortOrder,
+      ...photoRecord,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -727,13 +808,20 @@ export async function saveGalleryPhoto(input: {
 }
 
 export async function removeGalleryPhoto(id: number) {
-  const db = await getDb();
-  if (!db) {
-    const index = memoryStore.galleryPhotos.findIndex(p => p.id === id);
-    if (index !== -1) memoryStore.galleryPhotos.splice(index, 1);
-    return;
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      await supabase.from("galleryPhotos").delete().eq("id", id);
+    } catch {}
   }
-  await db.delete(galleryPhotos).where(eq(galleryPhotos.id, id));
+  const index = memoryStore.galleryPhotos.findIndex(p => p.id === id);
+  if (index !== -1) memoryStore.galleryPhotos.splice(index, 1);
+  const db = await getDb();
+  if (db) {
+    try {
+      await db.delete(galleryPhotos).where(eq(galleryPhotos.id, id));
+    } catch {}
+  }
 }
 
 export async function listPrograms(includeDrafts = true) {
@@ -837,6 +925,16 @@ export async function removeUpdate(id: number) {
 }
 
 export async function listSiteContent() {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from("siteContent").select("*").order("contentKey");
+      if (!error && data && data.length > 0) {
+        data.forEach(item => memoryStore.siteContent.set(item.contentKey, item));
+        return data;
+      }
+    } catch (e) {}
+  }
   const db = await getDb();
   if (!db) return Array.from(memoryStore.siteContent.values());
   try {
@@ -847,6 +945,20 @@ export async function listSiteContent() {
 }
 
 export async function getSiteContent(contentKey: string) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("siteContent")
+        .select("*")
+        .eq("contentKey", contentKey)
+        .maybeSingle();
+      if (!error && data) {
+        memoryStore.siteContent.set(contentKey, data);
+        return data;
+      }
+    } catch (e) {}
+  }
   const db = await getDb();
   if (!db) return memoryStore.siteContent.get(contentKey) ?? null;
   try {
@@ -865,32 +977,53 @@ export async function upsertSiteContent(input: {
   actionLabel?: string | null;
   actionHref?: string | null;
 }) {
-  const db = await getDb();
-  if (!db) {
-    memoryStore.siteContent.set(input.contentKey, { ...input, updatedAt: new Date() });
-    return;
+  memoryStore.siteContent.set(input.contentKey, { ...input, updatedAt: new Date() });
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      const { error } = await supabase.from("siteContent").upsert(
+        {
+          contentKey: input.contentKey,
+          label: input.label,
+          title: input.title,
+          body: input.body,
+          actionLabel: input.actionLabel ?? null,
+          actionHref: input.actionHref ?? null,
+          updatedAt: new Date().toISOString(),
+        },
+        { onConflict: "contentKey" }
+      );
+      if (!error) return;
+      console.warn("[Supabase] upsertSiteContent error:", error.message);
+    } catch (err) {
+      console.warn("[Supabase] upsertSiteContent exception:", err);
+    }
   }
+  const db = await getDb();
+  if (!db) return;
   try {
     await db.insert(siteContent).values(input).onConflictDoUpdate({
       target: siteContent.contentKey,
       set: { ...input, updatedAt: new Date() },
     });
-  } catch {
-    memoryStore.siteContent.set(input.contentKey, { ...input, updatedAt: new Date() });
+  } catch (err) {
+    console.error("[Database] upsertSiteContent failed:", err);
   }
 }
 
 export async function removeSiteContent(contentKey: string) {
-  const db = await getDb();
-  if (!db) {
-    memoryStore.siteContent.delete(contentKey);
-    return;
+  memoryStore.siteContent.delete(contentKey);
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      await supabase.from("siteContent").delete().eq("contentKey", contentKey);
+    } catch {}
   }
+  const db = await getDb();
+  if (!db) return;
   try {
     await db.delete(siteContent).where(eq(siteContent.contentKey, contentKey));
-  } catch {
-    memoryStore.siteContent.delete(contentKey);
-  }
+  } catch {}
 }
 
 // ─── Team Members ────────────────────────────────────────────────────────────
@@ -925,50 +1058,42 @@ function normalizeTeamSlug(value: string) {
 }
 
 export async function listTeamMembers(includeUnpublished = true) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      let query = supabase.from("teamMembers").select("*").order("sortOrder", { ascending: true });
+      if (!includeUnpublished) {
+        query = query.eq("isPublished", true);
+      }
+      const { data, error } = await query;
+      if (!error && data && data.length > 0) {
+        return data;
+      }
+    } catch (e) {}
+  }
   const db = await getDb();
   if (!db) {
     return fallbackTeamMembers(includeUnpublished);
   }
   try {
-    // Delete any old dummy / placeholder records from legacy tables
-    try {
-      await db.delete(teamMembers).where(
-        sql`${teamMembers.slug} IN ('executive-director-founder', 'programs-curriculum-lead', 'mentorship-community-lead', 'enterprise-venture-coach') OR ${teamMembers.name} IN ('Oben Joshua', 'Programs & Curriculum Lead', 'Mentorship & Community Lead', 'Enterprise & Venture Coach', 'Executive Director & Founder')`
-      );
-    } catch (e) {}
-
     let rows = await db.select().from(teamMembers).orderBy(teamMembers.sortOrder, teamMembers.id);
-    const existingOrders = new Set(rows.map((r) => r.sortOrder));
-    let seededAny = false;
-    for (const m of memoryStore.teamMembers) {
-      if (!existingOrders.has(m.sortOrder)) {
-        try {
-          await db.insert(teamMembers).values({
-            slug: m.slug,
-            name: m.name,
-            role: m.role,
-            bio: m.bio,
-            imageUrl: m.imageUrl,
-            email: m.email || null,
-            linkedIn: m.linkedIn || null,
-            sortOrder: m.sortOrder,
-            isPublished: m.isPublished,
-          }).onConflictDoNothing();
-          seededAny = true;
-        } catch (e) {}
-      }
-    }
-    if (seededAny) {
-      rows = await db.select().from(teamMembers).orderBy(teamMembers.sortOrder, teamMembers.id);
-    }
     return includeUnpublished ? rows : rows.filter((m) => m.isPublished);
   } catch (error) {
-    console.warn("[Team] Error querying PostgreSQL teamMembers; using local fallback.", error);
+    console.warn("[Team] Error querying teamMembers; using local fallback.", error);
     return fallbackTeamMembers(includeUnpublished);
   }
 }
 
 export async function getTeamMemberBySlug(slug: string, includeUnpublished = false) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from("teamMembers").select("*").eq("slug", slug).maybeSingle();
+      if (!error && data) {
+        return includeUnpublished || data.isPublished ? data : null;
+      }
+    } catch (e) {}
+  }
   const db = await getDb();
   if (!db) {
     const member = memoryStore.teamMembers.find(item => item.slug === slug) ?? null;
@@ -979,7 +1104,6 @@ export async function getTeamMemberBySlug(slug: string, includeUnpublished = fal
     const member = rows[0] ?? null;
     return member && (includeUnpublished || member.isPublished) ? member : null;
   } catch (error) {
-    console.warn("[Team] Error loading teamMember by slug from PostgreSQL:", error);
     const member = memoryStore.teamMembers.find(item => item.slug === slug) ?? null;
     return member && (includeUnpublished || member.isPublished) ? member : null;
   }
@@ -1028,6 +1152,53 @@ export async function saveTeamMember(input: {
 }) {
   const slug = normalizeTeamSlug(input.name);
   const finalImageUrl = persistDataUriToFile(input.imageUrl, slug);
+  const values = {
+    slug,
+    name: input.name,
+    role: input.role,
+    bio: input.bio,
+    imageUrl: finalImageUrl,
+    email: input.email || null,
+    linkedIn: input.linkedIn || null,
+    sortOrder: input.sortOrder,
+    isPublished: input.isPublished,
+    updatedAt: new Date().toISOString(),
+  };
+
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      if (input.id) {
+        const { data, error } = await supabase
+          .from("teamMembers")
+          .update(values)
+          .eq("id", input.id)
+          .select()
+          .single();
+        if (!error && data?.id) {
+          const idx = memoryStore.teamMembers.findIndex(m => m.id === input.id);
+          if (idx !== -1) memoryStore.teamMembers[idx] = { ...memoryStore.teamMembers[idx], ...data };
+          return data.id;
+        }
+      } else {
+        const { data, error } = await supabase
+          .from("teamMembers")
+          .insert({
+            ...values,
+            createdAt: new Date().toISOString(),
+          })
+          .select()
+          .single();
+        if (!error && data?.id) {
+          memoryStore.teamMembers.push(data);
+          return data.id;
+        }
+      }
+    } catch (err) {
+      console.warn("[Supabase] saveTeamMember error:", err);
+    }
+  }
+
   const db = await getDb();
   if (!db) {
     if (input.id) {
@@ -1042,22 +1213,9 @@ export async function saveTeamMember(input: {
     return id;
   }
 
-  const values = {
-    slug,
-    name: input.name,
-    role: input.role,
-    bio: input.bio,
-    imageUrl: finalImageUrl,
-    email: input.email || null,
-    linkedIn: input.linkedIn || null,
-    sortOrder: input.sortOrder,
-    isPublished: input.isPublished,
-    updatedAt: new Date(),
-  };
-
   if (input.id) {
     try {
-      const updated = await db.update(teamMembers).set(values).where(eq(teamMembers.id, input.id)).returning({ id: teamMembers.id });
+      const updated = await db.update(teamMembers).set(values as any).where(eq(teamMembers.id, input.id)).returning({ id: teamMembers.id });
       if (updated.length > 0) {
         const index = memoryStore.teamMembers.findIndex(m => m.id === input.id);
         if (index !== -1) memoryStore.teamMembers[index] = { ...memoryStore.teamMembers[index], ...input, slug, updatedAt: new Date() };
@@ -1066,25 +1224,14 @@ export async function saveTeamMember(input: {
     } catch (e) {}
   }
 
-  if (input.sortOrder) {
-    try {
-      const updatedBySort = await db.update(teamMembers).set(values).where(eq(teamMembers.sortOrder, input.sortOrder)).returning({ id: teamMembers.id });
-      if (updatedBySort.length > 0) {
-        const index = memoryStore.teamMembers.findIndex(m => m.sortOrder === input.sortOrder);
-        if (index !== -1) memoryStore.teamMembers[index] = { ...memoryStore.teamMembers[index], ...input, slug, updatedAt: new Date() };
-        return Number(updatedBySort[0].id);
-      }
-    } catch (e) {}
-  }
-
   try {
-    const result = await db.insert(teamMembers).values(values).returning({ id: teamMembers.id });
+    const result = await db.insert(teamMembers).values(values as any).returning({ id: teamMembers.id });
     const insertedId = Number(result[0].id);
     memoryStore.teamMembers.push({ id: insertedId, ...input, slug, email: input.email || "", linkedIn: input.linkedIn || "", createdAt: new Date(), updatedAt: new Date() });
     return insertedId;
   } catch (e) {
     const uniqueSlug = `${slug}-${Date.now().toString(36)}`;
-    const result = await db.insert(teamMembers).values({ ...values, slug: uniqueSlug }).returning({ id: teamMembers.id });
+    const result = await db.insert(teamMembers).values({ ...values, slug: uniqueSlug } as any).returning({ id: teamMembers.id });
     const insertedId = Number(result[0].id);
     memoryStore.teamMembers.push({ id: insertedId, ...input, slug: uniqueSlug, email: input.email || "", linkedIn: input.linkedIn || "", createdAt: new Date(), updatedAt: new Date() });
     return insertedId;
@@ -1092,12 +1239,18 @@ export async function saveTeamMember(input: {
 }
 
 export async function removeTeamMember(id: number) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      await supabase.from("teamMembers").delete().eq("id", id);
+    } catch {}
+  }
   const db = await getDb();
   if (db) {
     try {
       await db.delete(teamMembers).where(eq(teamMembers.id, id));
     } catch (error) {
-      console.warn("[Team] Error removing teamMember from PostgreSQL:", error);
+      console.warn("[Team] Error removing teamMember:", error);
     }
   }
   const index = memoryStore.teamMembers.findIndex(member => member.id === id);
@@ -1191,6 +1344,19 @@ export async function removeNewsletterSubscriber(id: number) {
 // ─── Phase 2: Events ─────────────────────────────────────────────────────────
 
 export async function listEvents(includeDrafts = true) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      let query = supabase.from("events").select("*").order("scheduledFor");
+      if (!includeDrafts) {
+        query = query.eq("status", "published");
+      }
+      const { data, error } = await query;
+      if (!error && data && data.length > 0) {
+        return data;
+      }
+    } catch (e) {}
+  }
   const db = await getDb();
   if (!db) {
     return includeDrafts
@@ -1208,6 +1374,13 @@ export async function listEvents(includeDrafts = true) {
 }
 
 export async function getEventBySlug(slug: string) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from("events").select("*").eq("slug", slug).maybeSingle();
+      if (!error && data) return data;
+    } catch (e) {}
+  }
   const db = await getDb();
   if (!db) return memoryStore.events.find(e => e.slug === slug) ?? null;
   try {
@@ -1219,6 +1392,13 @@ export async function getEventBySlug(slug: string) {
 }
 
 export async function getEventById(id: number) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from("events").select("*").eq("id", id).maybeSingle();
+      if (!error && data) return data;
+    } catch (e) {}
+  }
   const db = await getDb();
   if (!db) return memoryStore.events.find(e => e.id === id) ?? null;
   try {
@@ -1242,6 +1422,55 @@ export async function saveEvent(input: {
   priceGhs: number;
   status: "draft" | "published" | "cancelled";
 }) {
+  const values = {
+    slug: input.slug,
+    title: input.title,
+    description: input.description,
+    imageUrl: input.imageUrl ?? null,
+    scheduledFor: input.scheduledFor instanceof Date ? input.scheduledFor.toISOString() : input.scheduledFor,
+    location: input.location,
+    capacity: input.capacity ?? null,
+    isFree: input.isFree,
+    priceGhs: input.priceGhs,
+    status: input.status,
+    updatedAt: new Date().toISOString(),
+  };
+
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      if (input.id) {
+        const { data, error } = await supabase
+          .from("events")
+          .update(values)
+          .eq("id", input.id)
+          .select()
+          .single();
+        if (!error && data?.id) {
+          const idx = memoryStore.events.findIndex(e => e.id === input.id);
+          if (idx !== -1) memoryStore.events[idx] = { ...memoryStore.events[idx], ...data };
+          else memoryStore.events.push(data);
+          return data.id;
+        }
+      } else {
+        const { data, error } = await supabase
+          .from("events")
+          .insert({
+            ...values,
+            createdAt: new Date().toISOString(),
+          })
+          .select()
+          .single();
+        if (!error && data?.id) {
+          memoryStore.events.push(data);
+          return data.id;
+        }
+      }
+    } catch (err) {
+      console.warn("[Supabase] saveEvent error:", err);
+    }
+  }
+
   const db = await getDb();
   if (!db) {
     if (input.id) {
@@ -1255,26 +1484,18 @@ export async function saveEvent(input: {
     memoryStore.events.push({ id, ...input, createdAt: new Date(), updatedAt: new Date() });
     return id;
   }
-  const values = {
-    slug: input.slug,
-    title: input.title,
-    description: input.description,
-    imageUrl: input.imageUrl ?? null,
-    scheduledFor: input.scheduledFor,
-    location: input.location,
-    capacity: input.capacity ?? null,
-    isFree: input.isFree,
-    priceGhs: input.priceGhs,
-    status: input.status,
-    updatedAt: new Date(),
-  };
+
   try {
     if (input.id) {
-      await db.update(events).set(values).where(eq(events.id, input.id));
+      await db.update(events).set({ ...values, scheduledFor: input.scheduledFor } as any).where(eq(events.id, input.id));
+      const idx = memoryStore.events.findIndex(e => e.id === input.id);
+      if (idx !== -1) memoryStore.events[idx] = { ...memoryStore.events[idx], ...values, id: input.id };
       return input.id;
     }
-    const result = await db.insert(events).values(values).returning({ id: events.id });
-    return Number(result[0].id);
+    const result = await db.insert(events).values({ ...values, scheduledFor: input.scheduledFor } as any).returning({ id: events.id });
+    const newId = Number(result[0].id);
+    memoryStore.events.push({ id: newId, ...values });
+    return newId;
   } catch {
     if (input.id) {
       const index = memoryStore.events.findIndex(e => e.id === input.id);
@@ -1290,18 +1511,20 @@ export async function saveEvent(input: {
 }
 
 export async function removeEvent(id: number) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      await supabase.from("events").delete().eq("id", id);
+    } catch {}
+  }
   const db = await getDb();
-  if (!db) {
-    const index = memoryStore.events.findIndex(e => e.id === id);
-    if (index !== -1) memoryStore.events.splice(index, 1);
-    return;
+  if (db) {
+    try {
+      await db.delete(events).where(eq(events.id, id));
+    } catch {}
   }
-  try {
-    await db.delete(events).where(eq(events.id, id));
-  } catch {
-    const index = memoryStore.events.findIndex(e => e.id === id);
-    if (index !== -1) memoryStore.events.splice(index, 1);
-  }
+  const index = memoryStore.events.findIndex(e => e.id === id);
+  if (index !== -1) memoryStore.events.splice(index, 1);
 }
 
 // ─── Phase 2: Event Registrations ──────────────────────────────────────────
@@ -1317,7 +1540,6 @@ export async function createEventRegistration(input: {
   isWaitlist?: boolean;
   confirmedAt?: Date | null;
 }) {
-  const db = await getDb();
   const record = {
     eventId: input.eventId,
     name: input.name,
@@ -1327,15 +1549,38 @@ export async function createEventRegistration(input: {
     paystackRef: input.paystackRef ?? null,
     paymentStatus: input.paymentStatus ?? "pending",
     isWaitlist: input.isWaitlist ?? false,
-    confirmedAt: input.confirmedAt ?? (input.paymentStatus === "success" || input.paymentStatus === "free" ? new Date() : null),
+    confirmedAt: input.confirmedAt ?? (input.paymentStatus === "success" || input.paymentStatus === "free" ? new Date().toISOString() : null),
+    updatedAt: new Date().toISOString(),
   };
+
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("eventRegistrations")
+        .insert({
+          ...record,
+          createdAt: new Date().toISOString(),
+        })
+        .select()
+        .single();
+      if (!error && data?.id) {
+        memoryStore.eventRegistrations.push(data);
+        return data.id;
+      }
+    } catch (err) {
+      console.warn("[Supabase] createEventRegistration error:", err);
+    }
+  }
+
+  const db = await getDb();
   if (!db) {
     const id = ++memoryStore.autoId;
     memoryStore.eventRegistrations.push({ id, ...record, createdAt: new Date(), updatedAt: new Date() });
     return id;
   }
   try {
-    const result = await db.insert(eventRegistrations).values(record).returning({ id: eventRegistrations.id });
+    const result = await db.insert(eventRegistrations).values(record as any).returning({ id: eventRegistrations.id });
     return Number(result[0].id);
   } catch {
     const id = ++memoryStore.autoId;
@@ -1345,6 +1590,15 @@ export async function createEventRegistration(input: {
 }
 
 export async function listEventRegistrations(eventId?: number) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      let query = supabase.from("eventRegistrations").select("*").order("createdAt", { ascending: false });
+      if (eventId) query = query.eq("eventId", eventId);
+      const { data, error } = await query;
+      if (!error && data && data.length > 0) return data;
+    } catch (e) {}
+  }
   const db = await getDb();
   if (!db) {
     return eventId
@@ -1370,6 +1624,19 @@ export async function updateEventRegistrationPayment(
   paystackRef: string,
   paymentStatus: "pending" | "success" | "failed" | "free"
 ) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      await supabase
+        .from("eventRegistrations")
+        .update({
+          paymentStatus,
+          confirmedAt: paymentStatus === "success" || paymentStatus === "free" ? new Date().toISOString() : null,
+          updatedAt: new Date().toISOString(),
+        })
+        .eq("paystackRef", paystackRef);
+    } catch {}
+  }
   const db = await getDb();
   const item = memoryStore.eventRegistrations.find(r => r.paystackRef === paystackRef);
   if (item) {
@@ -1391,6 +1658,15 @@ export async function updateEventRegistrationPayment(
 // ─── Phase 2: Blog Posts ───────────────────────────────────────────────────
 
 export async function listBlogPosts(includeDrafts = true) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      let query = supabase.from("blogPosts").select("*").order("publishedAt", { ascending: false });
+      if (!includeDrafts) query = query.eq("status", "published");
+      const { data, error } = await query;
+      if (!error && data && data.length > 0) return data;
+    } catch (e) {}
+  }
   const db = await getDb();
   if (!db) {
     return includeDrafts
@@ -1408,6 +1684,13 @@ export async function listBlogPosts(includeDrafts = true) {
 }
 
 export async function getBlogPostBySlug(slug: string) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from("blogPosts").select("*").eq("slug", slug).maybeSingle();
+      if (!error) return data ?? null;
+    } catch (e) {}
+  }
   const db = await getDb();
   if (!db) return memoryStore.blogPosts.find(p => p.slug === slug) ?? null;
   try {
@@ -1430,20 +1713,7 @@ export async function saveBlogPost(input: {
   status: "draft" | "published";
   publishedAt?: Date | null;
 }) {
-  const db = await getDb();
-  const publishedAt = input.publishedAt ?? (input.status === "published" ? new Date() : null);
-  if (!db) {
-    if (input.id) {
-      const index = memoryStore.blogPosts.findIndex(p => p.id === input.id);
-      if (index !== -1) {
-        memoryStore.blogPosts[index] = { ...memoryStore.blogPosts[index], ...input, publishedAt, updatedAt: new Date() };
-        return input.id;
-      }
-    }
-    const id = ++memoryStore.autoId;
-    memoryStore.blogPosts.push({ id, ...input, publishedAt, createdAt: new Date(), updatedAt: new Date() });
-    return id;
-  }
+  const publishedAt = input.publishedAt ? input.publishedAt.toISOString() : (input.status === "published" ? new Date().toISOString() : null);
   const values = {
     slug: input.slug,
     title: input.title,
@@ -1454,42 +1724,92 @@ export async function saveBlogPost(input: {
     category: input.category,
     status: input.status,
     publishedAt,
-    updatedAt: new Date(),
+    updatedAt: new Date().toISOString(),
   };
+
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      if (input.id) {
+        const { data, error } = await supabase
+          .from("blogPosts")
+          .update(values)
+          .eq("id", input.id)
+          .select()
+          .single();
+        if (!error && data?.id) {
+          const idx = memoryStore.blogPosts.findIndex(p => p.id === input.id);
+          if (idx !== -1) memoryStore.blogPosts[idx] = { ...memoryStore.blogPosts[idx], ...data };
+          return data.id;
+        }
+      } else {
+        const { data, error } = await supabase
+          .from("blogPosts")
+          .insert({
+            ...values,
+            createdAt: new Date().toISOString(),
+          })
+          .select()
+          .single();
+        if (!error && data?.id) {
+          memoryStore.blogPosts.push(data);
+          return data.id;
+        }
+      }
+    } catch (err) {
+      console.warn("[Supabase] saveBlogPost error:", err);
+    }
+  }
+
+  const db = await getDb();
+  if (!db) {
+    if (input.id) {
+      const index = memoryStore.blogPosts.findIndex(p => p.id === input.id);
+      if (index !== -1) {
+        memoryStore.blogPosts[index] = { ...memoryStore.blogPosts[index], ...input, publishedAt: input.publishedAt ? new Date(input.publishedAt) : null, updatedAt: new Date() };
+        return input.id;
+      }
+    }
+    const id = ++memoryStore.autoId;
+    memoryStore.blogPosts.push({ id, ...input, publishedAt: input.publishedAt ? new Date(input.publishedAt) : null, createdAt: new Date(), updatedAt: new Date() });
+    return id;
+  }
   try {
     if (input.id) {
-      await db.update(blogPosts).set(values).where(eq(blogPosts.id, input.id));
+      await db.update(blogPosts).set({ ...values, publishedAt: input.publishedAt } as any).where(eq(blogPosts.id, input.id));
       return input.id;
     }
-    const result = await db.insert(blogPosts).values(values).returning({ id: blogPosts.id });
+    const result = await db.insert(blogPosts).values({ ...values, publishedAt: input.publishedAt } as any).returning({ id: blogPosts.id });
     return Number(result[0].id);
   } catch {
     if (input.id) {
       const index = memoryStore.blogPosts.findIndex(p => p.id === input.id);
       if (index !== -1) {
-        memoryStore.blogPosts[index] = { ...memoryStore.blogPosts[index], ...input, publishedAt, updatedAt: new Date() };
+        memoryStore.blogPosts[index] = { ...memoryStore.blogPosts[index], ...input, publishedAt: input.publishedAt ? new Date(input.publishedAt) : null, updatedAt: new Date() };
         return input.id;
       }
     }
     const id = ++memoryStore.autoId;
-    memoryStore.blogPosts.push({ id, ...input, publishedAt, createdAt: new Date(), updatedAt: new Date() });
+    memoryStore.blogPosts.push({ id, ...input, publishedAt: input.publishedAt ? new Date(input.publishedAt) : null, createdAt: new Date(), updatedAt: new Date() });
     return id;
   }
 }
 
 export async function removeBlogPost(id: number) {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      await supabase.from("blogPosts").delete().eq("id", id);
+    } catch {}
+  }
   const db = await getDb();
-  if (!db) {
-    const index = memoryStore.blogPosts.findIndex(p => p.id === id);
-    if (index !== -1) memoryStore.blogPosts.splice(index, 1);
-    return;
+  if (db) {
+    try {
+      await db.delete(blogPosts).where(eq(blogPosts.id, id));
+    } catch {}
   }
-  try {
-    await db.delete(blogPosts).where(eq(blogPosts.id, id));
-  } catch {
-    const index = memoryStore.blogPosts.findIndex(p => p.id === id);
-    if (index !== -1) memoryStore.blogPosts.splice(index, 1);
-  }
+  const index = memoryStore.blogPosts.findIndex(p => p.id === id);
+  if (index !== -1) memoryStore.blogPosts.splice(index, 1);
 }
 
 // ─── Phase 2: Donations ────────────────────────────────────────────────────
@@ -1503,7 +1823,6 @@ export async function createDonation(input: {
   paystackRef?: string | null;
   paymentStatus?: "pending" | "success" | "failed" | "free";
 }) {
-  const db = await getDb();
   const values = {
     name: input.name,
     email: input.email,
@@ -1512,14 +1831,37 @@ export async function createDonation(input: {
     message: input.message ?? null,
     paystackRef: input.paystackRef ?? null,
     paymentStatus: input.paymentStatus ?? "pending",
+    updatedAt: new Date().toISOString(),
   };
+
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("donations")
+        .insert({
+          ...values,
+          createdAt: new Date().toISOString(),
+        })
+        .select()
+        .single();
+      if (!error && data?.id) {
+        memoryStore.donations.unshift(data);
+        return data.id;
+      }
+    } catch (err) {
+      console.warn("[Supabase] createDonation error:", err);
+    }
+  }
+
+  const db = await getDb();
   if (!db) {
     const id = ++memoryStore.autoId;
     memoryStore.donations.unshift({ id, ...values, createdAt: new Date(), updatedAt: new Date() });
     return id;
   }
   try {
-    const result = await db.insert(donations).values(values).returning({ id: donations.id });
+    const result = await db.insert(donations).values(values as any).returning({ id: donations.id });
     return Number(result[0].id);
   } catch {
     const id = ++memoryStore.autoId;
@@ -1529,6 +1871,13 @@ export async function createDonation(input: {
 }
 
 export async function listDonations() {
+  const supabase = getSupabase();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from("donations").select("*").order("createdAt", { ascending: false });
+      if (!error && data && data.length > 0) return data;
+    } catch (e) {}
+  }
   const db = await getDb();
   if (!db) return memoryStore.donations;
   try {

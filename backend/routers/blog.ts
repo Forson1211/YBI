@@ -7,6 +7,7 @@ import {
   removeBlogPost,
   saveBlogPost,
 } from "../db";
+import { storagePut } from "../storage";
 
 const blogStatus = z.enum(["draft", "published"]);
 
@@ -29,8 +30,18 @@ export const blogAdminRouter = router({
   }),
 
   save: adminProcedure.input(blogPostInput).mutation(async ({ input }) => {
+    let coverImageUrl = input.coverImageUrl;
+    if (coverImageUrl && coverImageUrl.startsWith("data:")) {
+      try {
+        const uploaded = await storagePut(`blog/${input.slug || Date.now()}`, coverImageUrl);
+        coverImageUrl = uploaded.url;
+      } catch (err) {
+        console.warn("[Blog] Storage upload fallback:", err);
+      }
+    }
     return saveBlogPost({
       ...input,
+      coverImageUrl,
       publishedAt: input.publishedAt ? new Date(input.publishedAt) : undefined,
     });
   }),

@@ -133,14 +133,22 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath =
-    process.env.NODE_ENV === "development"
-      ? path.resolve(import.meta.dirname, "../..", "dist", "public")
-      : path.resolve(import.meta.dirname, "public");
+  const cwdDist = path.resolve(process.cwd(), "dist", "public");
+  const moduleDist = path.resolve(import.meta.dirname, "public");
+  const fallbackDist = path.resolve(import.meta.dirname, "../..", "dist", "public");
+  
+  const distPath = fs.existsSync(cwdDist)
+    ? cwdDist
+    : fs.existsSync(moduleDist)
+    ? moduleDist
+    : fallbackDist;
+
   if (!fs.existsSync(distPath)) {
-    console.error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`
+    console.warn(
+      `[Production Static] Notice: dist directory not found at ${distPath}. If running in serverless mode, static files are handled by the platform.`
     );
+  } else {
+    console.log(`[Production Static] Serving static assets from: ${distPath}`);
   }
 
   app.use(express.static(distPath));

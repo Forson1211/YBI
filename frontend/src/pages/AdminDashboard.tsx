@@ -1232,7 +1232,58 @@ function SiteImagesManager() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const saveMutation = trpc.admin.siteImages.save.useMutation({
-    onSuccess: () => {
+    onMutate: (variables) => {
+      // 0ms optimistic update in local React Query cache
+      utils.admin.siteImages.list.setData(undefined, (old) => {
+        if (!old) return old;
+        return old.map((slot) => {
+          if (slot.key === variables.slotKey) {
+            return {
+              ...slot,
+              isCustomized: true,
+              customSrc: variables.imageUrl,
+              customAlt: variables.altText || slot.customAlt || slot.defaultAlt,
+            };
+          }
+          return slot;
+        });
+      });
+      utils.publicSite.siteImages.getAll.setData(undefined, (old) => {
+        return {
+          ...old,
+          [variables.slotKey]: {
+            src: variables.imageUrl,
+            alt: variables.altText || "",
+          },
+        };
+      });
+    },
+    onSuccess: (data, variables) => {
+      if (data?.imageUrl) {
+        utils.admin.siteImages.list.setData(undefined, (old) => {
+          if (!old) return old;
+          return old.map((slot) => {
+            if (slot.key === variables.slotKey) {
+              return {
+                ...slot,
+                isCustomized: true,
+                customSrc: data.imageUrl,
+                customAlt: variables.altText || slot.customAlt || slot.defaultAlt,
+              };
+            }
+            return slot;
+          });
+        });
+        utils.publicSite.siteImages.getAll.setData(undefined, (old) => {
+          return {
+            ...old,
+            [variables.slotKey]: {
+              src: data.imageUrl,
+              alt: variables.altText || "",
+            },
+          };
+        });
+      }
       utils.admin.siteImages.list.invalidate();
       utils.publicSite.siteImages.getAll.invalidate();
       toast.success("Site image successfully updated!");
@@ -1241,7 +1292,30 @@ function SiteImagesManager() {
   });
 
   const uploadMutation = trpc.admin.siteImages.upload.useMutation({
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
+      utils.admin.siteImages.list.setData(undefined, (old) => {
+        if (!old) return old;
+        return old.map((slot) => {
+          if (slot.key === variables.slotKey) {
+            return {
+              ...slot,
+              isCustomized: true,
+              customSrc: data.imageUrl,
+              customAlt: variables.altText || slot.customAlt || slot.defaultAlt,
+            };
+          }
+          return slot;
+        });
+      });
+      utils.publicSite.siteImages.getAll.setData(undefined, (old) => {
+        return {
+          ...old,
+          [variables.slotKey]: {
+            src: data.imageUrl,
+            alt: variables.altText || "",
+          },
+        };
+      });
       utils.admin.siteImages.list.invalidate();
       utils.publicSite.siteImages.getAll.invalidate();
       toast.success("New image uploaded and published to website!");
@@ -1250,6 +1324,28 @@ function SiteImagesManager() {
   });
 
   const resetMutation = trpc.admin.siteImages.reset.useMutation({
+    onMutate: (variables) => {
+      // 0ms instant reset in local cache!
+      utils.admin.siteImages.list.setData(undefined, (old) => {
+        if (!old) return old;
+        return old.map((slot) => {
+          if (slot.key === variables.slotKey) {
+            return {
+              ...slot,
+              isCustomized: false,
+              customSrc: null,
+            };
+          }
+          return slot;
+        });
+      });
+      utils.publicSite.siteImages.getAll.setData(undefined, (old) => {
+        if (!old) return old;
+        const copy = { ...old };
+        delete copy[variables.slotKey];
+        return copy;
+      });
+    },
     onSuccess: () => {
       utils.admin.siteImages.list.invalidate();
       utils.publicSite.siteImages.getAll.invalidate();
@@ -1306,12 +1402,20 @@ function SiteImagesManager() {
             onSave={(imageUrl, altText) => saveMutation.mutate({ slotKey: slot.key, imageUrl, altText })}
             onUpload={async (file, altText) => {
               const { base64, mimeType } = await compressAndConvertToBase64(file);
-              uploadMutation.mutate({
-                slotKey: slot.key,
-                fileName: file.name,
-                mimeType: mimeType as any,
-                base64,
-                altText,
+              return new Promise<void>((resolve, reject) => {
+                uploadMutation.mutate(
+                  {
+                    slotKey: slot.key,
+                    fileName: file.name,
+                    mimeType: mimeType as any,
+                    base64,
+                    altText,
+                  },
+                  {
+                    onSuccess: () => resolve(),
+                    onError: (err) => reject(err),
+                  }
+                );
               });
             }}
             onReset={() => resetMutation.mutate({ slotKey: slot.key })}
@@ -1332,31 +1436,38 @@ function SiteImageSlotCard({
 }: {
   slot: any;
   onSave: (imageUrl: string, altText: string) => void;
-  onUpload: (file: File, altText: string) => void;
+  onUpload: (file: File, altText: string) => Promise<void> | void;
   onReset: () => void;
   isSaving: boolean;
 }) {
-  const currentSrc = slot.customSrc || slot.defaultSrc;
+  const [localPreview, setLocalPreview] = useState<string | null>(null);
+  const currentSrc = localPreview || slot.customSrc || slot.defaultSrc;
   const currentAlt = slot.customAlt || slot.defaultAlt;
   const [urlInput, setUrlInput] = useState(slot.customSrc || "");
   const [altInput, setAltInput] = useState(slot.customAlt || slot.defaultAlt || "");
   const [uploading, setUploading] = useState(false);
+  const [showUrlInput, setShowUrlInput] = useState(false);
 
   useEffect(() => {
     setUrlInput(slot.customSrc || "");
     setAltInput(slot.customAlt || slot.defaultAlt || "");
+    setLocalPreview(null);
   }, [slot.customSrc, slot.customAlt, slot.defaultAlt]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!/[jpeg|jpg|png|webp|svg]/.test(file.type)) {
+    if (!/[jpeg|jpg|png|webp|svg]/.test(file.type.toLowerCase())) {
       toast.error("Please upload a JPG, PNG, WEBP, or SVG image.");
       return;
     }
+    const blobUrl = URL.createObjectURL(file);
+    setLocalPreview(blobUrl);
     setUploading(true);
     try {
       await onUpload(file, altInput);
+    } catch {
+      setLocalPreview(null);
     } finally {
       setUploading(false);
       e.target.value = "";
@@ -1364,8 +1475,8 @@ function SiteImageSlotCard({
   };
 
   return (
-    <article className="admin-image-slot-card">
-      <div className="admin-image-preview-box">
+    <article className="admin-site-image-card">
+      <div className="admin-site-image-preview">
         <img
           src={currentSrc}
           alt={currentAlt}
@@ -1373,50 +1484,67 @@ function SiteImageSlotCard({
             (e.currentTarget as HTMLImageElement).src = slot.defaultSrc;
           }}
         />
-        <div className="admin-image-badge-group">
-          <span className="admin-slot-aspect">{slot.aspectRatio}</span>
-          <span className={`admin-slot-status-pill ${slot.isCustomized ? "custom" : "default"}`}>
-            {slot.isCustomized ? "Customized" : "Default"}
+        <div className="admin-site-image-badges">
+          <span className="admin-slot-aspect-badge">{slot.aspectRatio}</span>
+          <span className={`admin-slot-state-badge ${slot.isCustomized ? "customized" : "default"}`}>
+            <span className="state-dot" />
+            {slot.isCustomized ? "Customized" : "Default Asset"}
           </span>
         </div>
       </div>
 
-      <div className="admin-image-card-body">
-        <h3>{slot.label}</h3>
-        <p>{slot.description}</p>
+      <div className="admin-site-image-body">
+        <div className="admin-site-image-header-group">
+          <h3>{slot.label}</h3>
+          <p>{slot.description}</p>
+        </div>
 
         <form
-          className="admin-image-edit-form"
+          className="admin-site-image-form"
           onSubmit={(e) => {
             e.preventDefault();
             if (!urlInput.trim()) return;
             onSave(urlInput.trim(), altInput.trim());
           }}
         >
-          <label>
-            Image URL / File Upload
-            <input
-              type="text"
-              value={urlInput}
-              onChange={(e) => setUrlInput(e.target.value)}
-              placeholder="Paste direct image URL or upload below..."
-            />
-          </label>
+          {showUrlInput ? (
+            <div className="admin-site-image-url-group">
+              <label className="admin-input-label">Direct Image URL</label>
+              <div className="admin-inline-input-action">
+                <input
+                  type="text"
+                  value={urlInput}
+                  onChange={(e) => setUrlInput(e.target.value)}
+                  placeholder="https://... or paste direct image URL"
+                  className="admin-modern-input"
+                />
+                <button
+                  type="submit"
+                  disabled={isSaving || uploading || !urlInput.trim()}
+                  className="admin-save-url-btn"
+                  title="Save direct URL"
+                >
+                  <Save size={15} /> Save
+                </button>
+              </div>
+            </div>
+          ) : null}
 
-          <label>
-            Alt Text (for accessibility & SEO)
+          <div className="admin-site-image-alt-group">
+            <label className="admin-input-label">Accessibility & SEO Alt Text</label>
             <input
               type="text"
               value={altInput}
               onChange={(e) => setAltInput(e.target.value)}
-              placeholder="Describe this image..."
+              placeholder="Describe this image for search engines & screen readers..."
+              className="admin-modern-input"
             />
-          </label>
+          </div>
 
-          <div className="admin-image-button-row">
-            <label className="admin-upload-btn">
-              <UploadCloud size={15} />
-              {uploading ? "Uploading…" : "Upload File"}
+          <div className="admin-site-image-action-bar">
+            <label className={`admin-upload-action-btn ${uploading ? "loading" : ""}`}>
+              <UploadCloud size={16} />
+              <span>{uploading ? "Uploading to Cloud…" : "Upload New Photo"}</span>
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/webp,image/svg+xml"
@@ -1427,11 +1555,12 @@ function SiteImageSlotCard({
             </label>
 
             <button
-              type="submit"
-              disabled={isSaving || uploading || !urlInput.trim()}
-              className="admin-primary"
+              type="button"
+              onClick={() => setShowUrlInput((prev) => !prev)}
+              className="admin-secondary-action-btn"
+              title="Paste direct URL instead"
             >
-              <Save size={15} /> Save URL
+              {showUrlInput ? "Hide URL" : "Paste URL"}
             </button>
 
             {slot.isCustomized && (
@@ -1439,12 +1568,13 @@ function SiteImageSlotCard({
                 type="button"
                 onClick={() => {
                   if (window.confirm(`Reset "${slot.label}" back to the default image?`)) {
+                    setLocalPreview(null);
                     onReset();
                   }
                 }}
                 disabled={isSaving || uploading}
-                className="admin-secondary"
-                style={{ color: "#a83d38", borderColor: "#f1c9c6" }}
+                className="admin-reset-action-btn"
+                title="Revert back to default site asset"
               >
                 Reset Default
               </button>

@@ -11,6 +11,7 @@ import {
   removeEvent,
   saveEvent,
 } from "../db";
+import { storagePut } from "../storage";
 import { initiatePaystackPayment } from "../shared/paystackProvider";
 import { sendSms } from "../shared/smsProvider";
 
@@ -45,8 +46,18 @@ export const eventsAdminRouter = router({
   }),
 
   save: adminProcedure.input(eventInput).mutation(async ({ input }) => {
+    let imageUrl = input.imageUrl;
+    if (imageUrl && imageUrl.startsWith("data:")) {
+      try {
+        const uploaded = await storagePut(`events/${input.slug || Date.now()}`, imageUrl);
+        imageUrl = uploaded.url;
+      } catch (err) {
+        console.warn("[Events] Storage upload fallback:", err);
+      }
+    }
     return saveEvent({
       ...input,
+      imageUrl,
       scheduledFor: new Date(input.scheduledFor),
     });
   }),

@@ -74,6 +74,14 @@ export const config = {
   maxDuration: 60,
 };
 
-export default function handler(req: VercelRequest, res: VercelResponse) {
-  return app(req as any, res as any);
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  try {
+    console.log(`[Vercel API] ${req.method} ${req.url} (body: ${typeof req.body === 'object' ? 'pre-parsed' : typeof req.body})`);
+    return await (app as any)(req, res);
+  } catch (err: any) {
+    console.error("[Vercel API] Unhandled error in handler:", err?.message || err);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Internal server error", detail: String(err?.message || err) });
+    }
+  }
 }
