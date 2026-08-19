@@ -235,5 +235,8 @@ export function extractSlotKeyFromContentKey(contentKey: string): string | null 
   if (contentKey.startsWith(SITE_IMAGE_PREFIX)) {
     return contentKey.slice(SITE_IMAGE_PREFIX.length);
   }
+  if (contentKey.startsWith("site-image:")) {
+    return contentKey.slice("site-image:".length);
+  }
   return null;
 }

@@ -23,14 +23,17 @@ app.use((req, res, next) => {
   next();
 });
 
-// URL Normalizer: Ensure tRPC procedure path is always reachable under /api/trpc
+// URL Normalizer: Cleanly strip /api/trpc, /trpc, or /api prefixes so tRPC receives the pure procedure name
 app.use((req, _res, next) => {
-  const url = req.url || "/";
-  if (!url.startsWith("/api/trpc") && !url.startsWith("/trpc") && !url.startsWith("/api/")) {
-    if (url.includes(".")) {
-      req.url = `/api/trpc${url.startsWith("/") ? "" : "/"}${url}`;
-    }
+  let url = req.url || "/";
+  if (url.startsWith("/api/trpc")) {
+    url = url.slice("/api/trpc".length) || "/";
+  } else if (url.startsWith("/trpc")) {
+    url = url.slice("/trpc".length) || "/";
+  } else if (url.startsWith("/api/")) {
+    url = url.slice("/api".length) || "/";
   }
+  req.url = url;
   next();
 });
 
@@ -57,10 +60,7 @@ const trpcHandler = createExpressMiddleware({
   },
 });
 
-// Mount at all possible paths Vercel might pass
-app.use("/api/trpc", trpcHandler);
-app.use("/trpc", trpcHandler);
-app.use("/", trpcHandler);
+app.use(trpcHandler);
 
 // Fallback error handler
 app.use((err: any, _req: any, res: any, _next: any) => {
