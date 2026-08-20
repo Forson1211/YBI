@@ -1,11 +1,11 @@
 import "dotenv/config";
 import express from "express";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import { registerOAuthRoutes } from "../backend/_core/oauth";
-import { registerStorageProxy } from "../backend/_core/storageProxy";
-import { registerPaystackWebhook } from "../backend/routers/payments";
-import { appRouter } from "../backend/routers";
-import { createContext } from "../backend/_core/context";
+import { registerOAuthRoutes } from "./_core/oauth";
+import { registerStorageProxy } from "./_core/storageProxy";
+import { registerPaystackWebhook } from "./routers/payments";
+import { appRouter } from "./routers";
+import { createContext } from "./_core/context";
 
 const app = express();
 
