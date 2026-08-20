@@ -314,11 +314,6 @@ export function getSupabase(): SupabaseClient | null {
       _supabase = createClient(url, key, {
         auth: { persistSession: false, autoRefreshToken: false },
       });
-      if (!_seedPromise) {
-        _seedPromise = ensureDatabaseSeeded().catch((err) =>
-          console.warn("[Database Auto-Seed] Startup error:", err)
-        );
-      }
     } catch (e) {
       console.warn("[Database] Failed to initialize Supabase client:", e);
     }
