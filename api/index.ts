@@ -24,20 +24,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// URL Normalizer: Cleanly strip /api/trpc, /trpc, or /api prefixes so tRPC receives the pure procedure name
-app.use((req, _res, next) => {
-  let url = req.url || "/";
-  if (url.startsWith("/api/trpc")) {
-    url = url.slice("/api/trpc".length) || "/";
-  } else if (url.startsWith("/trpc")) {
-    url = url.slice("/trpc".length) || "/";
-  } else if (url.startsWith("/api/")) {
-    url = url.slice("/api".length) || "/";
-  }
-  req.url = url;
-  next();
-});
-
 // 2. Safe body parsing for Vercel serverless environment (handles both pre-parsed and unparsed bodies)
 app.use((req, res, next) => {
   if (req.body && typeof req.body === "object") {
@@ -61,7 +47,26 @@ const trpcHandler = createExpressMiddleware({
   },
 });
 
-app.use(trpcHandler);
+app.use("/api/trpc", trpcHandler);
+app.use("/trpc", trpcHandler);
+
+// Clean fallback for Vercel serverless functions when routed directly or with stripped path
+app.use((req, res, next) => {
+  const url = req.url || "/";
+  if (
+    !url.startsWith("/api/oauth") &&
+    !url.startsWith("/oauth") &&
+    !url.startsWith("/api/webhooks") &&
+    !url.startsWith("/webhooks") &&
+    !url.startsWith("/manus-storage") &&
+    !url.startsWith("/api/manus-storage") &&
+    !url.startsWith("/uploads") &&
+    !url.startsWith("/api/uploads")
+  ) {
+    return trpcHandler(req, res, next);
+  }
+  next();
+});
 
 // Fallback error handler
 app.use((err: any, _req: any, res: any, _next: any) => {
@@ -77,7 +82,6 @@ export const config = {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
-    console.log(`[Vercel API] ${req.method} ${req.url} (body: ${typeof req.body === 'object' ? 'pre-parsed' : typeof req.body})`);
     return await (app as any)(req, res);
   } catch (err: any) {
     console.error("[Vercel API] Unhandled error in handler:", err?.message || err);

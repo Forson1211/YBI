@@ -14,7 +14,7 @@ import {
 import { sendSms } from "../shared/smsProvider";
 
 export function registerPaystackWebhook(app: Express) {
-  app.post("/api/webhooks/paystack", async (req: Request, res: Response) => {
+  const webhookHandler = async (req: Request, res: Response) => {
     const signature = (req.headers["x-paystack-signature"] as string) || "";
     const rawBody = typeof req.body === "string" ? req.body : JSON.stringify(req.body);
 
@@ -64,7 +64,10 @@ export function registerPaystackWebhook(app: Express) {
     }
 
     return res.status(200).json({ status: true });
-  });
+  };
+
+  app.post("/api/webhooks/paystack", webhookHandler);
+  app.post("/webhooks/paystack", webhookHandler);
 }
 
 export const paymentsRouter = router({

@@ -55,23 +55,21 @@ export function getSupabase(): SupabaseClient | null {
   return _supabase;
 }
 
-// Lazily create the drizzle (postgres) instance — falls back to in-memory if no DATABASE_URL.
+// Lazily create the drizzle (postgres) instance — falls back to in-memory if no database connection.
 export async function getDb() {
-  // This project’s managed data connection is MySQL-compatible. The legacy
-  // PostgreSQL helper below cannot service that URL and otherwise waits for a
-  // failing socket before callers can use their safe fallback paths.
-  if (process.env.DATABASE_URL && !process.env.DATABASE_URL.startsWith("postgres")) {
+  const dbUrl = (process.env.DATABASE_URL || ENV.databaseUrl || "").trim();
+  if (dbUrl && !dbUrl.startsWith("postgres")) {
     return null;
   }
-  if (!_db && process.env.DATABASE_URL) {
+  if (!_db && dbUrl) {
     try {
       const postgres = (await import("postgres")).default;
-      const client = postgres(process.env.DATABASE_URL, {
+      const client = postgres(dbUrl, {
         max: 5,
         ssl: "require",
         prepare: false,
         idle_timeout: 20,
-        connect_timeout: 10,
+        connect_timeout: 4,
       });
       _db = drizzle(client, { schema });
       console.log("[Database] Connected to Supabase PostgreSQL ✓");
@@ -79,7 +77,7 @@ export async function getDb() {
       console.error("[Database] Failed to connect to Supabase:", error);
       _db = null;
     }
-  } else if (!process.env.DATABASE_URL) {
+  } else if (!dbUrl) {
     console.warn("[Database] DATABASE_URL not set — using in-memory store");
   }
   return _db;
