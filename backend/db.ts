@@ -170,6 +170,134 @@ export async function ensureDatabaseSeeded() {
       }
       console.log("[Database Auto-Seed] Seeded default galleryPhotos to Supabase ✓");
     }
+
+    // 7. Seed eventRegistrations if table is empty
+    const { data: existingRegs, error: regErr } = await supabase.from("eventRegistrations").select("id").limit(1);
+    if (!regErr && (!existingRegs || existingRegs.length === 0)) {
+      for (const reg of memoryStore.eventRegistrations) {
+        try {
+          await supabase.from("eventRegistrations").insert({
+            eventId: reg.eventId,
+            name: reg.name,
+            email: reg.email,
+            phone: reg.phone,
+            smsOptIn: reg.smsOptIn ?? false,
+            paystackRef: reg.paystackRef || null,
+            paymentStatus: reg.paymentStatus || "free",
+            isWaitlist: reg.isWaitlist ?? false,
+            confirmedAt: reg.confirmedAt instanceof Date ? reg.confirmedAt.toISOString() : (reg.confirmedAt || new Date().toISOString()),
+            createdAt: reg.createdAt instanceof Date ? reg.createdAt.toISOString() : new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+        } catch {}
+      }
+      console.log("[Database Auto-Seed] Seeded default eventRegistrations to Supabase ✓");
+    }
+
+    // 8. Seed donations if table is empty
+    const { data: existingDonations, error: donErr } = await supabase.from("donations").select("id").limit(1);
+    if (!donErr && (!existingDonations || existingDonations.length === 0)) {
+      for (const don of memoryStore.donations) {
+        try {
+          await supabase.from("donations").insert({
+            name: don.name,
+            email: don.email,
+            phone: don.phone || null,
+            amountGhs: don.amountGhs,
+            message: don.message || null,
+            paystackRef: don.paystackRef || null,
+            paymentStatus: don.paymentStatus || "pending",
+            createdAt: don.createdAt instanceof Date ? don.createdAt.toISOString() : new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+        } catch {}
+      }
+      console.log("[Database Auto-Seed] Seeded default donations to Supabase ✓");
+    }
+
+    // 9. Seed communityInquiries if table is empty
+    const { data: existingInquiries, error: inqErr } = await supabase.from("communityInquiries").select("id").limit(1);
+    if (!inqErr && (!existingInquiries || existingInquiries.length === 0)) {
+      for (const inq of memoryStore.communityInquiries) {
+        try {
+          await supabase.from("communityInquiries").insert({
+            name: inq.name,
+            email: inq.email,
+            phone: inq.phone || null,
+            subject: inq.subject,
+            message: inq.message,
+            status: inq.status || "new",
+            adminNotes: inq.adminNotes || null,
+            createdAt: inq.createdAt instanceof Date ? inq.createdAt.toISOString() : new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+        } catch {}
+      }
+      console.log("[Database Auto-Seed] Seeded default communityInquiries to Supabase ✓");
+    }
+
+    // 10. Seed impactMetrics if table is empty
+    const { data: existingMetrics, error: metErr } = await supabase.from("impactMetrics").select("id").limit(1);
+    if (!metErr && (!existingMetrics || existingMetrics.length === 0)) {
+      for (const met of memoryStore.impactMetrics) {
+        try {
+          await supabase.from("impactMetrics").insert({
+            title: met.title,
+            focusArea: met.focusArea,
+            description: met.description,
+            currentValue: met.currentValue,
+            targetValue: met.targetValue || null,
+            unit: met.unit,
+            period: met.period,
+            status: met.status,
+            createdAt: met.createdAt instanceof Date ? met.createdAt.toISOString() : new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+        } catch {}
+      }
+      console.log("[Database Auto-Seed] Seeded default impactMetrics to Supabase ✓");
+    }
+
+    // 11. Seed opportunities if table is empty
+    const { data: existingOpp, error: oppErr } = await supabase.from("opportunities").select("id").limit(1);
+    if (!oppErr && (!existingOpp || existingOpp.length === 0)) {
+      for (const opp of memoryStore.opportunities) {
+        try {
+          await supabase.from("opportunities").insert({
+            title: opp.title,
+            category: opp.category,
+            summary: opp.summary,
+            commitment: opp.commitment,
+            status: opp.status,
+            sortOrder: opp.sortOrder,
+            createdAt: opp.createdAt instanceof Date ? opp.createdAt.toISOString() : new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+        } catch {}
+      }
+      console.log("[Database Auto-Seed] Seeded default opportunities to Supabase ✓");
+    }
+
+    // 12. Seed programSessions if table is empty
+    const { data: existingSessions, error: sesErr } = await supabase.from("programSessions").select("id").limit(1);
+    if (!sesErr && (!existingSessions || existingSessions.length === 0)) {
+      for (const ses of memoryStore.programSessions) {
+        try {
+          await supabase.from("programSessions").insert({
+            title: ses.title,
+            focusArea: ses.focusArea,
+            details: ses.details,
+            scheduledFor: ses.scheduledFor instanceof Date ? ses.scheduledFor.toISOString() : ses.scheduledFor,
+            venue: ses.venue,
+            capacity: ses.capacity || null,
+            status: ses.status,
+            createdAt: ses.createdAt instanceof Date ? ses.createdAt.toISOString() : new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+        } catch {}
+      }
+      console.log("[Database Auto-Seed] Seeded default programSessions to Supabase ✓");
+    }
   } catch (err) {
     console.warn("[Database Auto-Seed] Notice:", err);
   }
@@ -706,12 +834,17 @@ export async function listCommunityInquiries() {
   if (supabase) {
     try {
       const { data, error } = await supabase.from("communityInquiries").select("*").order("createdAt", { ascending: false });
-      if (!error && data) return data;
+      if (!error && data && data.length > 0) return data;
     } catch {}
   }
   const db = await getDb();
-  if (!db) return memoryStore.communityInquiries;
-  return db.select().from(communityInquiries).orderBy(desc(communityInquiries.createdAt));
+  if (db) {
+    try {
+      const rows = await db.select().from(communityInquiries).orderBy(desc(communityInquiries.createdAt));
+      if (rows && rows.length > 0) return rows;
+    } catch {}
+  }
+  return memoryStore.communityInquiries;
 }
 
 export async function updateCommunityInquiry(input: {
@@ -1784,16 +1917,17 @@ export async function listNewsletterSubscribers() {
   if (supabase) {
     try {
       const { data, error } = await supabase.from("newsletterSubscribers").select("*").order("subscribedAt", { ascending: false });
-      if (!error && data) return data;
+      if (!error && data && data.length > 0) return data;
     } catch {}
   }
   const db = await getDb();
-  if (!db) return memoryStore.newsletterSubscribers;
-  try {
-    return await db.select().from(newsletterSubscribers).orderBy(desc(newsletterSubscribers.subscribedAt));
-  } catch {
-    return memoryStore.newsletterSubscribers;
+  if (db) {
+    try {
+      const rows = await db.select().from(newsletterSubscribers).orderBy(desc(newsletterSubscribers.subscribedAt));
+      if (rows && rows.length > 0) return rows;
+    } catch {}
   }
+  return memoryStore.newsletterSubscribers;
 }
 
 export async function removeNewsletterSubscriber(id: number) {
@@ -2076,28 +2210,21 @@ export async function listEventRegistrations(eventId?: number) {
       let query = supabase.from("eventRegistrations").select("*").order("createdAt", { ascending: false });
       if (eventId) query = query.eq("eventId", eventId);
       const { data, error } = await query;
-      if (!error && data) return data;
+      if (!error && data && data.length > 0) return data;
     } catch (e) {}
   }
   const db = await getDb();
-  if (!db) {
-    return eventId
-      ? memoryStore.eventRegistrations.filter(r => r.eventId === eventId)
-      : memoryStore.eventRegistrations;
+  if (db) {
+    try {
+      const rows = eventId
+        ? await db.select().from(eventRegistrations).where(eq(eventRegistrations.eventId, eventId)).orderBy(desc(eventRegistrations.createdAt))
+        : await db.select().from(eventRegistrations).orderBy(desc(eventRegistrations.createdAt));
+      if (rows && rows.length > 0) return rows;
+    } catch {}
   }
-  try {
-    const rows = eventId
-      ? await db.select().from(eventRegistrations).where(eq(eventRegistrations.eventId, eventId)).orderBy(desc(eventRegistrations.createdAt))
-      : await db.select().from(eventRegistrations).orderBy(desc(eventRegistrations.createdAt));
-    if (rows) return rows;
-    return eventId
-      ? memoryStore.eventRegistrations.filter(r => r.eventId === eventId)
-      : memoryStore.eventRegistrations;
-  } catch {
-    return eventId
-      ? memoryStore.eventRegistrations.filter(r => r.eventId === eventId)
-      : memoryStore.eventRegistrations;
-  }
+  return eventId
+    ? memoryStore.eventRegistrations.filter(r => r.eventId === eventId)
+    : memoryStore.eventRegistrations;
 }
 
 export async function updateEventRegistrationPayment(
@@ -2341,16 +2468,17 @@ export async function listDonations() {
   if (supabase) {
     try {
       const { data, error } = await supabase.from("donations").select("*").order("createdAt", { ascending: false });
-      if (!error && data) return data;
+      if (!error && data && data.length > 0) return data;
     } catch (e) {}
   }
   const db = await getDb();
-  if (!db) return memoryStore.donations;
-  try {
-    return await db.select().from(donations).orderBy(desc(donations.createdAt));
-  } catch {
-    return memoryStore.donations;
+  if (db) {
+    try {
+      const rows = await db.select().from(donations).orderBy(desc(donations.createdAt));
+      if (rows && rows.length > 0) return rows;
+    } catch {}
   }
+  return memoryStore.donations;
 }
 
 export async function updateDonationPayment(

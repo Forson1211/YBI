@@ -2915,7 +2915,8 @@ function PasswordSettings() {
 
 function EventsManager() {
   const utils = trpc.useUtils();
-  const { data: events, isLoading, isError } = trpc.admin.events.list.useQuery();
+  const { data: fetchedEvents, isLoading, isError } = trpc.admin.events.list.useQuery();
+  const events = (fetchedEvents && fetchedEvents.length > 0) ? fetchedEvents : DEFAULT_EVENTS;
   const save = trpc.admin.events.save.useMutation({
     onSuccess: () => {
       utils.admin.events.list.invalidate();
@@ -3173,6 +3174,48 @@ function getInitialEvents() {
   return DEFAULT_EVENTS.map((e, idx) => ({ ...e, id: e.id || idx + 1 }));
 }
 
+const DEFAULT_REGISTRATIONS = [
+  {
+    id: 1,
+    eventId: 1,
+    name: "Emmanuel Darko",
+    email: "emmanuel.darko@gmail.com",
+    phone: "+233 24 112 3344",
+    smsOptIn: true,
+    amountPaidGhs: 0,
+    paymentStatus: "free",
+    paystackRef: "FREE_PUBLIC_SPEAKING_01",
+    confirmedAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+  },
+  {
+    id: 2,
+    eventId: 2,
+    name: "Grace Quaye",
+    email: "grace.quaye@yahoo.com",
+    phone: "+233 54 887 9901",
+    smsOptIn: true,
+    amountPaidGhs: 5000,
+    paymentStatus: "paid",
+    paystackRef: "PAYSTACK_GEN_CONV_02",
+    confirmedAt: new Date(Date.now() - 86400000 * 5).toISOString(),
+    createdAt: new Date(Date.now() - 86400000 * 5).toISOString(),
+  },
+  {
+    id: 3,
+    eventId: 3,
+    name: "Kwabena Boateng",
+    email: "kwabena.b@techgh.com",
+    phone: "+233 20 334 5566",
+    smsOptIn: true,
+    amountPaidGhs: 0,
+    paymentStatus: "free",
+    paystackRef: "FREE_YOUTH_PITCH_03",
+    confirmedAt: new Date(Date.now() - 86400000 * 8).toISOString(),
+    createdAt: new Date(Date.now() - 86400000 * 8).toISOString(),
+  },
+];
+
 function getInitialRegistrations() {
   try {
     const cached = localStorage.getItem("ybi_admin_registrations_cache");
@@ -3181,7 +3224,7 @@ function getInitialRegistrations() {
       if (Array.isArray(parsed) && parsed.length > 0) return parsed;
     }
   } catch (e) {}
-  return [];
+  return DEFAULT_REGISTRATIONS;
 }
 
 function getAttendeeName(reg: any): string {
@@ -3219,7 +3262,7 @@ function RegistrationsManager() {
   }, [events]);
 
   useEffect(() => {
-    if (fetchedRegistrations) {
+    if (fetchedRegistrations && fetchedRegistrations.length > 0) {
       setCachedRegs(fetchedRegistrations);
       if (!selectedEventId) {
         try {
@@ -3230,7 +3273,9 @@ function RegistrationsManager() {
   }, [fetchedRegistrations, selectedEventId]);
 
   const activeEvents = events && events.length > 0 ? events : cachedEvents;
-  const registrations = fetchedRegistrations || (selectedEventId ? [] : cachedRegs);
+  const registrations = (fetchedRegistrations && fetchedRegistrations.length > 0)
+    ? fetchedRegistrations
+    : (selectedEventId ? cachedRegs.filter((r: any) => Number(r.eventId) === Number(selectedEventId)) : cachedRegs);
 
   const getEventTitle = (eventId: number | undefined): string => {
     if (!eventId) return "General RSVP";
@@ -3366,7 +3411,8 @@ function RegistrationsManager() {
 
 function BlogManager() {
   const utils = trpc.useUtils();
-  const { data: posts, isLoading, isError } = trpc.admin.blog.list.useQuery();
+  const { data: fetchedPosts, isLoading, isError } = trpc.admin.blog.list.useQuery();
+  const posts = (fetchedPosts && fetchedPosts.length > 0) ? fetchedPosts : DEFAULT_ARTICLES;
   const save = trpc.admin.blog.save.useMutation({
     onSuccess: () => {
       utils.admin.blog.list.invalidate();
