@@ -1,4 +1,2 @@
-import handler, { config } from "./index";
-
-export { config };
-export default handler;
+import app from "./index";
+export default app;
