@@ -1,5 +1,4 @@
 import "dotenv/config";
-import type { VercelRequest, VercelResponse } from "@vercel/node";
 import express from "express";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "../backend/_core/oauth";
@@ -16,7 +15,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", origin);
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization,x-trpc-source");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization,x-trpc-source,Cookie");
   if (req.method === "OPTIONS") {
     res.status(200).end();
     return;
@@ -76,35 +75,4 @@ app.use((err: any, _req: any, res: any, _next: any) => {
   }
 });
 
-export const config = {
-  maxDuration: 60,
-};
-
-export default function handler(req: VercelRequest, res: VercelResponse) {
-  return new Promise<void>((resolve, reject) => {
-    res.on("finish", () => resolve());
-    res.on("close", () => resolve());
-    res.on("error", (err) => {
-      console.error("[Vercel API Response Error]:", err);
-      resolve();
-    });
-
-    try {
-      (app as any)(req, res, (err: any) => {
-        if (err) {
-          console.error("[Vercel API Express Error]:", err);
-          if (!res.headersSent) {
-            res.status(500).json({ error: err.message || "Internal server error" });
-          }
-        }
-        resolve();
-      });
-    } catch (err: any) {
-      console.error("[Vercel API Handler Exception]:", err);
-      if (!res.headersSent) {
-        res.status(500).json({ error: "Internal server error", detail: String(err?.message || err) });
-      }
-      resolve();
-    }
-  });
-}
+export default app;
