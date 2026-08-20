@@ -34,8 +34,6 @@ dotenv.config();
 
 let _db: ReturnType<typeof drizzle<typeof schema>> | null = null;
 let _supabase: SupabaseClient | null = null;
-let _teamProfilePool: import("mysql2/promise").Pool | null = null;
-let teamProfilePoolUnavailable = false;
 let _seedPromise: Promise<void> | null = null;
 
 export async function ensureDatabaseSeeded() {

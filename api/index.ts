@@ -75,4 +75,6 @@ app.use((err: any, _req: any, res: any, _next: any) => {
   }
 });
 
-export default app;
+export default function handler(req: any, res: any) {
+  return (app as any)(req, res);
+}
