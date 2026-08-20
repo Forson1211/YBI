@@ -4193,7 +4193,7 @@ function FaqManager() {
           title="All FAQ Items"
           count={faqs?.length ?? 0}
         />
-        {isError && faqs.length === 0 ? (
+        {isError && (!faqs || faqs.length === 0) ? (
           <ErrorCopy text="FAQ items could not be loaded." />
         ) : !faqs?.length ? (
           isLoading ? null : <EmptyCopy text="No FAQ items yet. Add questions on the left." />
