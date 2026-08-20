@@ -80,13 +80,31 @@ export const config = {
   maxDuration: 60,
 };
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  try {
-    return await (app as any)(req, res);
-  } catch (err: any) {
-    console.error("[Vercel API] Unhandled error in handler:", err?.message || err);
-    if (!res.headersSent) {
-      res.status(500).json({ error: "Internal server error", detail: String(err?.message || err) });
+export default function handler(req: VercelRequest, res: VercelResponse) {
+  return new Promise<void>((resolve, reject) => {
+    res.on("finish", () => resolve());
+    res.on("close", () => resolve());
+    res.on("error", (err) => {
+      console.error("[Vercel API Response Error]:", err);
+      resolve();
+    });
+
+    try {
+      (app as any)(req, res, (err: any) => {
+        if (err) {
+          console.error("[Vercel API Express Error]:", err);
+          if (!res.headersSent) {
+            res.status(500).json({ error: err.message || "Internal server error" });
+          }
+        }
+        resolve();
+      });
+    } catch (err: any) {
+      console.error("[Vercel API Handler Exception]:", err);
+      if (!res.headersSent) {
+        res.status(500).json({ error: "Internal server error", detail: String(err?.message || err) });
+      }
+      resolve();
     }
-  }
+  });
 }

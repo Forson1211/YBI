@@ -10,11 +10,15 @@
   },
   "rewrites": [
     {
-      "source": "/manus-storage/:path*",
+      "source": "/api/(.*)",
       "destination": "/api"
     },
     {
-      "source": "/uploads/:path*",
+      "source": "/manus-storage/(.*)",
+      "destination": "/api"
+    },
+    {
+      "source": "/uploads/(.*)",
       "destination": "/api"
     },
     {

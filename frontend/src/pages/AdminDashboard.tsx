@@ -2069,7 +2069,7 @@ function TeamMembersManager() {
             <Plus size={16} /> Add Member
           </button>
         </div>
-        {isError ? <ErrorCopy text="Team data could not be loaded." /> :
+        {isError && displayMembers.length === 0 ? <ErrorCopy text="Team data could not be loaded." /> :
           <div className="admin-record-list">
             {displayMembers.map(m => {
               const photo = (typeof window !== "undefined" ? (localStorage.getItem(`ybi_team_photo_${m.sortOrder}`) || localStorage.getItem(`ybi_team_photo_${(m.name || "").toLowerCase().replace(/[^a-z0-9]+/g, "-")}`)) : null) || m.imageUrl;
@@ -3097,7 +3097,7 @@ function EventsManager() {
           title="All events & masterclasses"
           count={events?.length ?? 0}
         />
-        {isError ? (
+        {isError && events.length === 0 ? (
           <ErrorCopy text="Events could not be loaded." />
         ) : !events?.length ? (
           isLoading ? null : <EmptyCopy text="No events created yet. Use the form on the left to schedule your first gathering." />
@@ -3341,7 +3341,7 @@ function RegistrationsManager() {
         </div>
       </div>
 
-      {isError ? (
+      {isError && registrations.length === 0 ? (
         <ErrorCopy text="Registrations could not be loaded." />
       ) : !registrations?.length ? (
         isLoading ? null : <EmptyCopy text="No registrations recorded for this selection." />
@@ -3578,7 +3578,7 @@ function BlogManager() {
           title="All articles & stories"
           count={posts?.length ?? 0}
         />
-        {isError ? (
+        {isError && posts.length === 0 ? (
           <ErrorCopy text="Articles could not be loaded." />
         ) : !posts?.length ? (
           isLoading ? null : <EmptyCopy text="No articles published yet. Compose your first story on the left." />
@@ -4193,7 +4193,7 @@ function FaqManager() {
           title="All FAQ Items"
           count={faqs?.length ?? 0}
         />
-        {isError ? (
+        {isError && faqs.length === 0 ? (
           <ErrorCopy text="FAQ items could not be loaded." />
         ) : !faqs?.length ? (
           isLoading ? null : <EmptyCopy text="No FAQ items yet. Add questions on the left." />
