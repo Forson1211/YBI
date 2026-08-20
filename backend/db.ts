@@ -27,6 +27,8 @@ import * as schema from "./drizzle/schema";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { ENV } from './_core/env';
 
+import { storagePut } from "./storage";
+
 // Load .env for local development
 dotenv.config();
 
@@ -34,6 +36,144 @@ let _db: ReturnType<typeof drizzle<typeof schema>> | null = null;
 let _supabase: SupabaseClient | null = null;
 let _teamProfilePool: import("mysql2/promise").Pool | null = null;
 let teamProfilePoolUnavailable = false;
+let _seedPromise: Promise<void> | null = null;
+
+export async function ensureDatabaseSeeded() {
+  const supabase = getSupabase();
+  if (!supabase) return;
+
+  try {
+    // 1. Seed blogPosts if table is empty
+    const { data: existingPosts, error: postErr } = await supabase.from("blogPosts").select("id").limit(1);
+    if (!postErr && (!existingPosts || existingPosts.length === 0)) {
+      for (const post of memoryStore.blogPosts) {
+        try {
+          await supabase.from("blogPosts").insert({
+            slug: post.slug,
+            title: post.title,
+            excerpt: post.excerpt,
+            body: post.body,
+            authorName: post.authorName,
+            coverImageUrl: post.coverImageUrl,
+            category: post.category,
+            status: post.status,
+            publishedAt: post.publishedAt instanceof Date ? post.publishedAt.toISOString() : post.publishedAt,
+            createdAt: post.createdAt instanceof Date ? post.createdAt.toISOString() : new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+        } catch {}
+      }
+      console.log("[Database Auto-Seed] Seeded default blogPosts to Supabase ✓");
+    }
+
+    // 2. Seed events if table is empty
+    const { data: existingEvents, error: evtErr } = await supabase.from("events").select("id").limit(1);
+    if (!evtErr && (!existingEvents || existingEvents.length === 0)) {
+      for (const evt of memoryStore.events) {
+        try {
+          await supabase.from("events").insert({
+            slug: evt.slug,
+            title: evt.title,
+            description: evt.description,
+            imageUrl: evt.imageUrl,
+            scheduledFor: evt.scheduledFor instanceof Date ? evt.scheduledFor.toISOString() : evt.scheduledFor,
+            location: evt.location,
+            capacity: evt.capacity,
+            isFree: evt.isFree,
+            priceGhs: evt.priceGhs,
+            status: evt.status,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+        } catch {}
+      }
+      console.log("[Database Auto-Seed] Seeded default events to Supabase ✓");
+    }
+
+    // 3. Seed programs if table is empty
+    const { data: existingPrograms, error: progErr } = await supabase.from("programs").select("id").limit(1);
+    if (!progErr && (!existingPrograms || existingPrograms.length === 0)) {
+      for (const prog of memoryStore.programs) {
+        try {
+          await supabase.from("programs").insert({
+            title: prog.title,
+            category: prog.category,
+            summary: prog.summary,
+            status: prog.status,
+            sortOrder: prog.sortOrder,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+        } catch {}
+      }
+      console.log("[Database Auto-Seed] Seeded default programs to Supabase ✓");
+    }
+
+    // 4. Seed teamMembers if table is empty
+    const { data: existingTeam, error: teamErr } = await supabase.from("teamMembers").select("id").limit(1);
+    if (!teamErr && (!existingTeam || existingTeam.length === 0)) {
+      for (const member of memoryStore.teamMembers) {
+        try {
+          await supabase.from("teamMembers").insert({
+            slug: member.slug,
+            name: member.name,
+            role: member.role,
+            bio: member.bio,
+            imageUrl: member.imageUrl,
+            email: member.email || "",
+            linkedIn: member.linkedIn || "",
+            sortOrder: member.sortOrder,
+            isPublished: member.isPublished,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+        } catch {}
+      }
+      console.log("[Database Auto-Seed] Seeded default teamMembers to Supabase ✓");
+    }
+
+    // 5. Seed FAQ items if table is empty
+    const { data: existingFaq, error: faqErr } = await supabase.from("faqItems").select("id").limit(1);
+    if (!faqErr && (!existingFaq || existingFaq.length === 0)) {
+      for (const faq of memoryStore.faqItems) {
+        try {
+          await supabase.from("faqItems").insert({
+            question: faq.question,
+            answer: faq.answer,
+            category: faq.category,
+            sortOrder: faq.sortOrder,
+            isPublished: faq.isPublished,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+        } catch {}
+      }
+      console.log("[Database Auto-Seed] Seeded default faqItems to Supabase ✓");
+    }
+
+    // 6. Seed galleryPhotos if table is empty
+    const { data: existingGallery, error: galErr } = await supabase.from("galleryPhotos").select("id").limit(1);
+    if (!galErr && (!existingGallery || existingGallery.length === 0)) {
+      for (const photo of memoryStore.galleryPhotos) {
+        try {
+          await supabase.from("galleryPhotos").insert({
+            title: photo.title,
+            altText: photo.altText,
+            imageUrl: photo.imageUrl,
+            storageKey: photo.storageKey,
+            isPublished: photo.isPublished,
+            sortOrder: photo.sortOrder,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+        } catch {}
+      }
+      console.log("[Database Auto-Seed] Seeded default galleryPhotos to Supabase ✓");
+    }
+  } catch (err) {
+    console.warn("[Database Auto-Seed] Notice:", err);
+  }
+}
 
 export function getSupabase(): SupabaseClient | null {
   if (_supabase) return _supabase;
@@ -48,6 +188,11 @@ export function getSupabase(): SupabaseClient | null {
       _supabase = createClient(url, key, {
         auth: { persistSession: false, autoRefreshToken: false },
       });
+      if (!_seedPromise) {
+        _seedPromise = ensureDatabaseSeeded().catch((err) =>
+          console.warn("[Database Auto-Seed] Startup error:", err)
+        );
+      }
     } catch (e) {
       console.warn("[Database] Failed to initialize Supabase client:", e);
     }
@@ -449,21 +594,21 @@ export async function getDashboardOverview() {
       ]);
 
       return {
-        gallery: galleryCount ?? 0,
-        programs: programCount ?? 0,
-        updates: 0,
-        content: contentCount ?? 0,
-        inquiries: inquiryCount ?? 0,
-        sessions: sessionCount ?? 0,
-        opportunities: opportunityCount ?? 0,
-        impactMetrics: metricCount ?? 0,
-        teamMembers: teamCount ?? 0,
-        subscribers: subCount ?? 0,
-        events: eventCount ?? 0,
-        blogPosts: blogCount ?? 0,
-        donations: donationCount ?? 0,
-        registrations: regCount ?? 0,
-        faqItems: faqCount ?? 0,
+        gallery: galleryCount ?? memoryStore.galleryPhotos.length,
+        programs: programCount ?? memoryStore.programs.length,
+        updates: memoryStore.updates.length,
+        content: contentCount ?? memoryStore.siteContent.size,
+        inquiries: inquiryCount ?? memoryStore.communityInquiries.length,
+        sessions: sessionCount ?? memoryStore.programSessions.length,
+        opportunities: opportunityCount ?? memoryStore.opportunities.length,
+        impactMetrics: metricCount ?? memoryStore.impactMetrics.length,
+        teamMembers: teamCount ?? memoryStore.teamMembers.length,
+        subscribers: subCount ?? memoryStore.newsletterSubscribers.length,
+        events: eventCount ?? memoryStore.events.length,
+        blogPosts: blogCount ?? memoryStore.blogPosts.length,
+        donations: donationCount ?? memoryStore.donations.length,
+        registrations: regCount ?? memoryStore.eventRegistrations.length,
+        faqItems: faqCount ?? memoryStore.faqItems.length,
       };
     } catch (e) {
       console.warn("[Database] getDashboardOverview Supabase error:", e);
@@ -622,12 +767,17 @@ export async function listProgramSessions() {
   if (supabase) {
     try {
       const { data, error } = await supabase.from("programSessions").select("*").order("scheduledFor", { ascending: true });
-      if (!error && data) return data;
+      if (!error && data && data.length > 0) return data;
     } catch {}
   }
   const db = await getDb();
-  if (!db) return memoryStore.programSessions;
-  return db.select().from(programSessions).orderBy(programSessions.scheduledFor, desc(programSessions.createdAt));
+  if (db) {
+    try {
+      const rows = await db.select().from(programSessions).orderBy(programSessions.scheduledFor, desc(programSessions.createdAt));
+      if (rows && rows.length > 0) return rows;
+    } catch {}
+  }
+  return memoryStore.programSessions;
 }
 
 export async function saveProgramSession(input: {
@@ -644,7 +794,7 @@ export async function saveProgramSession(input: {
   if (supabase) {
     try {
       if (input.id) {
-        await supabase.from("programSessions").update({
+        const { data, error } = await supabase.from("programSessions").update({
           title: input.title,
           focusArea: input.focusArea,
           details: input.details,
@@ -653,8 +803,12 @@ export async function saveProgramSession(input: {
           capacity: input.capacity ?? null,
           status: input.status,
           updatedAt: new Date().toISOString(),
-        }).eq("id", input.id);
-        return input.id;
+        }).eq("id", input.id).select().single();
+        if (!error && data?.id) {
+          const idx = memoryStore.programSessions.findIndex(s => s.id === input.id);
+          if (idx !== -1) memoryStore.programSessions[idx] = { ...memoryStore.programSessions[idx], ...data };
+          return data.id;
+        }
       }
       const { data, error } = await supabase.from("programSessions").insert({
         title: input.title,
@@ -665,7 +819,10 @@ export async function saveProgramSession(input: {
         capacity: input.capacity ?? null,
         status: input.status,
       }).select("id").single();
-      if (!error && data) return Number(data.id);
+      if (!error && data?.id) {
+        memoryStore.programSessions.push(data);
+        return Number(data.id);
+      }
     } catch {}
   }
   const db = await getDb();
@@ -713,12 +870,17 @@ export async function listOpportunities() {
   if (supabase) {
     try {
       const { data, error } = await supabase.from("opportunities").select("*").order("sortOrder", { ascending: true });
-      if (!error && data) return data;
+      if (!error && data && data.length > 0) return data;
     } catch {}
   }
   const db = await getDb();
-  if (!db) return memoryStore.opportunities;
-  return db.select().from(opportunities).orderBy(opportunities.sortOrder, desc(opportunities.createdAt));
+  if (db) {
+    try {
+      const rows = await db.select().from(opportunities).orderBy(opportunities.sortOrder, desc(opportunities.createdAt));
+      if (rows && rows.length > 0) return rows;
+    } catch {}
+  }
+  return memoryStore.opportunities;
 }
 
 export async function saveOpportunity(input: {
@@ -734,7 +896,7 @@ export async function saveOpportunity(input: {
   if (supabase) {
     try {
       if (input.id) {
-        await supabase.from("opportunities").update({
+        const { data, error } = await supabase.from("opportunities").update({
           title: input.title,
           category: input.category,
           summary: input.summary,
@@ -742,8 +904,12 @@ export async function saveOpportunity(input: {
           status: input.status,
           sortOrder: input.sortOrder,
           updatedAt: new Date().toISOString(),
-        }).eq("id", input.id);
-        return input.id;
+        }).eq("id", input.id).select().single();
+        if (!error && data?.id) {
+          const idx = memoryStore.opportunities.findIndex(o => o.id === input.id);
+          if (idx !== -1) memoryStore.opportunities[idx] = { ...memoryStore.opportunities[idx], ...data };
+          return data.id;
+        }
       }
       const { data, error } = await supabase.from("opportunities").insert({
         title: input.title,
@@ -753,7 +919,10 @@ export async function saveOpportunity(input: {
         status: input.status,
         sortOrder: input.sortOrder,
       }).select("id").single();
-      if (!error && data) return Number(data.id);
+      if (!error && data?.id) {
+        memoryStore.opportunities.push(data);
+        return Number(data.id);
+      }
     } catch {}
   }
   const db = await getDb();
@@ -899,19 +1068,20 @@ export async function listGalleryPhotos(includeUnpublished = true) {
         query = query.eq("isPublished", true);
       }
       const { data, error } = await query;
-      if (!error && data) {
+      if (!error && data && data.length > 0) {
         return data;
       }
     } catch (e) {}
   }
   const db = await getDb();
-  if (!db) return includeUnpublished ? memoryStore.galleryPhotos : memoryStore.galleryPhotos.filter(p => p.isPublished);
-  try {
-    const rows = await db.select().from(galleryPhotos).orderBy(galleryPhotos.sortOrder, desc(galleryPhotos.createdAt));
-    return includeUnpublished ? rows : rows.filter(photo => photo.isPublished);
-  } catch {
-    return includeDraftsGallery(includeUnpublished);
+  if (db) {
+    try {
+      const rows = await db.select().from(galleryPhotos).orderBy(galleryPhotos.sortOrder, desc(galleryPhotos.createdAt));
+      const res = includeUnpublished ? rows : rows.filter(photo => photo.isPublished);
+      if (res && res.length > 0) return res;
+    } catch {}
   }
+  return includeDraftsGallery(includeUnpublished);
 }
 
 function includeDraftsGallery(includeUnpublished: boolean) {
@@ -927,11 +1097,24 @@ export async function saveGalleryPhoto(input: {
   isPublished: boolean;
   sortOrder: number;
 }) {
+  let imageUrl = input.imageUrl || "/ybi-assets/gallery/workshop-1.jpg";
+  let storageKey = input.storageKey || "sample.jpg";
+
+  if (imageUrl && imageUrl.startsWith("data:")) {
+    try {
+      const uploaded = await storagePut(`gallery/${input.title.toLowerCase().replace(/[^a-z0-9]+/g, "-") || Date.now()}`, imageUrl);
+      imageUrl = uploaded.url;
+      storageKey = uploaded.key;
+    } catch (e) {
+      console.warn("[Gallery] Storage upload fallback:", e);
+    }
+  }
+
   const photoRecord = {
     title: input.title,
     altText: input.altText,
-    imageUrl: input.imageUrl || "/ybi-assets/gallery/workshop-1.jpg",
-    storageKey: input.storageKey || "sample.jpg",
+    imageUrl,
+    storageKey,
     isPublished: input.isPublished,
     sortOrder: input.sortOrder,
     updatedAt: new Date().toISOString(),
@@ -952,19 +1135,19 @@ export async function saveGalleryPhoto(input: {
           if (idx !== -1) memoryStore.galleryPhotos[idx] = { ...memoryStore.galleryPhotos[idx], ...data };
           return data.id;
         }
-      } else {
-        const { data, error } = await supabase
-          .from("galleryPhotos")
-          .insert({
-            ...photoRecord,
-            createdAt: new Date().toISOString(),
-          })
-          .select()
-          .single();
-        if (!error && data?.id) {
-          memoryStore.galleryPhotos.push(data);
-          return data.id;
-        }
+      }
+      
+      const { data, error } = await supabase
+        .from("galleryPhotos")
+        .insert({
+          ...photoRecord,
+          createdAt: new Date().toISOString(),
+        })
+        .select()
+        .single();
+      if (!error && data?.id) {
+        memoryStore.galleryPhotos.push(data);
+        return data.id;
       }
     } catch (err) {
       console.warn("[Supabase] saveGalleryPhoto error:", err);
@@ -1038,17 +1221,18 @@ export async function listPrograms(includeDrafts = true) {
         query = query.eq("status", "published");
       }
       const { data, error } = await query;
-      if (!error && data) return data;
+      if (!error && data && data.length > 0) return data;
     } catch {}
   }
   const db = await getDb();
-  if (!db) return includeDrafts ? memoryStore.programs : memoryStore.programs.filter(p => p.status === "published");
-  try {
-    const rows = await db.select().from(programs).orderBy(programs.sortOrder, desc(programs.createdAt));
-    return includeDrafts ? rows : rows.filter(program => program.status === "published");
-  } catch {
-    return includeDrafts ? memoryStore.programs : memoryStore.programs.filter(p => p.status === "published");
+  if (db) {
+    try {
+      const rows = await db.select().from(programs).orderBy(programs.sortOrder, desc(programs.createdAt));
+      const res = includeDrafts ? rows : rows.filter(program => program.status === "published");
+      if (res && res.length > 0) return res;
+    } catch {}
   }
+  return includeDrafts ? memoryStore.programs : memoryStore.programs.filter(p => p.status === "published");
 }
 
 export async function saveProgram(input: {
@@ -1063,15 +1247,19 @@ export async function saveProgram(input: {
   if (supabase) {
     try {
       if (input.id) {
-        await supabase.from("programs").update({
+        const { data, error } = await supabase.from("programs").update({
           title: input.title,
           category: input.category,
           summary: input.summary,
           status: input.status,
           sortOrder: input.sortOrder,
           updatedAt: new Date().toISOString(),
-        }).eq("id", input.id);
-        return input.id;
+        }).eq("id", input.id).select().single();
+        if (!error && data?.id) {
+          const idx = memoryStore.programs.findIndex(p => p.id === input.id);
+          if (idx !== -1) memoryStore.programs[idx] = { ...memoryStore.programs[idx], ...data };
+          return data.id;
+        }
       }
       const { data, error } = await supabase.from("programs").insert({
         title: input.title,
@@ -1080,7 +1268,10 @@ export async function saveProgram(input: {
         status: input.status,
         sortOrder: input.sortOrder,
       }).select("id").single();
-      if (!error && data) return Number(data.id);
+      if (!error && data?.id) {
+        memoryStore.programs.push(data);
+        return Number(data.id);
+      }
     } catch {}
   }
   const db = await getDb();
@@ -1361,22 +1552,22 @@ export async function listTeamMembers(includeUnpublished = true) {
         query = query.eq("isPublished", true);
       }
       const { data, error } = await query;
-      if (!error && data) {
+      if (!error && data && data.length > 0) {
         return data;
       }
     } catch (e) {}
   }
   const db = await getDb();
-  if (!db) {
-    return fallbackTeamMembers(includeUnpublished);
+  if (db) {
+    try {
+      let rows = await db.select().from(teamMembers).orderBy(teamMembers.sortOrder, teamMembers.id);
+      const res = includeUnpublished ? rows : rows.filter((m) => m.isPublished);
+      if (res && res.length > 0) return res;
+    } catch (error) {
+      console.warn("[Team] Error querying teamMembers; using local fallback.", error);
+    }
   }
-  try {
-    let rows = await db.select().from(teamMembers).orderBy(teamMembers.sortOrder, teamMembers.id);
-    return includeUnpublished ? rows : rows.filter((m) => m.isPublished);
-  } catch (error) {
-    console.warn("[Team] Error querying teamMembers; using local fallback.", error);
-    return fallbackTeamMembers(includeUnpublished);
-  }
+  return fallbackTeamMembers(includeUnpublished);
 }
 
 export async function getTeamMemberBySlug(slug: string, includeUnpublished = false) {
@@ -1390,48 +1581,15 @@ export async function getTeamMemberBySlug(slug: string, includeUnpublished = fal
     } catch (e) {}
   }
   const db = await getDb();
-  if (!db) {
-    const member = memoryStore.teamMembers.find(item => item.slug === slug) ?? null;
-    return member && (includeUnpublished || member.isPublished) ? member : null;
-  }
-  try {
-    const rows = await db.select().from(teamMembers).where(eq(teamMembers.slug, slug)).limit(1);
-    const member = rows[0] ?? null;
-    return member && (includeUnpublished || member.isPublished) ? member : null;
-  } catch (error) {
-    const member = memoryStore.teamMembers.find(item => item.slug === slug) ?? null;
-    return member && (includeUnpublished || member.isPublished) ? member : null;
-  }
-}
-
-function persistDataUriToFile(dataUri: string, prefix: string): string {
-  if (!dataUri || !dataUri.startsWith("data:image/")) {
-    return dataUri;
-  }
-  try {
-    const match = dataUri.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
-    if (!match) return dataUri;
-    const ext = match[1] === "jpeg" ? "jpg" : match[1].replace(/\+xml/, "");
-    const base64Data = match[2];
-    const buffer = Buffer.from(base64Data, "base64");
-    const filename = `${prefix}-${Date.now()}.${ext}`;
-    const relKey = `team-members/${filename}`;
-
-    const uploadsDir = path.resolve(process.cwd(), "uploads", "team-members");
-    fs.mkdirSync(uploadsDir, { recursive: true });
-    fs.writeFileSync(path.join(uploadsDir, filename), buffer);
-
-    const feUploadsDir = path.resolve(process.cwd(), "frontend", "public", "uploads", "team-members");
+  if (db) {
     try {
-      fs.mkdirSync(feUploadsDir, { recursive: true });
-      fs.writeFileSync(path.join(feUploadsDir, filename), buffer);
-    } catch (e) {}
-
-    return `/uploads/${relKey}`;
-  } catch (e) {
-    console.error("Failed to persist data URI to file:", e);
-    return dataUri;
+      const rows = await db.select().from(teamMembers).where(eq(teamMembers.slug, slug)).limit(1);
+      const member = rows[0] ?? null;
+      if (member && (includeUnpublished || member.isPublished)) return member;
+    } catch (error) {}
   }
+  const member = memoryStore.teamMembers.find(item => item.slug === slug) ?? null;
+  return member && (includeUnpublished || member.isPublished) ? member : null;
 }
 
 export async function saveTeamMember(input: {
@@ -1446,7 +1604,17 @@ export async function saveTeamMember(input: {
   isPublished: boolean;
 }) {
   const slug = normalizeTeamSlug(input.name);
-  const finalImageUrl = persistDataUriToFile(input.imageUrl, slug);
+  let finalImageUrl = input.imageUrl;
+
+  if (finalImageUrl && finalImageUrl.startsWith("data:")) {
+    try {
+      const uploaded = await storagePut(`team-members/${slug || Date.now()}`, finalImageUrl);
+      finalImageUrl = uploaded.url;
+    } catch (e) {
+      console.warn("[Team] Storage upload fallback:", e);
+    }
+  }
+
   const values = {
     slug,
     name: input.name,
@@ -1475,19 +1643,19 @@ export async function saveTeamMember(input: {
           if (idx !== -1) memoryStore.teamMembers[idx] = { ...memoryStore.teamMembers[idx], ...data };
           return data.id;
         }
-      } else {
-        const { data, error } = await supabase
-          .from("teamMembers")
-          .insert({
-            ...values,
-            createdAt: new Date().toISOString(),
-          })
-          .select()
-          .single();
-        if (!error && data?.id) {
-          memoryStore.teamMembers.push(data);
-          return data.id;
-        }
+      }
+      
+      const { data, error } = await supabase
+        .from("teamMembers")
+        .insert({
+          ...values,
+          createdAt: new Date().toISOString(),
+        })
+        .select()
+        .single();
+      if (!error && data?.id) {
+        memoryStore.teamMembers.push(data);
+        return data.id;
       }
     } catch (err) {
       console.warn("[Supabase] saveTeamMember error:", err);
@@ -1513,7 +1681,7 @@ export async function saveTeamMember(input: {
       const updated = await db.update(teamMembers).set(values as any).where(eq(teamMembers.id, input.id)).returning({ id: teamMembers.id });
       if (updated.length > 0) {
         const index = memoryStore.teamMembers.findIndex(m => m.id === input.id);
-        if (index !== -1) memoryStore.teamMembers[index] = { ...memoryStore.teamMembers[index], ...input, slug, updatedAt: new Date() };
+        if (index !== -1) memoryStore.teamMembers[index] = { ...memoryStore.teamMembers[index], ...input, imageUrl: finalImageUrl, slug, updatedAt: new Date() };
         return input.id;
       }
     } catch (e) {}
@@ -1522,13 +1690,13 @@ export async function saveTeamMember(input: {
   try {
     const result = await db.insert(teamMembers).values(values as any).returning({ id: teamMembers.id });
     const insertedId = Number(result[0].id);
-    memoryStore.teamMembers.push({ id: insertedId, ...input, slug, email: input.email || "", linkedIn: input.linkedIn || "", createdAt: new Date(), updatedAt: new Date() });
+    memoryStore.teamMembers.push({ id: insertedId, ...input, imageUrl: finalImageUrl, slug, email: input.email || "", linkedIn: input.linkedIn || "", createdAt: new Date(), updatedAt: new Date() });
     return insertedId;
   } catch (e) {
     const uniqueSlug = `${slug}-${Date.now().toString(36)}`;
     const result = await db.insert(teamMembers).values({ ...values, slug: uniqueSlug } as any).returning({ id: teamMembers.id });
     const insertedId = Number(result[0].id);
-    memoryStore.teamMembers.push({ id: insertedId, ...input, slug: uniqueSlug, email: input.email || "", linkedIn: input.linkedIn || "", createdAt: new Date(), updatedAt: new Date() });
+    memoryStore.teamMembers.push({ id: insertedId, ...input, imageUrl: finalImageUrl, slug: uniqueSlug, email: input.email || "", linkedIn: input.linkedIn || "", createdAt: new Date(), updatedAt: new Date() });
     return insertedId;
   }
 }
@@ -1660,25 +1828,22 @@ export async function listEvents(includeDrafts = true) {
         query = query.eq("status", "published");
       }
       const { data, error } = await query;
-      if (!error && data) {
+      if (!error && data && data.length > 0) {
         return data;
       }
     } catch (e) {}
   }
   const db = await getDb();
-  if (!db) {
-    return includeDrafts
-      ? memoryStore.events
-      : memoryStore.events.filter(e => e.status === "published");
+  if (db) {
+    try {
+      const rows = await db.select().from(events).orderBy(events.scheduledFor);
+      const res = includeDrafts ? rows : rows.filter(e => e.status === "published");
+      if (res && res.length > 0) return res;
+    } catch {}
   }
-  try {
-    const rows = await db.select().from(events).orderBy(events.scheduledFor);
-    return includeDrafts ? rows : rows.filter(e => e.status === "published");
-  } catch {
-    return includeDrafts
-      ? memoryStore.events
-      : memoryStore.events.filter(e => e.status === "published");
-  }
+  return includeDrafts
+    ? memoryStore.events
+    : memoryStore.events.filter(e => e.status === "published");
 }
 
 export async function getEventBySlug(slug: string) {
@@ -1690,13 +1855,13 @@ export async function getEventBySlug(slug: string) {
     } catch (e) {}
   }
   const db = await getDb();
-  if (!db) return memoryStore.events.find(e => e.slug === slug) ?? null;
-  try {
-    const rows = await db.select().from(events).where(eq(events.slug, slug)).limit(1);
-    return rows[0] ?? memoryStore.events.find(e => e.slug === slug) ?? null;
-  } catch {
-    return memoryStore.events.find(e => e.slug === slug) ?? null;
+  if (db) {
+    try {
+      const rows = await db.select().from(events).where(eq(events.slug, slug)).limit(1);
+      if (rows[0]) return rows[0];
+    } catch {}
   }
+  return memoryStore.events.find(e => e.slug === slug) ?? null;
 }
 
 export async function getEventById(id: number) {
@@ -1708,13 +1873,13 @@ export async function getEventById(id: number) {
     } catch (e) {}
   }
   const db = await getDb();
-  if (!db) return memoryStore.events.find(e => e.id === id) ?? null;
-  try {
-    const rows = await db.select().from(events).where(eq(events.id, id)).limit(1);
-    return rows[0] ?? memoryStore.events.find(e => e.id === id) ?? null;
-  } catch {
-    return memoryStore.events.find(e => e.id === id) ?? null;
+  if (db) {
+    try {
+      const rows = await db.select().from(events).where(eq(events.id, id)).limit(1);
+      if (rows[0]) return rows[0];
+    } catch {}
   }
+  return memoryStore.events.find(e => e.id === id) ?? null;
 }
 
 export async function saveEvent(input: {
@@ -1723,19 +1888,32 @@ export async function saveEvent(input: {
   title: string;
   description: string;
   imageUrl?: string | null;
-  scheduledFor: string;
+  scheduledFor: string | Date;
   location: string;
   capacity?: number | null;
   isFree?: boolean;
   priceGhs?: number;
   status: "draft" | "published" | "cancelled";
 }) {
+  let imageUrl = input.imageUrl ?? null;
+  if (imageUrl && imageUrl.startsWith("data:")) {
+    try {
+      const uploaded = await storagePut(`events/${input.slug || Date.now()}`, imageUrl);
+      imageUrl = uploaded.url;
+    } catch (err) {
+      console.warn("[Events] Storage upload fallback:", err);
+    }
+  }
+
+  const scheduledForStr = input.scheduledFor instanceof Date ? input.scheduledFor.toISOString() : input.scheduledFor;
+  const scheduledForDate = input.scheduledFor instanceof Date ? input.scheduledFor : new Date(input.scheduledFor);
+
   const values = {
     slug: input.slug,
     title: input.title,
     description: input.description,
-    imageUrl: input.imageUrl ?? null,
-    scheduledFor: input.scheduledFor,
+    imageUrl,
+    scheduledFor: scheduledForStr,
     location: input.location,
     capacity: input.capacity ?? null,
     isFree: input.isFree ?? true,
@@ -1759,19 +1937,19 @@ export async function saveEvent(input: {
           if (idx !== -1) memoryStore.events[idx] = { ...memoryStore.events[idx], ...data };
           return data.id;
         }
-      } else {
-        const { data, error } = await supabase
-          .from("events")
-          .insert({
-            ...values,
-            createdAt: new Date().toISOString(),
-          })
-          .select()
-          .single();
-        if (!error && data?.id) {
-          memoryStore.events.push(data);
-          return data.id;
-        }
+      }
+      
+      const { data, error } = await supabase
+        .from("events")
+        .insert({
+          ...values,
+          createdAt: new Date().toISOString(),
+        })
+        .select()
+        .single();
+      if (!error && data?.id) {
+        memoryStore.events.push(data);
+        return data.id;
       }
     } catch (err) {
       console.warn("[Supabase] saveEvent error:", err);
@@ -1783,31 +1961,31 @@ export async function saveEvent(input: {
     if (input.id) {
       const index = memoryStore.events.findIndex(e => e.id === input.id);
       if (index !== -1) {
-        memoryStore.events[index] = { ...memoryStore.events[index], ...input, scheduledFor: new Date(input.scheduledFor), updatedAt: new Date() };
+        memoryStore.events[index] = { ...memoryStore.events[index], ...input, imageUrl, scheduledFor: scheduledForDate, updatedAt: new Date() };
         return input.id;
       }
     }
     const id = ++memoryStore.autoId;
-    memoryStore.events.push({ id, ...input, scheduledFor: new Date(input.scheduledFor), createdAt: new Date(), updatedAt: new Date() });
+    memoryStore.events.push({ id, ...input, imageUrl, scheduledFor: scheduledForDate, createdAt: new Date(), updatedAt: new Date() });
     return id;
   }
   try {
     if (input.id) {
-      await db.update(events).set({ ...values, scheduledFor: new Date(input.scheduledFor) } as any).where(eq(events.id, input.id));
+      await db.update(events).set({ ...values, scheduledFor: scheduledForDate } as any).where(eq(events.id, input.id));
       return input.id;
     }
-    const result = await db.insert(events).values({ ...values, scheduledFor: new Date(input.scheduledFor) } as any).returning({ id: events.id });
+    const result = await db.insert(events).values({ ...values, scheduledFor: scheduledForDate } as any).returning({ id: events.id });
     return Number(result[0].id);
   } catch {
     if (input.id) {
       const index = memoryStore.events.findIndex(e => e.id === input.id);
       if (index !== -1) {
-        memoryStore.events[index] = { ...memoryStore.events[index], ...input, scheduledFor: new Date(input.scheduledFor), updatedAt: new Date() };
+        memoryStore.events[index] = { ...memoryStore.events[index], ...input, imageUrl, scheduledFor: scheduledForDate, updatedAt: new Date() };
         return input.id;
       }
     }
     const id = ++memoryStore.autoId;
-    memoryStore.events.push({ id, ...input, scheduledFor: new Date(input.scheduledFor), createdAt: new Date(), updatedAt: new Date() });
+    memoryStore.events.push({ id, ...input, imageUrl, scheduledFor: scheduledForDate, createdAt: new Date(), updatedAt: new Date() });
     return id;
   }
 }
@@ -1966,23 +2144,20 @@ export async function listBlogPosts(includeDrafts = true) {
       let query = supabase.from("blogPosts").select("*").order("publishedAt", { ascending: false });
       if (!includeDrafts) query = query.eq("status", "published");
       const { data, error } = await query;
-      if (!error && data) return data;
+      if (!error && data && data.length > 0) return data;
     } catch (e) {}
   }
   const db = await getDb();
-  if (!db) {
-    return includeDrafts
-      ? memoryStore.blogPosts
-      : memoryStore.blogPosts.filter(p => p.status === "published");
+  if (db) {
+    try {
+      const rows = await db.select().from(blogPosts).orderBy(desc(blogPosts.publishedAt), desc(blogPosts.createdAt));
+      const res = includeDrafts ? rows : rows.filter(p => p.status === "published");
+      if (res && res.length > 0) return res;
+    } catch {}
   }
-  try {
-    const rows = await db.select().from(blogPosts).orderBy(desc(blogPosts.publishedAt), desc(blogPosts.createdAt));
-    return includeDrafts ? rows : rows.filter(p => p.status === "published");
-  } catch {
-    return includeDrafts
-      ? memoryStore.blogPosts
-      : memoryStore.blogPosts.filter(p => p.status === "published");
-  }
+  return includeDrafts
+    ? memoryStore.blogPosts
+    : memoryStore.blogPosts.filter(p => p.status === "published");
 }
 
 export async function getBlogPostBySlug(slug: string) {
@@ -1990,17 +2165,17 @@ export async function getBlogPostBySlug(slug: string) {
   if (supabase) {
     try {
       const { data, error } = await supabase.from("blogPosts").select("*").eq("slug", slug).maybeSingle();
-      if (!error) return data ?? null;
+      if (!error && data) return data;
     } catch (e) {}
   }
   const db = await getDb();
-  if (!db) return memoryStore.blogPosts.find(p => p.slug === slug) ?? null;
-  try {
-    const rows = await db.select().from(blogPosts).where(eq(blogPosts.slug, slug)).limit(1);
-    return rows[0] ?? memoryStore.blogPosts.find(p => p.slug === slug) ?? null;
-  } catch {
-    return memoryStore.blogPosts.find(p => p.slug === slug) ?? null;
+  if (db) {
+    try {
+      const rows = await db.select().from(blogPosts).where(eq(blogPosts.slug, slug)).limit(1);
+      if (rows[0]) return rows[0];
+    } catch {}
   }
+  return memoryStore.blogPosts.find(p => p.slug === slug) ?? null;
 }
 
 export async function saveBlogPost(input: {
@@ -2015,6 +2190,16 @@ export async function saveBlogPost(input: {
   status: "draft" | "published";
   publishedAt?: Date | null;
 }) {
+  let coverImageUrl = input.coverImageUrl ?? null;
+  if (coverImageUrl && coverImageUrl.startsWith("data:")) {
+    try {
+      const uploaded = await storagePut(`blog/${input.slug || Date.now()}`, coverImageUrl);
+      coverImageUrl = uploaded.url;
+    } catch (err) {
+      console.warn("[Blog] Storage upload fallback:", err);
+    }
+  }
+
   const publishedAt = input.publishedAt ? input.publishedAt.toISOString() : (input.status === "published" ? new Date().toISOString() : null);
   const values = {
     slug: input.slug,
@@ -2022,7 +2207,7 @@ export async function saveBlogPost(input: {
     excerpt: input.excerpt,
     body: input.body,
     authorName: input.authorName,
-    coverImageUrl: input.coverImageUrl ?? null,
+    coverImageUrl,
     category: input.category,
     status: input.status,
     publishedAt,
@@ -2044,19 +2229,19 @@ export async function saveBlogPost(input: {
           if (idx !== -1) memoryStore.blogPosts[idx] = { ...memoryStore.blogPosts[idx], ...data };
           return data.id;
         }
-      } else {
-        const { data, error } = await supabase
-          .from("blogPosts")
-          .insert({
-            ...values,
-            createdAt: new Date().toISOString(),
-          })
-          .select()
-          .single();
-        if (!error && data?.id) {
-          memoryStore.blogPosts.push(data);
-          return data.id;
-        }
+      }
+      
+      const { data, error } = await supabase
+        .from("blogPosts")
+        .insert({
+          ...values,
+          createdAt: new Date().toISOString(),
+        })
+        .select()
+        .single();
+      if (!error && data?.id) {
+        memoryStore.blogPosts.push(data);
+        return data.id;
       }
     } catch (err) {
       console.warn("[Supabase] saveBlogPost error:", err);
@@ -2068,27 +2253,6 @@ export async function saveBlogPost(input: {
     if (input.id) {
       const index = memoryStore.blogPosts.findIndex(p => p.id === input.id);
       if (index !== -1) {
-        memoryStore.blogPosts[index] = { ...memoryStore.blogPosts[index], ...input, publishedAt: input.publishedAt ? new Date(input.publishedAt) : null, updatedAt: new Date() };
-        return input.id;
-      }
-    }
-    const id = ++memoryStore.autoId;
-    memoryStore.blogPosts.push({ id, ...input, publishedAt: input.publishedAt ? new Date(input.publishedAt) : null, createdAt: new Date(), updatedAt: new Date() });
-    return id;
-  }
-  try {
-    if (input.id) {
-      await db.update(blogPosts).set({ ...values, publishedAt: input.publishedAt } as any).where(eq(blogPosts.id, input.id));
-      return input.id;
-    }
-    const result = await db.insert(blogPosts).values({ ...values, publishedAt: input.publishedAt } as any).returning({ id: blogPosts.id });
-    return Number(result[0].id);
-  } catch {
-    if (input.id) {
-      const index = memoryStore.blogPosts.findIndex(p => p.id === input.id);
-      if (index !== -1) {
-        memoryStore.blogPosts[index] = { ...memoryStore.blogPosts[index], ...input, publishedAt: input.publishedAt ? new Date(input.publishedAt) : null, updatedAt: new Date() };
-        return input.id;
       }
     }
     const id = ++memoryStore.autoId;
@@ -2220,25 +2384,21 @@ export async function listFaqItems(includeUnpublished = true) {
         query = query.eq("isPublished", true);
       }
       const { data, error } = await query;
-      if (!error && data) return data;
+      if (!error && data && data.length > 0) return data;
     } catch {}
   }
   const db = await getDb();
-  if (!db) {
-    const items = includeUnpublished
-      ? memoryStore.faqItems
-      : memoryStore.faqItems.filter(f => f.isPublished);
-    return items.slice().sort((a, b) => a.sortOrder - b.sortOrder);
+  if (db) {
+    try {
+      const rows = await db.select().from(faqItems).orderBy(faqItems.sortOrder, desc(faqItems.createdAt));
+      const res = includeUnpublished ? rows : rows.filter(f => f.isPublished);
+      if (res && res.length > 0) return res;
+    } catch {}
   }
-  try {
-    const rows = await db.select().from(faqItems).orderBy(faqItems.sortOrder, desc(faqItems.createdAt));
-    return includeUnpublished ? rows : rows.filter(f => f.isPublished);
-  } catch {
-    const items = includeUnpublished
-      ? memoryStore.faqItems
-      : memoryStore.faqItems.filter(f => f.isPublished);
-    return items.slice().sort((a, b) => a.sortOrder - b.sortOrder);
-  }
+  const items = includeUnpublished
+    ? memoryStore.faqItems
+    : memoryStore.faqItems.filter(f => f.isPublished);
+  return items.slice().sort((a, b) => a.sortOrder - b.sortOrder);
 }
 
 export async function saveFaqItem(input: {
@@ -2261,11 +2421,18 @@ export async function saveFaqItem(input: {
   if (supabase) {
     try {
       if (input.id) {
-        await supabase.from("faqItems").update(values).eq("id", input.id);
-        return input.id;
+        const { data, error } = await supabase.from("faqItems").update(values).eq("id", input.id).select().single();
+        if (!error && data?.id) {
+          const idx = memoryStore.faqItems.findIndex(f => f.id === input.id);
+          if (idx !== -1) memoryStore.faqItems[idx] = { ...memoryStore.faqItems[idx], ...data };
+          return data.id;
+        }
       }
       const { data, error } = await supabase.from("faqItems").insert(values).select("id").single();
-      if (!error && data) return Number(data.id);
+      if (!error && data?.id) {
+        memoryStore.faqItems.push(data);
+        return Number(data.id);
+      }
     } catch {}
   }
   const db = await getDb();
