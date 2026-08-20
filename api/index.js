@@ -79419,6 +79419,15 @@ app.use((req, res, next) => {
   }
   next();
 });
+app.use((req, _res, next) => {
+  const matchedPath = req.headers["x-matched-path"] || req.headers["x-invoke-path"] || req.originalUrl || req.url || "/";
+  if (req.url === "/api/index.js" || req.url === "/api" || req.url === "/api/") {
+    if (matchedPath && matchedPath !== req.url) {
+      req.url = matchedPath;
+    }
+  }
+  next();
+});
 app.use((req, res, next) => {
   if (req.body && typeof req.body === "object") {
     return next();
@@ -79447,6 +79456,11 @@ app.use((req, res, next) => {
   }
   next();
 });
+app.use((req, res) => {
+  if (!res.headersSent) {
+    res.status(404).json({ error: `Not found: ${req.method} ${req.url}` });
+  }
+});
 app.use((err, _req, res, _next) => {
   console.error("[Vercel API Handler Error]:", err);
   if (!res.headersSent) {
@@ -79455,9 +79469,25 @@ app.use((err, _req, res, _next) => {
 });
 function handler(req, res) {
   return new Promise((resolve) => {
-    res.on("finish", resolve);
-    res.on("close", resolve);
-    app(req, res);
+    let resolved = false;
+    const done = () => {
+      if (!resolved) {
+        resolved = true;
+        resolve(void 0);
+      }
+    };
+    res.on("finish", done);
+    res.on("close", done);
+    setTimeout(done, 15e3);
+    try {
+      app(req, res);
+    } catch (e) {
+      console.error("[Express Execution Error]:", e);
+      if (!res.headersSent) {
+        res.status(500).json({ error: e?.message || "Handler error" });
+      }
+      done();
+    }
   });
 }
 export {

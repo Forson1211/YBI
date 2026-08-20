@@ -23,7 +23,25 @@ app.use((req, res, next) => {
   next();
 });
 
-// 2. Safe body parsing for Vercel serverless environment (handles both pre-parsed and unparsed bodies)
+// 2. URL Normalization for Vercel Rewrites
+app.use((req, _res, next) => {
+  const matchedPath =
+    (req.headers["x-matched-path"] as string) ||
+    (req.headers["x-invoke-path"] as string) ||
+    req.originalUrl ||
+    req.url ||
+    "/";
+
+  // If Vercel rewrote the path to /api/index.js or /api, restore original path
+  if (req.url === "/api/index.js" || req.url === "/api" || req.url === "/api/") {
+    if (matchedPath && matchedPath !== req.url) {
+      req.url = matchedPath;
+    }
+  }
+  next();
+});
+
+// 3. Safe body parsing for Vercel serverless environment
 app.use((req, res, next) => {
   if (req.body && typeof req.body === "object") {
     return next();
@@ -67,6 +85,13 @@ app.use((req, res, next) => {
   next();
 });
 
+// Explicit 404 handler so serverless responses NEVER hang
+app.use((req, res) => {
+  if (!res.headersSent) {
+    res.status(404).json({ error: `Not found: ${req.method} ${req.url}` });
+  }
+});
+
 // Fallback error handler
 app.use((err: any, _req: any, res: any, _next: any) => {
   console.error("[Vercel API Handler Error]:", err);
@@ -77,8 +102,25 @@ app.use((err: any, _req: any, res: any, _next: any) => {
 
 export default function handler(req: any, res: any) {
   return new Promise((resolve) => {
-    res.on("finish", resolve);
-    res.on("close", resolve);
-    (app as any)(req, res);
+    let resolved = false;
+    const done = () => {
+      if (!resolved) {
+        resolved = true;
+        resolve(undefined);
+      }
+    };
+    res.on("finish", done);
+    res.on("close", done);
+    // 15 second safety timeout to prevent lambda freeze
+    setTimeout(done, 15000);
+    try {
+      (app as any)(req, res);
+    } catch (e: any) {
+      console.error("[Express Execution Error]:", e);
+      if (!res.headersSent) {
+        res.status(500).json({ error: e?.message || "Handler error" });
+      }
+      done();
+    }
   });
 }
