@@ -57,7 +57,7 @@ const imageInput = z.object({
   altText: z.string().trim().min(3).max(240),
 
   fileName: z.string().trim().min(1).max(220),
-  mimeType: z.enum(["image/jpeg", "image/png", "image/webp"]),
+  mimeType: z.string().min(1).default("image/jpeg"),
   base64: z.string().min(10),
   isPublished: z.boolean().default(true),
   sortOrder: z.number().int().min(0).max(9999).default(0),
@@ -144,7 +144,7 @@ const siteImageInput = z.object({
 const siteImageUploadInput = z.object({
   slotKey: z.string().trim().min(2).max(100),
   fileName: z.string().trim().min(1).max(220),
-  mimeType: z.enum(["image/jpeg", "image/png", "image/webp", "image/svg+xml"]),
+  mimeType: z.string().min(1).default("image/jpeg"),
   base64: z.string().min(10),
   altText: z.string().trim().max(300).optional(),
 });
