@@ -15,6 +15,7 @@ const queryClient = new QueryClient({
       gcTime: 1000 * 60 * 60, // 1 hour memory persistence
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
+      placeholderData: (previousData: any) => previousData,
       retry: 1,
     },
   },

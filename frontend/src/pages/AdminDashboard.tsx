@@ -306,6 +306,15 @@ function AdminAccessDenied() {
   });
   const utils = trpc.useUtils();
 
+  useEffect(() => {
+    const handleLogout = () => {
+      setLocalAdmin(null);
+      setPassword("");
+    };
+    window.addEventListener("ybi_auth_logged_out", handleLogout);
+    return () => window.removeEventListener("ybi_auth_logged_out", handleLogout);
+  }, []);
+
   const activeAdmin = (user && user.role === "admin") ? user : localAdmin;
 
   const loginMutation = trpc.auth.login.useMutation({
@@ -353,14 +362,6 @@ function AdminAccessDenied() {
       }
     },
   });
-
-  if (loading && !activeAdmin) {
-    return (
-      <div className="admin-auth-state">
-        <Loader2 className="spin" size={28} /> Loading your access…
-      </div>
-    );
-  }
 
   if (!activeAdmin || activeAdmin.role !== "admin") {
     return (

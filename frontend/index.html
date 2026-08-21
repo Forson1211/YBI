@@ -8,11 +8,45 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1, interactive-widget=resizes-content" />
     <title>Young Beginners Inspiration | Your voice is a beginning</title>
     <meta name="description" content="Young Beginners Inspiration creates a platform for the young and the aged to inspire, learn, and become responsible leaders." />
-    <meta name="theme-color" content="#173e32" />
+    <meta name="theme-color" content="#073c52" />
     <link rel="icon" type="image/png" href="/ybi-assets/brand/ybi-logo.png" />
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        background-color: #fffaf0;
+        color: #183541;
+      }
+      #root {
+        min-height: 100vh;
+      }
+    </style>
+    <script>
+      (function () {
+        try {
+          var p = window.location.pathname || "";
+          if (p.startsWith("/admin")) {
+            document.documentElement.style.backgroundColor = "#073c52";
+            document.documentElement.style.color = "#ffffff";
+            if (document.body) {
+              document.body.style.backgroundColor = "#073c52";
+              document.body.style.color = "#ffffff";
+            }
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
 
   <body>
+    <script>
+      try {
+        if (window.location.pathname.startsWith("/admin")) {
+          document.body.style.backgroundColor = "#073c52";
+          document.body.style.color = "#ffffff";
+        }
+      } catch (e) {}
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

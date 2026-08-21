@@ -46,6 +46,9 @@ export function useAuth(options?: UseAuthOptions) {
         sessionStorage.removeItem("manus-cookie");
         localStorage.removeItem("manus-cookie");
         localStorage.removeItem("manus-runtime-user-info");
+        document.cookie = `app_session_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax`;
+        document.cookie = `ybi_admin_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax`;
+        window.dispatchEvent(new Event("ybi_auth_logged_out"));
       } catch {}
       utils.auth.me.setData(undefined, null);
       await utils.auth.me.invalidate();

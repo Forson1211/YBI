@@ -3,7 +3,8 @@ export type ImageCategory =
   | "About Page"
   | "Programs & Pathways"
   | "Team & Leadership"
-  | "Brand & Navigation";
+  | "Brand & Navigation"
+  | "Media & Platform Stories";
 
 export type SiteImageDefinition = {
   key: string;

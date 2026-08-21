@@ -39,16 +39,19 @@ export function useSiteImages() {
   }, []);
 
   useEffect(() => {
-    if (query.data !== undefined) {
+    if (query.data && Object.keys(query.data).length > 0) {
       try {
-        localStorage.setItem("ybi_site_images_overrides", JSON.stringify(query.data));
-        setCachedOverrides(query.data);
+        const merged = { ...cachedOverrides, ...query.data };
+        localStorage.setItem("ybi_site_images_overrides", JSON.stringify(merged));
+        setCachedOverrides(merged);
       } catch {}
     }
   }, [query.data]);
 
   const images = useMemo(() => {
-    const overrides = query.data ?? cachedOverrides ?? {};
+    const overrides = (query.data && Object.keys(query.data).length > 0)
+      ? { ...cachedOverrides, ...query.data }
+      : cachedOverrides;
     const result: Record<string, { src: string; alt: string }> = {};
 
     defaultSlotsMap.forEach((val, key) => {

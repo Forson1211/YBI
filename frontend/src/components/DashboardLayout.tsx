@@ -147,6 +147,13 @@ function DashboardLayoutContent({
   const sidebarRef = useRef<HTMLDivElement>(null);
   const activeMenuItem = menuItems.find((item) => item.path === location);
 
+  const handleSignOut = async () => {
+    try {
+      await logout();
+    } catch {}
+    setLocation("/admin");
+  };
+
   useEffect(() => {
     if (isCollapsed) {
       setIsResizing(false);
@@ -269,7 +276,7 @@ function DashboardLayoutContent({
               </div>
               <button
                 type="button"
-                onClick={logout}
+                onClick={handleSignOut}
                 className="admin-drawer-logout-btn"
                 title="Sign out"
               >
@@ -394,7 +401,7 @@ function DashboardLayoutContent({
                   <span>Admin Settings</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={logout}
+                  onClick={handleSignOut}
                   className="admin-dropdown-item danger"
                 >
                   <LogOut size={14} />
@@ -474,7 +481,7 @@ function DashboardLayoutContent({
                   <span>Admin Settings</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={logout}
+                  onClick={handleSignOut}
                   className="admin-dropdown-item danger"
                 >
                   <LogOut size={14} />
