@@ -368,7 +368,13 @@ function AdminAccessDenied() {
       <div className="admin-auth-container">
         <div className="admin-auth-card">
           <div className="admin-auth-brand">
-            <img src="/ybi-assets/brand/ybi-logo.png" alt="Young Beginners Inspiration" className="admin-auth-logo" />
+            <img
+              src="/ybi-assets/brand/ybi-logo.png"
+              alt="Young Beginners Inspiration"
+              className="admin-auth-logo"
+              width={56}
+              height={42}
+            />
             <div>
               <p className="admin-kicker">Protected Workspace</p>
               <h1>YBI Admin Sign-In</h1>
@@ -394,7 +400,6 @@ function AdminAccessDenied() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter password (default: ybi-admin-2026)"
               autoComplete="current-password"
-              autoFocus
               required
             />
 

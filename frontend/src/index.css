@@ -6050,13 +6050,18 @@ h2 {
 
 /* Protected YBI administration control center */
 .admin-auth-container {
-  min-height: 100vh;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2.5rem 1.5rem;
+  padding: 1.5rem;
   background: radial-gradient(circle at 50% 25%, #0c4d68 0%, #073c52 55%, #03202d 100%);
-  position: relative;
+  z-index: 9999;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .admin-auth-container::before {
@@ -6079,6 +6084,9 @@ h2 {
   text-align: left;
   position: relative;
   z-index: 2;
+  transform: none !important;
+  animation: none !important;
+  transition: none !important;
 }
 
 .admin-auth-brand {
@@ -7549,21 +7557,11 @@ h2 {
   }
 }
 
-/* Smooth public-page entry and contained, fixed YBI administration shell */
+/* Seamless instant route rendering - zero layout shift and zero flash on refresh */
 .public-route-enter {
-  animation: public-route-enter 320ms var(--ease-out, cubic-bezier(.23, 1, .32, 1)) both
-}
-
-@keyframes public-route-enter {
-  from {
-    opacity: 0;
-    transform: translateY(10px)
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0)
-  }
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
 }
 
 .admin-sidebar {
