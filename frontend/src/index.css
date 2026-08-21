@@ -775,7 +775,9 @@ h2 {
 
 .initiative-image {
   position: relative;
-  height: 205px;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  min-height: 240px;
   overflow: hidden;
   background: var(--blue-deep);
   border-radius: 0;
@@ -786,6 +788,7 @@ h2 {
   height: 100%;
   display: block;
   object-fit: cover;
+  object-position: center 20%;
   transition: transform .5s var(--ease);
   border-radius: 0;
 }
@@ -8872,7 +8875,9 @@ h2 {
 
 .home-event-media {
   position: relative;
-  height: 200px;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  min-height: 240px;
   overflow: hidden;
   background: var(--blue-deep);
   border-radius: 0 !important;
@@ -8882,6 +8887,7 @@ h2 {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 20%;
   transition: transform 0.5s ease;
   border-radius: 0 !important;
 }
@@ -9372,13 +9378,18 @@ h2 {
 
 .event-card-media {
   position: relative;
-  height: 200px;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  min-height: 230px;
+  overflow: hidden;
+  background: var(--blue-deep);
 }
 
 .event-card-media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 20%;
 }
 
 .event-card-date-badge {
@@ -10841,8 +10852,9 @@ h2 {
 
 .event-card-media {
   position: relative;
-  height: 210px;
   width: 100%;
+  aspect-ratio: 16 / 10;
+  min-height: 230px;
   overflow: hidden;
   background: var(--blue-deep);
 }
@@ -10851,6 +10863,7 @@ h2 {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 20%;
   transition: transform 0.5s ease;
 }
 
@@ -12926,7 +12939,9 @@ h2 {
 
 .blog-post-media {
   position: relative;
-  height: 200px;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  min-height: 220px;
   overflow: hidden;
   background: var(--blue-deep);
 }
@@ -12935,6 +12950,7 @@ h2 {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 20%;
   transition: transform 0.5s ease;
 }
 
