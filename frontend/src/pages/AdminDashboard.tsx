@@ -86,6 +86,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Link, useLocation } from "wouter";
+import { ImageFieldUploader } from "@/components/ImageFieldUploader";
 
 type ProgramForm = { id?: number; title: string; category: string; summary: string; status: "draft" | "published"; sortOrder: number };
 type UpdateForm = { id?: number; title: string; excerpt: string; body: string; status: "draft" | "published" };
@@ -3299,14 +3300,13 @@ function EventsManager() {
               </label>
             )}
           </div>
-          <label>
-            Cover Image URL
-            <input
-              value={form.imageUrl}
-              onChange={(e) => update("imageUrl", e.target.value)}
-              placeholder="https://... or /ybi-assets/programs/..."
-            />
-          </label>
+          <ImageFieldUploader
+            label="Event Cover Image"
+            value={form.imageUrl}
+            onChange={(url) => update("imageUrl", url)}
+            placeholder="https://... or upload from your device"
+            aspectRatioHint="Recommended: 16:9 or 16:10"
+          />
           <label>
             Publishing Status
             <select
@@ -3761,14 +3761,13 @@ function BlogManager() {
               />
             </label>
           </div>
-          <label>
-            Cover Image URL
-            <input
-              value={form.coverImageUrl}
-              onChange={(e) => update("coverImageUrl", e.target.value)}
-              placeholder="/ybi-assets/programs/ybi-public-speaking.jpg"
-            />
-          </label>
+          <ImageFieldUploader
+            label="Article Cover Image"
+            value={form.coverImageUrl}
+            onChange={(url) => update("coverImageUrl", url)}
+            placeholder="https://... or upload from your device"
+            aspectRatioHint="Recommended: 16:9 or 16:10"
+          />
           <label>
             Short Excerpt (Summary for listings & SEO)
             <textarea

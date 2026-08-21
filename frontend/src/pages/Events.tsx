@@ -1,9 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link } from "wouter";
 import { PublicPageShell } from "@/components/PublicSiteChrome";
 import { trpc } from "@/lib/trpc";
 import { useSiteImages } from "@/lib/useSiteImage";
 import { DEFAULT_EVENTS } from "@/lib/defaultEvents";
+import { getClientCache, setClientCache } from "@/lib/clientCache";
 import {
   Calendar,
   Clock,
@@ -11,6 +12,7 @@ import {
   Tag,
   Users,
   Search,
+  Filter,
   ArrowRight,
   Sparkles,
   CheckCircle2,
@@ -24,17 +26,36 @@ export default function Events() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-  const { data: eventsList } = trpc.publicSite.events.list.useQuery();
-  const effectiveEvents = eventsList?.length ? eventsList : DEFAULT_EVENTS;
+  const [cachedEvents, setCachedEvents] = useState<any[]>(() =>
+    getClientCache<any[]>("events_list", [])
+  );
+
+  const { data: eventsList } = trpc.publicSite.events.list.useQuery(undefined, {
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: true,
+  });
+
+  useEffect(() => {
+    if (eventsList && eventsList.length > 0) {
+      setCachedEvents(eventsList);
+      setClientCache("events_list", eventsList);
+    }
+  }, [eventsList]);
+
+  const effectiveEvents = eventsList?.length
+    ? eventsList
+    : cachedEvents.length
+    ? cachedEvents
+    : DEFAULT_EVENTS;
 
   const now = useMemo(() => new Date(), []);
 
   const categorizedEvents = useMemo(() => {
     const upcoming = effectiveEvents.filter(
-      (e) => new Date(e.scheduledFor).getTime() >= now.getTime()
+      (e: any) => new Date(e.scheduledFor).getTime() >= now.getTime()
     );
     const past = effectiveEvents.filter(
-      (e) => new Date(e.scheduledFor).getTime() < now.getTime()
+      (e: any) => new Date(e.scheduledFor).getTime() < now.getTime()
     );
 
     return { upcoming, past };

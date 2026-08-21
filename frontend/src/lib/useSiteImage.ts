@@ -8,7 +8,7 @@ const defaultSlotsMap = new Map(
 
 export function useSiteImages() {
   const query = trpc.publicSite.siteImages.getAll.useQuery(undefined, {
-    staleTime: 0,
+    staleTime: 60 * 1000,
     refetchOnWindowFocus: true,
     refetchOnMount: true,
   });
@@ -22,6 +22,21 @@ export function useSiteImages() {
       return {};
     }
   });
+
+  useEffect(() => {
+    const handleSync = () => {
+      try {
+        const saved = localStorage.getItem("ybi_site_images_overrides");
+        if (saved) setCachedOverrides(JSON.parse(saved));
+      } catch {}
+    };
+    window.addEventListener("storage", handleSync);
+    window.addEventListener("ybi_site_images_updated", handleSync);
+    return () => {
+      window.removeEventListener("storage", handleSync);
+      window.removeEventListener("ybi_site_images_updated", handleSync);
+    };
+  }, []);
 
   useEffect(() => {
     if (query.data !== undefined) {
@@ -52,7 +67,7 @@ export function useSiteImages() {
 
   return {
     images,
-    isLoading: query.isLoading,
+    isLoading: query.isLoading && Object.keys(cachedOverrides).length === 0,
     getImage: (key: string, fallbackSrc?: string, fallbackAlt?: string) => {
       if (images[key]?.src) return images[key];
       const def = defaultSlotsMap.get(key);
@@ -68,4 +83,3 @@ export function useSiteImage(key: string, fallbackSrc?: string, fallbackAlt?: st
   const { getImage } = useSiteImages();
   return getImage(key, fallbackSrc, fallbackAlt);
 }
-

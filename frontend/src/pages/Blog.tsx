@@ -1,9 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link } from "wouter";
 import { toast } from "sonner";
 import { PublicPageShell } from "@/components/PublicSiteChrome";
 import { trpc } from "@/lib/trpc";
 import { DEFAULT_ARTICLES } from "@/lib/defaultArticles";
+import { getClientCache, setClientCache } from "@/lib/clientCache";
 import {
   BookOpen,
   Calendar,
@@ -33,10 +34,27 @@ export default function Blog() {
   const [subscriberEmail, setSubscriberEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
 
-  const { data: posts } = trpc.publicSite.blog.list.useQuery({
-    limit: 30,
-  });
-  const effectivePosts = posts?.length ? posts : DEFAULT_ARTICLES;
+  const [cachedPosts, setCachedPosts] = useState<any[]>(() =>
+    getClientCache<any[]>("blog_posts", [])
+  );
+
+  const { data: posts } = trpc.publicSite.blog.list.useQuery(
+    { limit: 30 },
+    { staleTime: 60 * 1000, refetchOnWindowFocus: true }
+  );
+
+  useEffect(() => {
+    if (posts && posts.length > 0) {
+      setCachedPosts(posts);
+      setClientCache("blog_posts", posts);
+    }
+  }, [posts]);
+
+  const effectivePosts = posts?.length
+    ? posts
+    : cachedPosts.length
+    ? cachedPosts
+    : DEFAULT_ARTICLES;
 
   const subscribeMutation = trpc.publicSite.newsletter.subscribe.useMutation({
     onSuccess: () => {

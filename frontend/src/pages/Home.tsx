@@ -6,6 +6,7 @@ import { Link } from "wouter";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 import { useSiteImages } from "@/lib/useSiteImage";
+import { getClientCache, setClientCache } from "@/lib/clientCache";
 import { createImageWallRows, type ImageWallPhoto } from "@/lib/imageWall";
 import { aboutMediaSlides } from "@/lib/aboutMedia";
 import { DEFAULT_EVENTS } from "@/lib/defaultEvents";
@@ -296,10 +297,50 @@ export default function Home() {
   const wall6 = getImage("home_wall_6", "/ybi-assets/programs/ybi-entrepreneurship.jpg", "Young participants collaborating during an innovation sprint");
 
   const utils = trpc.useUtils();
+  const [cachedEvents, setCachedEvents] = useState<any[]>(() =>
+    getClientCache<any[]>("home_events", [])
+  );
+  const [cachedBlogPosts, setCachedBlogPosts] = useState<any[]>(() =>
+    getClientCache<any[]>("home_blog_posts", [])
+  );
+  const [cachedGallery, setCachedGallery] = useState<any[]>(() =>
+    getClientCache<any[]>("gallery_photos", [])
+  );
+
   const { data: managedHero } = trpc.publicSite.content.useQuery({ contentKey: "homepage-hero" });
-  const { data: managedGallery } = trpc.publicSite.gallery.useQuery();
-  const { data: upcomingEvents } = trpc.publicSite.events.list.useQuery();
-  const { data: latestBlogPosts } = trpc.publicSite.blog.list.useQuery({ limit: 3 });
+  const { data: managedGallery } = trpc.publicSite.gallery.useQuery(undefined, {
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: true,
+  });
+  const { data: upcomingEvents } = trpc.publicSite.events.list.useQuery(undefined, {
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: true,
+  });
+  const { data: latestBlogPosts } = trpc.publicSite.blog.list.useQuery({ limit: 3 }, {
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: true,
+  });
+
+  useEffect(() => {
+    if (upcomingEvents && upcomingEvents.length > 0) {
+      setCachedEvents(upcomingEvents);
+      setClientCache("home_events", upcomingEvents);
+    }
+  }, [upcomingEvents]);
+
+  useEffect(() => {
+    if (latestBlogPosts && latestBlogPosts.length > 0) {
+      setCachedBlogPosts(latestBlogPosts);
+      setClientCache("home_blog_posts", latestBlogPosts);
+    }
+  }, [latestBlogPosts]);
+
+  useEffect(() => {
+    if (managedGallery && managedGallery.length > 0) {
+      setCachedGallery(managedGallery);
+      setClientCache("gallery_photos", managedGallery);
+    }
+  }, [managedGallery]);
 
   const rotatingSlides = useMemo(
     () => [
@@ -349,12 +390,16 @@ export default function Home() {
   );
 
   const dynamicEvents = useMemo(() => {
-    const list = upcomingEvents?.length ? upcomingEvents : DEFAULT_EVENTS;
+    const list = upcomingEvents?.length
+      ? upcomingEvents
+      : cachedEvents.length
+      ? cachedEvents
+      : DEFAULT_EVENTS;
     const now = new Date().getTime();
     return list
       .filter((e) => new Date(e.scheduledFor).getTime() >= now)
       .slice(0, 3);
-  }, [upcomingEvents]);
+  }, [upcomingEvents, cachedEvents]);
 
   const dynamicWallFallback: ImageWallPhoto[] = useMemo(
     () => [
@@ -371,12 +416,13 @@ export default function Home() {
   );
 
   const imageWallRows = useMemo(() => {
-    const publishedPhotos = (managedGallery ?? []).slice(0, 12).map((photo) => ({
+    const rawList = managedGallery?.length ? managedGallery : cachedGallery;
+    const publishedPhotos = rawList.slice(0, 12).map((photo: any) => ({
       src: photo.imageUrl,
       alt: photo.altText || photo.title,
     }));
     return createImageWallRows([...publishedPhotos, ...dynamicWallFallback]);
-  }, [managedGallery, dynamicWallFallback]);
+  }, [managedGallery, cachedGallery, dynamicWallFallback]);
 
   const closeMenu = () => setMenuOpen(false);
 

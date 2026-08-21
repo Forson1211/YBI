@@ -18,6 +18,7 @@ import {
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useSiteImages } from "@/lib/useSiteImage";
+import { getClientCache, setClientCache } from "@/lib/clientCache";
 import PublicNavigation from "@/components/PublicNavigation";
 import { PublicFooter } from "@/components/PublicSiteChrome";
 
@@ -97,18 +98,43 @@ export default function Gallery() {
     "Young Beginners Inspiration logo"
   );
 
-  const { data: managedPhotos } = trpc.publicSite.gallery.useQuery();
+  const [cachedPhotos, setCachedPhotos] = useState<GalleryPhoto[]>(() =>
+    getClientCache<GalleryPhoto[]>("gallery_photos", [])
+  );
+
+  const { data: managedPhotos, isLoading } = trpc.publicSite.gallery.useQuery(undefined, {
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: true,
+  });
+
+  useEffect(() => {
+    if (managedPhotos && managedPhotos.length > 0) {
+      const formatted = managedPhotos.map((photo) => ({
+        id: photo.id,
+        src: photo.imageUrl,
+        title: photo.title,
+        caption: photo.altText || "",
+        category: photo.category || "Community",
+      }));
+      setCachedPhotos(formatted);
+      setClientCache("gallery_photos", formatted);
+    }
+  }, [managedPhotos]);
 
   const allPhotos: GalleryPhoto[] = useMemo(() => {
-    const saved = (managedPhotos ?? []).map((photo) => ({
-      id: photo.id,
-      src: photo.imageUrl,
-      title: photo.title,
-      caption: photo.altText || "",
-      category: photo.category || "Community",
-    }));
-    return saved.length ? saved : seededPhotos;
-  }, [managedPhotos]);
+    if (cachedPhotos.length > 0) return cachedPhotos;
+    if (managedPhotos && managedPhotos.length > 0) {
+      return managedPhotos.map((photo) => ({
+        id: photo.id,
+        src: photo.imageUrl,
+        title: photo.title,
+        caption: photo.altText || "",
+        category: photo.category || "Community",
+      }));
+    }
+    if (!isLoading && managedPhotos?.length === 0) return seededPhotos;
+    return cachedPhotos;
+  }, [cachedPhotos, managedPhotos, isLoading]);
 
   const categories = useMemo(() => {
     const cats = Array.from(new Set(allPhotos.map((p) => p.category || "Community")));
