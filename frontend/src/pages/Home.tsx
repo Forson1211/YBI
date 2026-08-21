@@ -284,11 +284,16 @@ export default function Home() {
   const progCommunity = getImage("program_community", "/ybi-assets/community/ybi-community.jpg", "Generations in Conversation");
   const progLeadership = getImage("program_leadership", "/ybi-assets/image-wall/ybi-wall-youth-leadership.jpg", "Values-Led Leadership Lab");
 
+  const aboutSlide1 = getImage("home_about_rotator_1", "/ybi-assets/programs/ybi-public-speaking.jpg", "Young people taking part in a Young Beginners Inspiration learning session");
+  const aboutSlide2 = getImage("home_about_rotator_2", "/ybi-assets/community/ybi-community.jpg", "People taking part in an intergenerational Young Beginners Inspiration conversation");
+  const aboutSlide3 = getImage("home_about_rotator_3", "/ybi-assets/programs/ybi-entrepreneurship.jpg", "A Young Beginners Inspiration participant developing an entrepreneurial idea");
+
   const wall1 = getImage("home_wall_1", "/ybi-assets/image-wall/ybi-wall-youth-leadership.jpg", "Young facilitator leading a community leadership workshop");
   const wall2 = getImage("home_wall_2", "/ybi-assets/image-wall/ybi-wall-intergenerational-mentoring.jpg", "Intergenerational mentoring around a practical project");
   const wall3 = getImage("home_wall_3", "/ybi-assets/image-wall/ybi-wall-entrepreneurship.jpg", "Community members developing an entrepreneurship idea");
   const wall4 = getImage("home_wall_4", "/ybi-assets/image-wall/ybi-wall-public-speaking.jpg", "Young participant practicing public speaking");
   const wall5 = getImage("home_wall_5", "/ybi-assets/image-wall/ybi-wall-community-circle.jpg", "An outdoor intergenerational community circle");
+  const wall6 = getImage("home_wall_6", "/ybi-assets/programs/ybi-entrepreneurship.jpg", "Young participants collaborating during an innovation sprint");
 
   const utils = trpc.useUtils();
   const { data: managedHero } = trpc.publicSite.content.useQuery({ contentKey: "homepage-hero" });
@@ -298,11 +303,11 @@ export default function Home() {
 
   const rotatingSlides = useMemo(
     () => [
-      { src: progSpeaking.src, alt: progSpeaking.alt },
-      { src: progCommunity.src, alt: progCommunity.alt },
-      { src: progEnterprise.src, alt: progEnterprise.alt },
+      { src: aboutSlide1.src, alt: aboutSlide1.alt },
+      { src: aboutSlide2.src, alt: aboutSlide2.alt },
+      { src: aboutSlide3.src, alt: aboutSlide3.alt },
     ],
-    [progSpeaking, progCommunity, progEnterprise]
+    [aboutSlide1, aboutSlide2, aboutSlide3]
   );
 
   const dynamicProgramCards = useMemo(
@@ -353,16 +358,16 @@ export default function Home() {
 
   const dynamicWallFallback: ImageWallPhoto[] = useMemo(
     () => [
-      { src: progSpeaking.src, alt: "Young people developing public-speaking confidence" },
-      { src: progEnterprise.src, alt: "Participants exploring entrepreneurship together" },
-      { src: progCommunity.src, alt: "Intergenerational community conversation" },
       { src: wall1.src, alt: wall1.alt },
       { src: wall2.src, alt: wall2.alt },
       { src: wall3.src, alt: wall3.alt },
       { src: wall4.src, alt: wall4.alt },
       { src: wall5.src, alt: wall5.alt },
+      { src: wall6.src, alt: wall6.alt },
+      { src: aboutSlide1.src, alt: aboutSlide1.alt },
+      { src: aboutSlide2.src, alt: aboutSlide2.alt },
     ],
-    [progSpeaking, progEnterprise, progCommunity, wall1, wall2, wall3, wall4, wall5]
+    [wall1, wall2, wall3, wall4, wall5, wall6, aboutSlide1, aboutSlide2]
   );
 
   const imageWallRows = useMemo(() => {
