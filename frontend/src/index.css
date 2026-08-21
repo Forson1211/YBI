@@ -567,39 +567,40 @@ h2 {
   opacity: 0;
   object-fit: cover;
   object-position: center;
+  transform-origin: center center;
   will-change: opacity, transform;
-  transform: translate3d(6%, 0, 0) scale(1.045);
-  transition: opacity 1050ms cubic-bezier(.22, 1, .36, 1), transform 1250ms cubic-bezier(.22, 1, .36, 1);
+  transform: scale(1.0);
+  transition: opacity 1200ms cubic-bezier(.25, 1, .5, 1);
 }
 
 .about-rotating-image.is-active {
   z-index: 1;
   opacity: 1;
-  transform: translate3d(0, 0, 0) scale(1.02);
-  animation: about-image-zoom 8.2s cubic-bezier(.37, 0, .21, 1) both;
+  transform: scale(1.0);
+  animation: about-image-zoom 8.2s cubic-bezier(.25, 1, .5, 1) both;
 }
 
 .about-rotating-image.is-exiting {
   z-index: 0;
   opacity: 0;
-  transform: translate3d(-6%, 0, 0) scale(1.035);
+  transform: scale(1.08);
 }
 
 .about-rotating-image.is-exiting.is-reverse {
-  transform: translate3d(6%, 0, 0) scale(1.035);
+  transform: scale(1.0);
 }
 
 @keyframes about-image-zoom {
   0% {
-    transform: translate3d(3%, 0, 0) scale(1.035);
+    transform: scale(1.0);
   }
 
-  48% {
-    transform: translate3d(-1%, 0, 0) scale(1.075);
+  50% {
+    transform: scale(1.08);
   }
 
   100% {
-    transform: translate3d(-4%, 0, 0) scale(1.04);
+    transform: scale(1.03);
   }
 }
 

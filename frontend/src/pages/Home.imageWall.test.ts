@@ -3,7 +3,8 @@ import { describe, expect, it } from "vitest";
 
 describe("homepage image-wall mobile marquee safeguards", () => {
   const homeSource = readFileSync(new URL("./Home.tsx", import.meta.url), "utf8");
-  const styles = readFileSync(new URL("../index.css", import.meta.url), "utf8");
+  const rawStyles = readFileSync(new URL("../index.css", import.meta.url), "utf8");
+  const styles = rawStyles.replace(/\s+/g, " ");
 
   it("renders two explicit matching sequences for every marquee row", () => {
     expect(homeSource).toContain('id="gallery-wall"');
