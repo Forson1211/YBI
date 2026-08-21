@@ -254,13 +254,6 @@ export default function Gallery() {
                     Every picture <span>holds a beginning.</span>
                   </h2>
                 </div>
-
-                {/* Admin Quick Action (ONLY visible if logged in as admin) */}
-                {isAdmin && (
-                  <Link className="gallery-admin-badge" href="/admin/gallery">
-                    <Sparkles size={16} /> Manage Gallery (Admin) <ArrowUpRight size={15} />
-                  </Link>
-                )}
               </div>
 
               {/* Controls Bar: Category Pills & Search */}

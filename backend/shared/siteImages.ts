@@ -259,6 +259,35 @@ export const SITE_IMAGE_SLOTS: SiteImageDefinition[] = [
     defaultAlt: "YBI AI Assistant",
     aspectRatio: "1:1",
   },
+
+  // Media & Platform Stories (/media)
+  {
+    key: "media_story_1",
+    category: "Media & Platform Stories",
+    label: "Platform Story 1: Leadership (Start with the room you are in)",
+    description: "Featured visual for Story 01 on the Media & Platform Stories page.",
+    defaultSrc: "/ybi-assets/community/ybi-community.jpg",
+    defaultAlt: "People taking part in an intergenerational Young Beginners Inspiration conversation",
+    aspectRatio: "16:10",
+  },
+  {
+    key: "media_story_2",
+    category: "Media & Platform Stories",
+    label: "Platform Story 2: Entrepreneurship (An idea becomes useful when it serves)",
+    description: "Featured visual for Story 02 on the Media & Platform Stories page.",
+    defaultSrc: "/ybi-assets/programs/ybi-entrepreneurship.jpg",
+    defaultAlt: "Participants developing an entrepreneurial idea together",
+    aspectRatio: "16:10",
+  },
+  {
+    key: "media_story_3",
+    category: "Media & Platform Stories",
+    label: "Platform Story 3: Public Speaking (Your voice gets stronger in practice)",
+    description: "Featured visual for Story 03 on the Media & Platform Stories page.",
+    defaultSrc: "/ybi-assets/programs/ybi-public-speaking.jpg",
+    defaultAlt: "A participant presenting to a Young Beginners Inspiration group",
+    aspectRatio: "16:10",
+  },
 ];
 
 export const SITE_IMAGE_PREFIX = "ybi_site_image_";

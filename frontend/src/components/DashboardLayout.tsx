@@ -28,6 +28,7 @@ import {
   BotMessageSquare,
   Calendar,
   CalendarDays,
+  ChevronDown,
   Coins,
   Download,
   ExternalLink,
@@ -49,6 +50,7 @@ import {
   Send,
   Settings,
   ShieldCheck,
+  Sparkles,
   Target,
   Ticket,
   Users,
@@ -252,14 +254,18 @@ function DashboardLayoutContent({
 
           <div className="admin-drawer-footer">
             <div className="admin-drawer-user-row">
-              <Avatar className="h-8 w-8 border">
-                <AvatarFallback className="text-xs font-bold text-white bg-slate-700">
-                  {user?.name?.charAt(0).toUpperCase() || "A"}
-                </AvatarFallback>
-              </Avatar>
+              <div className="relative shrink-0">
+                <div className="admin-profile-avatar-styled">
+                  {user?.name ? user.name.charAt(0).toUpperCase() : "Y"}
+                </div>
+                <span className="admin-profile-status-dot" title="Online" />
+              </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-white truncate">{user?.name || "Administrator"}</p>
-                <p className="text-[10px] text-slate-400 truncate">{user?.email || "admin@ybi.org"}</p>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-xs font-bold text-white truncate">{user?.name || "YBI Administrator"}</p>
+                  <span className="admin-profile-role-badge">Admin</span>
+                </div>
+                <p className="text-[10px] text-slate-400 truncate mt-0.5">{user?.email || "admin@ybi.org"}</p>
               </div>
               <button
                 type="button"
@@ -321,28 +327,77 @@ function DashboardLayoutContent({
           <SidebarFooter className="p-3">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-3 rounded-lg px-1 py-1 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                  <Avatar className="h-9 w-9 border shrink-0">
-                    <AvatarFallback className="text-xs font-medium">
-                      {user?.name?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
+                <button
+                  type="button"
+                  className="admin-profile-card flex items-center gap-3 w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none"
+                  aria-label="Admin profile menu"
+                >
+                  <div className="relative shrink-0">
+                    <div className="admin-profile-avatar-styled">
+                      {user?.name ? user.name.charAt(0).toUpperCase() : "Y"}
+                    </div>
+                    <span className="admin-profile-status-dot" title="Authorized Admin" />
+                  </div>
+
                   <div className="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
-                    <p className="text-sm font-medium truncate leading-none">
-                      {user?.name || "-"}
-                    </p>
-                    <p className="text-xs text-muted-foreground truncate mt-1.5">
-                      {user?.email || "-"}
+                    <div className="flex items-center justify-between gap-1">
+                      <p className="text-xs font-bold text-white truncate">
+                        {user?.name || "YBI Administrator"}
+                      </p>
+                      <span className="admin-profile-role-badge">Admin</span>
+                    </div>
+                    <p className="text-[10px] text-slate-400 truncate mt-0.5">
+                      {user?.email || "admin@ybi.org"}
                     </p>
                   </div>
+
+                  <ChevronDown
+                    size={14}
+                    className="text-slate-400 shrink-0 group-data-[collapsible=icon]:hidden"
+                  />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuContent align="end" className="admin-dropdown-menu w-56" sideOffset={8}>
+                <div className="admin-dropdown-header">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="admin-profile-avatar-mini">
+                      {user?.name ? user.name.charAt(0).toUpperCase() : "Y"}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="admin-dropdown-user-name truncate">{user?.name || "YBI Administrator"}</p>
+                      <p className="admin-dropdown-user-email truncate">{user?.email || "admin@ybi.org"}</p>
+                    </div>
+                  </div>
+                  <span className="admin-dropdown-badge">
+                    <ShieldCheck size={12} /> Full Management Access
+                  </span>
+                </div>
+                <DropdownMenuItem
+                  onClick={() => window.open("/", "_blank")}
+                  className="admin-dropdown-item"
+                >
+                  <ExternalLink size={14} />
+                  <span>Visit Live Website</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setLocation("/admin/images")}
+                  className="admin-dropdown-item"
+                >
+                  <Sparkles size={14} />
+                  <span>Site Images & Media</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setLocation("/admin/settings")}
+                  className="admin-dropdown-item"
+                >
+                  <Settings size={14} />
+                  <span>Admin Settings</span>
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={logout}
-                  className="cursor-pointer text-destructive focus:text-destructive"
+                  className="admin-dropdown-item danger"
                 >
-                  <LogOut className="mr-2 h-4 w-4" />
+                  <LogOut size={14} />
                   <span>Sign out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>

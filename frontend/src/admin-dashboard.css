@@ -2956,3 +2956,72 @@ span.admin-count,
   align-items: center;
   gap: 8px;
 }
+
+/* ── Admin Sidebar Profile Enhancements ── */
+.admin-profile-card {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 12px !important;
+  padding: 8px 10px !important;
+  cursor: pointer;
+  transition: all 0.2s ease !important;
+}
+
+.admin-profile-card:hover {
+  background: rgba(30, 41, 59, 0.8) !important;
+  border-color: rgba(255, 208, 0, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+.admin-profile-avatar-styled {
+  width: 36px;
+  height: 36px;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #ffd000 0%, #ff9f0a 100%) !important;
+  color: #073c52 !important;
+  font-weight: 900 !important;
+  font-size: 15px !important;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 2px 8px rgba(255, 208, 0, 0.35);
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.admin-profile-avatar-mini {
+  width: 32px;
+  height: 32px;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #ffd000 0%, #ff9f0a 100%) !important;
+  color: #073c52 !important;
+  font-weight: 900 !important;
+  font-size: 13px !important;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.admin-profile-status-dot {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50% !important;
+  background: #22c55e;
+  border: 2px solid #073c52 !important;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.3);
+}
+
+.admin-profile-role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 4px !important;
+  background: rgba(255, 208, 0, 0.15);
+  color: #ffd000;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 1px solid rgba(255, 208, 0, 0.3);
+}
